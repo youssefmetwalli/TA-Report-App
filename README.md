@@ -6,7 +6,7 @@ TA: Madhavi Palla
 
 Members:
 
- - Soichiro Sato
+ - Merci Habineza
  
  - Youssef Yuto Obata
 
