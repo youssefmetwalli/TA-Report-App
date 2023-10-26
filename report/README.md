@@ -11,3 +11,9 @@ We analyzed the user roles for the three entities of our project: TA, Faculty, a
 
 ### Week 2
 We made the project baclklog by breaking down all the features every user needs in the application sysytem.
+
+### Week 3
+We created the class diagram, user-diagram, and project phaselog
+
+### Week 4
+We defined the user interface, and described the user-diagram
