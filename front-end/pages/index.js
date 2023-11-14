@@ -1,6 +1,9 @@
 // pages/index.js
 import { useState } from 'react';
 import LoginForm from '../src/components/loginForm';
+import Dashboard from './dasboard';
+import 'tailwindcss/tailwind.css'
+
 
 const Index = () => {
   const [loggedInUser, setLoggedInUser] = useState(null);
@@ -15,7 +18,9 @@ const Index = () => {
       {!loggedInUser ? (
         <LoginForm onLogin={handleLogin} />
       ) : (
-        <a href="/Dashboard">Go to Dashboard</a>
+        <>
+          <Dashboard/>
+        </>
       )}
     </div>
   );
