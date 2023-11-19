@@ -11,14 +11,7 @@ const Dashboard = () => {
 
   return (
     <div>
-      <AddCourse 
-        Status={Status}
-      />
-      <ShiftsReport
-      shift={shift}
-      w_course={Course}
-      status={Status.sa}
-      />
+      
     </div>
   );
 };

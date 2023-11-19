@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import LoginForm from '../components/loginForm';
-import Dashboard from './dasboard';
+import Dashboard from '../app/dashboard/page';
 import 'tailwindcss/tailwind.css'
 
 
