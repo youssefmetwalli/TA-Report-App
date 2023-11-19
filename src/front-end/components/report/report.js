@@ -1,8 +1,9 @@
 
 // src/components/ShiftsReport.js
 import React from 'react';
+import AddShift from './addshift';
 
-const ShiftsReport = ({ shift }) => {
+const ShiftsReport = ({ shift, w_course , status}) => {
   return (
     <section id="shiftsReport" className="overflow-hidden py-16 md:py-20 lg:py-28">
       <div className="container">
@@ -12,8 +13,17 @@ const ShiftsReport = ({ shift }) => {
             data-wow-delay=".15s"
           >
             <h2 className="mb-3 text-2xl font-bold text-black dark:text-white sm:text-3xl lg:text-2xl xl:text-3xl">
-              Shifts Report
+               REPORT
             </h2>
+            <ul className=" text-black dark:text-white sm:text-xl lg:text-2xl xl:text-3xl">
+              <li>Course Name: {w_course.name}</li>
+              <li>Course Id: {w_course.id}</li>
+              <li>Course Instructor: {w_course.instructor}</li> 
+              <AddShift
+                course={w_course}
+                status={status}
+              />
+            </ul>
             <div className="overflow-x-auto">
               <table className="min-w-full bg-white border border-gray-300 shadow-md rounded-md overflow-hidden">
                 <thead className="bg-primary text-white">

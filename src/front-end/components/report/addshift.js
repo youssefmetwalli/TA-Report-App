@@ -1,4 +1,4 @@
-import {createShift, shift} from "../../../types/shifts";
+import {createShift, shift} from "../../types/shifts";
 import { useState } from "react";
 
 const AddShift = ({course, status}) =>{

@@ -1,6 +1,6 @@
 // pages/index.js
 import { useState } from 'react';
-import LoginForm from '../src/components/loginForm';
+import LoginForm from '../components/loginForm';
 import Dashboard from './dasboard';
 import 'tailwindcss/tailwind.css'
 
