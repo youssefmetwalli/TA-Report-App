@@ -1,11 +1,10 @@
 // courses type
-export const createCourse = (id, name, instructor, max_hours) =>
-{
-    return{
-        id,
-        name,
-        instructor,
-        max_hours
-    };
+export class createCourse {
+    constructor(id, name, instructor, max_hours) {
+        this.id = id;
+        this.name = name;
+        this.instructor = instructor;
+        this.max_hours = max_hours;
+    }
 }
-export const Course = createCourse('CN01','Course Name',"Instructor Name", 25);
+export const Course = new createCourse('CN01','Course Name',"Instructor Name", 25);
