@@ -1,6 +1,7 @@
 // shift type
 //start_time(in 24:00 format), end_time(in 24:00 format), break_time in minutes
 
+"use client"
 
 export const createShift = (date_time, start_time, end_time, break_time) => {
     // Convert time strings to Date objects for easier manipulation

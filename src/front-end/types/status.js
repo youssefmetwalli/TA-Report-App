@@ -1,3 +1,4 @@
+// "use client"
 //person status
 export const Status = {
     sa: 'SA',
