@@ -1,9 +1,9 @@
+"use client"
 
-// src/components/ShiftsReport.js
 import React from 'react';
 import AddShift from './addshift';
 
-const ShiftsReport = ({ shift, w_course , status}) => {
+const ShiftsReport = ({ shift, w_course, status}) => {
   return (
     <section id="shiftsReport" className="overflow-hidden py-16 md:py-20 lg:py-28">
       <div className="container">

@@ -1,4 +1,5 @@
 // courses type
+"use client"
 export class createCourse {
     constructor(id, name, instructor, max_hours) {
         this.id = id;

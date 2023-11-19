@@ -1,9 +1,13 @@
+"use client"
+
 import {createShift, shift} from "../../types/shifts";
 import { useState } from "react";
 
+// let new_shift;
 const AddShift = ({course, status}) =>{
     //course data
     const [shiftData, setShiftData] = useState(shift);
+
     // Function to handle input change
     const handleInputChange = (e) => {
         setShiftData({
@@ -12,9 +16,15 @@ const AddShift = ({course, status}) =>{
         });
         console.log("shiftData")
         console.log(shiftData)
-        const new_shift = createShift(shiftData.date_time, shiftData.start_time, shiftData.end_time, shiftData.break_time)
-        console.log("new_shift")
-        console.log(new_shift)
+    };
+
+     // create a new report after submission
+     const handleSubmit = (event) => {
+      event.preventDefault();
+      console.log('Shift data:', shiftData);
+      const new_shift = new createShift(shiftData.date_time, shiftData.start_time, shiftData.end_time, shiftData.break_time)
+      console.error(new_shift)
+
     };
 return(
     <section id="addCourse" className="overflow-hidden py-16 md:py-20 lg:py-28">
@@ -32,7 +42,7 @@ return(
                   <p className="mb-12 text-base font-medium text-body-color">
                     {status}
                   </p>
-                  <form >
+                  <form onSubmit={handleSubmit}>
                     <div className="-mx-4 flex flex-wrap">
                       <div className="w-full px-4 md:w-1/2">
                         <div className="mb-8">
@@ -45,7 +55,8 @@ return(
                           <input
                             type="date"
                             id="date"
-                            // value={shiftData.date}
+                            name="date_time"
+                            // value={shiftData.date_time}
                             onChange={handleInputChange}
                             placeholder="Enter the shift date"
                             className="border-stroke dark:text-body-color-dark dark:shadow-two w-full rounded-sm border bg-[#f8f8f8] px-6 py-3 text-base text-body-color outline-none focus:border-primary dark:border-transparent dark:bg-[#2C303B] dark:focus:border-primary dark:focus:shadow-none"
@@ -61,8 +72,9 @@ return(
                             Start Time:
                           </label>
                           <input
-                            type="text"
-                            id="start_time"
+                            type="time"
+                            id="start-time"
+                            name="start_time"
                             // value={shiftData.start_time}
                             onChange={handleInputChange}
                             placeholder="Enter the Start Time"
@@ -79,8 +91,9 @@ return(
                             Break Time:
                           </label>
                           <input
-                            type="text"
-                            id="break_time"
+                            type="time"
+                            id="break-time"
+                            name="break_time"
                             // value={shiftData.break_time}
                             onChange={handleInputChange}
                             placeholder="Enter the Break Time"
@@ -97,8 +110,9 @@ return(
                             End Time:
                           </label>
                           <input
-                            type="text"
-                            id="end_time"
+                            type="time"
+                            id="end-time"
+                            name="end_time"
                             // value={shiftData.end_time}
                             onChange={handleInputChange}
                             placeholder="Enter the Start Time"
@@ -107,7 +121,7 @@ return(
                         </div>
                       </div>
                       <div className="w-full px-4">
-                        <button  className="shadow-submit dark:shadow-submit-dark rounded-sm bg-primary px-3 py-4 text-base font-medium text-white duration-300 hover:bg-primary/90">
+                        <button  type="submit" className="shadow-submit dark:shadow-submit-dark rounded-sm bg-primary px-3 py-4 text-base font-medium text-white duration-300 hover:bg-primary/90">
                           Add Shift
                         </button>
                       </div>

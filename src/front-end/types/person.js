@@ -1,3 +1,4 @@
+"use client"
 import { Status } from "./status";
 
 //actor type
