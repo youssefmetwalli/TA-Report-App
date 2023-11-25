@@ -2,8 +2,12 @@
 
 import React from 'react';
 import AddShift from './addshift';
+import { useSearchParams } from 'next/navigation'
 
 const ShiftsReport = ({ shift, w_course, status}) => {
+  const searchParams = useSearchParams();
+  const search = searchParams.get('search')
+  console.log(search)
   return (
     <section id="shiftsReport" className="overflow-hidden py-16 md:py-20 lg:py-28">
       <div className="container">

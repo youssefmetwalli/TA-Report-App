@@ -3,13 +3,10 @@
 import { useState } from "react";
 // import {useRouter} from 'next/router';
 import { createCourse, Course } from "../../types/course";
+import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 
 
-let new_course;
-// const newCourse = (course, stat)=>{
-//   course.status = stat
-// }
 const AddCourse = ({Status}) =>{
 
     const router = useRouter();
@@ -18,16 +15,13 @@ const AddCourse = ({Status}) =>{
     const [selectedStatus, setSelectedStatus] = useState('');
     const handleStatusChange = (e) => {
         setSelectedStatus(e.target.value);
-        // new_course.status = selectedStatus
     };
 
     // create a new report after submission
     const handleSubmit = (event) => {
       event.preventDefault();
       console.log('Course data:', courseData);
-      new_course = {
-        ...courseData
-      };
+      console.log("selected status: ", selectedStatus)
       router.push('/reports');
 
     };
@@ -42,7 +36,6 @@ const AddCourse = ({Status}) =>{
         ...courseData,
         [name]: value,
         });
-        console.log(courseData)
     };
 
     return (
@@ -161,7 +154,9 @@ const AddCourse = ({Status}) =>{
                         </div>
                       </div>
                       <div className="w-full px-4">
-                        <button  type="submit" className="shadow-submit dark:shadow-submit-dark rounded-sm bg-primary px-9 py-4 text-base font-medium text-white duration-300 hover:bg-primary/90">
+                        <button
+                        type="submit"
+                        className="shadow-submit dark:shadow-submit-dark rounded-sm bg-primary px-9 py-4 text-base font-medium text-white duration-300 hover:bg-primary/90">
                            Create Report
                         </button>
                       </div>
@@ -176,5 +171,3 @@ const AddCourse = ({Status}) =>{
 }
 
 export default AddCourse;
-
-export let added_course = new_course;
