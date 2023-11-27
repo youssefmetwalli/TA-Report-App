@@ -1,3 +1,5 @@
-Place your source code here.
-
-Replace this README.md with instructions on how to build/run your applications, for the instructors and TAs.
+This folder is practically unused for this project.
+We have decided to use flutter to build our application.
+To build and test our app, please simply:
+1. go to the lib folder
+2. 
