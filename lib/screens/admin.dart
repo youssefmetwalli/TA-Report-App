@@ -36,35 +36,60 @@ class _AdminScreenState extends State<AdminScreen> {
             },
           ),
         ],
+        flexibleSpace: Container(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [
+                Color.fromARGB(255, 78, 177, 204),
+                Color.fromARGB(255, 0, 128, 255),
+              ],
+            ),
+          ),
+        ),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(28.0), // Add padding on all sides
-        child: ListView.separated(
-          itemCount: itemList.length,
-          separatorBuilder: (context, index) {
-            return SizedBox(height: 8.0); // Adjust the height of the separator
-          },
-          itemBuilder: (context, index) {
-            return Container(
-              decoration: BoxDecoration(
-                border: Border.all(
-                  color: Colors.black, // Border color
-                  width: 1.0, // Border width
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              Color.fromARGB(255, 205, 242, 255),
+              Color.fromARGB(255, 219, 241, 255),
+            ],
+          ),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(28.0), // Add padding on all sides
+          child: ListView.separated(
+            itemCount: itemList.length,
+            separatorBuilder: (context, index) {
+              return SizedBox(height: 8.0); // Adjust the height of the separator
+            },
+            itemBuilder: (context, index) {
+              return Container(
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  border: Border.all(
+                    color: Colors.black, // Border color
+                    width: 1.0, // Border width
+                  ),
+                  borderRadius: BorderRadius.all(
+                    Radius.circular(8.0), // Border radius
+                  ),
                 ),
-                borderRadius: BorderRadius.all(
-                  Radius.circular(8.0), // Border radius
+                child: ListTile(
+                  title: Text(itemList[index]),
+                  onTap: () {
+                    // Handle the tap on an item
+                    print('Tapped on: ${itemList[index]}');
+                    // Add your item handling logic here
+                  },
                 ),
-              ),
-              child: ListTile(
-                title: Text(itemList[index]),
-                onTap: () {
-                  // Handle the tap on an item
-                  print('Tapped on: ${itemList[index]}');
-                  // Add your item handling logic here
-                },
-              ),
-            );
-          },
+              );
+            },
+          ),
         ),
       ),
       drawer: Drawer(
@@ -73,7 +98,14 @@ class _AdminScreenState extends State<AdminScreen> {
           children: [
             DrawerHeader(
               decoration: BoxDecoration(
-                color: Colors.blue,
+                gradient: LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [
+                    Color.fromARGB(255, 0, 0, 255),
+                    Color.fromARGB(255, 0, 128, 255),
+                  ],
+                ),
               ),
               child: Text(
                 'Notifications',

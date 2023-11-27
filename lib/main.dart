@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:ta_report_app/screens/admin.dart';
 import 'package:ta_report_app/screens/faculty.dart';
 import 'package:ta_report_app/screens/login.dart';
-import 'package:ta_report_app/screens/student.dart';
+import 'package:ta_report_app/screens/student/report_list.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -23,6 +23,7 @@ class MyApp extends StatelessWidget {
         '/admin_screen': (context) => AdminScreen(),
         // Add other routes as needed
       },
+      debugShowCheckedModeBanner: false,
     );
   }
 }

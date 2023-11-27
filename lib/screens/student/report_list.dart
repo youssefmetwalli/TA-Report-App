@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:ta_report_app/screens/student/course_input.dart';
 
 class StudentScreen extends StatefulWidget {
   @override
@@ -22,6 +23,19 @@ class _StudentScreenState extends State<StudentScreen> {
     'Notification 3',
   ];
 
+  // Controllers for text form fields in the dialog
+  List<TextEditingController> _textFieldControllers = List.generate(6, (index) => TextEditingController());
+
+  // Function to show the create report dialog
+  void _showCreateReportDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return CourseInputDialog();
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -35,36 +49,66 @@ class _StudentScreenState extends State<StudentScreen> {
               // Add your logout logic here
             },
           ),
+          IconButton(
+            icon: Icon(Icons.add),
+            onPressed: () {
+              // Show the create report dialog
+              _showCreateReportDialog();
+            },
+          ),
         ],
+        flexibleSpace: Container(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [
+                Color.fromARGB(255, 0, 128, 0),
+                Color.fromARGB(255, 0, 64, 0)
+              ],
+            ),
+          ),
+        ),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(28.0), // Add padding on all sides
-        child: ListView.separated(
-          itemCount: itemList.length,
-          separatorBuilder: (context, index) {
-            return SizedBox(height: 8.0); // Adjust the height of the separator
-          },
-          itemBuilder: (context, index) {
-            return Container(
-              decoration: BoxDecoration(
-                border: Border.all(
-                  color: Colors.black, // Border color
-                  width: 1.0, // Border width
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              Color.fromARGB(255, 192, 255, 192),
+              Color.fromARGB(255, 201, 231, 201),
+            ],
+          ),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(28.0),
+          child: ListView.separated(
+            itemCount: itemList.length,
+            separatorBuilder: (context, index) {
+              return SizedBox(height: 8.0);
+            },
+            itemBuilder: (context, index) {
+              return Container(
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  border: Border.all(
+                    color: Colors.black,
+                    width: 1.0,
+                  ),
+                  borderRadius: BorderRadius.all(
+                    Radius.circular(8.0),
+                  ),
                 ),
-                borderRadius: BorderRadius.all(
-                  Radius.circular(8.0), // Border radius
+                child: ListTile(
+                  title: Text(itemList[index]),
+                  onTap: () {
+                    print('Tapped on: ${itemList[index]}');
+                  },
                 ),
-              ),
-              child: ListTile(
-                title: Text(itemList[index]),
-                onTap: () {
-                  // Handle the tap on an item
-                  print('Tapped on: ${itemList[index]}');
-                  // Add your item handling logic here
-                },
-              ),
-            );
-          },
+              );
+            },
+          ),
         ),
       ),
       drawer: Drawer(
@@ -73,7 +117,14 @@ class _StudentScreenState extends State<StudentScreen> {
           children: [
             DrawerHeader(
               decoration: BoxDecoration(
-                color: Colors.blue,
+                gradient: LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [
+                    Color.fromARGB(255, 0, 128, 0),
+                    Color.fromARGB(255, 0, 255, 0),
+                  ],
+                ),
               ),
               child: Text(
                 'Notifications',
@@ -87,9 +138,7 @@ class _StudentScreenState extends State<StudentScreen> {
               ListTile(
                 title: Text(notification),
                 onTap: () {
-                  // Handle the tap on a notification
                   print('Tapped on: $notification');
-                  // Add your notification handling logic here
                 },
               ),
           ],
