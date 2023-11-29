@@ -25,3 +25,8 @@
 /.tern-project
 node_modules
 node_modules
+
+# others
+.environment
+.env
+node_modules/
