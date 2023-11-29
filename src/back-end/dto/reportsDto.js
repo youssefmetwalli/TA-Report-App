@@ -1,12 +1,10 @@
 // dto/reportsDto.js
 class ReportsDto {
-    constructor(id, assignedCourseId, shiftID, studentId, reportDate, reportDescription) {
+    constructor(id, assignedCourseId, reportDate, reportDescription) {
         this.id = id;
         this.assignedCourseId = assignedCourseId;
-        this.shiftID = shiftID;
-        this.studentId = studentId;
-        this.reportDate = reportDate;
-        this.reportDescription = reportDescription;
+        this.reportDate = reportDate; //null
+        this.reportDescription = reportDescription; //null
     }
   }
   

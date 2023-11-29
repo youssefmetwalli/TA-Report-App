@@ -1,6 +1,7 @@
 // dto/shiftsDto.js
 class ShiftsDto {
-    constructor(date, startTime, endTime, breakTime, workingHours, workCategoryId, id) {
+    constructor(date, startTime, endTime, breakTime, workingHours, workCategoryId, id, report_id) {
+      
       this.date = date;
       this.startTime = startTime;
       this.endTime = endTime;
@@ -8,6 +9,7 @@ class ShiftsDto {
       this.workingHours = workingHours;
       this.workCategoryId = workCategoryId;
       this.id = id;
+      this.report_id = this.report_id
     }
   }
   
