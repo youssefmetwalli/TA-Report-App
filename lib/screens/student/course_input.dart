@@ -2,60 +2,109 @@ import 'package:flutter/material.dart';
 
 class CourseInputDialog extends StatefulWidget {
   @override
+  // ignore: library_private_types_in_public_api
   _CourseInputDialogState createState() => _CourseInputDialogState();
 }
 
 class _CourseInputDialogState extends State<CourseInputDialog> {
-  final TextEditingController firstNameController = TextEditingController();
-  final TextEditingController lastNameController = TextEditingController();
-  final TextEditingController firstNameKanaController = TextEditingController();
-  final TextEditingController lastNameKanaController = TextEditingController();
-  final TextEditingController phoneNumber1Controller = TextEditingController();
-  final TextEditingController phoneNumber2Controller = TextEditingController();
-  final TextEditingController phoneNumber3Controller = TextEditingController();
-  final TextEditingController companyController = TextEditingController();
-  final TextEditingController departmentController = TextEditingController();
+  final TextEditingController academicYearController = TextEditingController();
+  final TextEditingController monthController = TextEditingController();
+  final TextEditingController studentNameController = TextEditingController();
+  final TextEditingController studentIDController = TextEditingController();
+  final TextEditingController courseNameController = TextEditingController();
+  final TextEditingController instructorNameController =
+      TextEditingController();
 
   final _formKey = GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: Text('ユーザー登録'),
+      backgroundColor: Colors.white, // Added to make the close button visible
+      title: Row(
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: [
+          IconButton(
+            icon: const Icon(Icons.close),
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+          ),
+          const SizedBox(
+            width: 10,
+          ),
+          const Text(
+            'Input Course Information',
+            style: TextStyle(fontSize: 24.0, fontWeight: FontWeight.bold),
+          ),
+        ],
+      ),
       content: SingleChildScrollView(
-        child: Container(
+        child: SizedBox(
           width: double.maxFinite,
           child: Form(
             key: _formKey,
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                buildTextField('姓', lastNameController),
-                SizedBox(height: 16.0),
-                buildTextField('名', firstNameController),
-                SizedBox(height: 16.0),
-                buildTextField('姓（フリガナ）', lastNameKanaController),
-                SizedBox(height: 16.0),
-                buildTextField('名（フリガナ）', firstNameKanaController),
-                SizedBox(height: 16.0),
-                buildPhoneNumberField(),
-                SizedBox(height: 16.0),
-                buildTextField('会社', companyController, enabled: false),
-                SizedBox(height: 16.0),
-                buildTextField('部署', departmentController, enabled: false),
-                SizedBox(height: 40.0),
+                Row(
+                  children: [
+                    Expanded(
+                      child: buildTextField(
+                        'Academic Year',
+                        academicYearController,
+                      ),
+                    ),
+                    const SizedBox(width: 16.0),
+                    Expanded(
+                      child: buildTextField('Month', monthController),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 16.0),
+                Row(
+                  children: [
+                    Expanded(
+                      child: buildTextField(
+                        'Student Name',
+                        studentNameController,
+                      ),
+                    ),
+                    const SizedBox(width: 16.0),
+                    Expanded(
+                      child: buildTextField('Student ID', studentIDController),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 16.0),
+                Row(
+                  children: [
+                    Expanded(
+                      child: buildTextField(
+                        'Course Name',
+                        courseNameController,
+                        enabled: false,
+                      ),
+                    ),
+                    const SizedBox(width: 16.0),
+                    Expanded(
+                      child: buildTextField(
+                        'Instructor Name',
+                        instructorNameController,
+                        enabled: false,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 40.0),
                 ElevatedButton(
                   onPressed: () {
                     // Handle registration logic
                     if (_formKey.currentState!.validate()) {
-                      // Your registration logic here
                       Navigator.of(context).pop();
                     }
                   },
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Color.fromARGB(255, 112, 218, 115),
-                    foregroundColor: Colors.black,
-                    padding: EdgeInsets.symmetric(
+                    padding: const EdgeInsets.symmetric(
                       horizontal: 32.0,
                       vertical: 16.0,
                     ),
@@ -63,8 +112,8 @@ class _CourseInputDialogState extends State<CourseInputDialog> {
                       borderRadius: BorderRadius.circular(12.0),
                     ),
                   ),
-                  child: Text(
-                    '登録する',
+                  child: const Text(
+                    'Add Course',
                     style: TextStyle(
                       fontSize: 28.0,
                     ),
@@ -85,89 +134,18 @@ class _CourseInputDialogState extends State<CourseInputDialog> {
       children: [
         Text(
           label,
-          style: TextStyle(fontSize: 20.0),
+          style: const TextStyle(fontSize: 20.0),
         ),
-        SizedBox(height: 8.0),
+        const SizedBox(height: 8.0),
         TextFormField(
           controller: controller,
           validator: validate,
-          decoration: InputDecoration(
+          decoration: const InputDecoration(
             border: OutlineInputBorder(),
             errorStyle: TextStyle(fontSize: 16),
           ),
-          style: TextStyle(fontSize: 20.0),
+          style: const TextStyle(fontSize: 20.0),
           enabled: enabled,
-        ),
-      ],
-    );
-  }
-
-  Widget buildPhoneNumberField() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          '電話番号',
-          style: TextStyle(fontSize: 20.0),
-        ),
-        SizedBox(height: 8.0),
-        Row(
-          children: [
-            Flexible(
-              child: SizedBox(
-                width: 200,
-                child: TextFormField(
-                  controller: phoneNumber1Controller,
-                  validator: validate,
-                  decoration: InputDecoration(
-                    border: OutlineInputBorder(),
-                  ),
-                  textAlign: TextAlign.center,
-                  style: TextStyle(fontSize: 20.0),
-                ),
-              ),
-            ),
-            SizedBox(width: 10),
-            Text(
-              '-',
-              style: TextStyle(fontSize: 20.0),
-            ),
-            SizedBox(width: 10),
-            Flexible(
-              child: SizedBox(
-                width: 200,
-                child: TextFormField(
-                  controller: phoneNumber2Controller,
-                  validator: validate,
-                  decoration: InputDecoration(
-                    border: OutlineInputBorder(),
-                  ),
-                  textAlign: TextAlign.center,
-                  style: TextStyle(fontSize: 20.0),
-                ),
-              ),
-            ),
-            SizedBox(width: 10),
-            Text(
-              '-',
-              style: TextStyle(fontSize: 20.0),
-            ),
-            SizedBox(width: 10),
-            Flexible(
-              child: SizedBox(
-                width: 200,
-                child: TextFormField(
-                  validator: validate,
-                  controller: phoneNumber3Controller,
-                  decoration: InputDecoration(
-                    border: OutlineInputBorder(),
-                  ),
-                  textAlign: TextAlign.center,
-                  style: TextStyle(fontSize: 20.0),
-                ),
-              ),
-            ),
-          ],
         ),
       ],
     );
@@ -175,7 +153,7 @@ class _CourseInputDialogState extends State<CourseInputDialog> {
 
   String? validate(String? value) {
     if (value == null || value.isEmpty) {
-      return '(必須)';
+      return 'Required Input';
     }
     return null;
   }
