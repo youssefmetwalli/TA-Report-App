@@ -9,6 +9,7 @@ class CourseService{
         this.connection = connection;
     };
 
+    //check if course in Courses table
     doesCourseExist(course_id){
         return new Promise((resolve, reject) => {
             const query = `SELECT COUNT(*) As count FROM Courses WHERE ID = ${course_id}`;
@@ -34,6 +35,10 @@ class CourseService{
             this.doesCourseExist(courseDto.id).then((course_exists) => {
                 if (course_exists) {
                     console.log(`course ${courseDto.id} already exists in the database`)
+                    resolve({
+                        success: true,
+                        message: "course exists!"
+                    })
                 }
                 else{
                     console.log('adding the course...');
@@ -45,7 +50,11 @@ class CourseService{
                             return;
                         }
                         console.log('Course added successfully:', results);
-                        resolve(results)
+                        resolve({
+                            success: true,
+                            message: "course added!",
+                            result: results
+                        })
                     })
                 }
             }).finally(() => {
@@ -62,11 +71,21 @@ class CourseService{
           dp.query(query, [assignedCoursesDto.studentId, assignedCoursesDto.courseId, assignedCoursesDto.professorId, assignedCoursesDto.status, assignedCoursesDto.maxHours], (error, results) => {
             if (error) {
               console.log("Error 3: Internal server assigning a course. ", error);
-              reject(error);
+              reject({
+                success: false,
+                message: "Internal Server Error",
+                error: error
+            });
               return;
             }
             console.log('Course assigned to student successfully:', results);
-            resolve(results);
+            resolve(
+                {
+                    success: true,
+                    message: "course assigned!",
+                    result: results
+                }
+            );
           });
         });
       }
@@ -88,6 +107,28 @@ class CourseService{
         })
     }
 
+    //get  assigned course data by student id
+    getAllAssignedCourses(studentId){
+        return new Promise(async (resolve, reject) =>{
+            try {
+                const query = 'SELECT * FROM AssignedCourses WHERE student_id = ?';
+                const [rows] = await db.query(query, studentId);
+                resolve({
+                    success: true,
+                    data: rows,
+                    message: "Successfully got all the course_id assigned"
+                })
+            }
+            catch {
+                reject({
+                    success: false,
+                    message: "Failed to get all the course_id assigned"
+                })
+            }
+        })
+    }
+    
+
     //   REPORT
     createReport(assignedCourseId, reportDate, reportDescription){
         return new Promise((resolve, reject) => {
@@ -100,7 +141,11 @@ class CourseService{
                     return;
                 }
                 console.log('Report created successfully');
-                resolve(results)
+                resolve({
+                    success: true,
+                    message: 'Report created successfully',
+                    result: results
+                })
             });
         });
     }
@@ -122,5 +167,28 @@ class CourseService{
         });
     }
 
+    //get  report_id by assigned student id
+    getReportData(assigned_student_id){
+        return new Promise(async (resolve, reject) =>{
+            try {
+                const query = 'SELECT * FROM AssignedCourses WHERE assigned_course_id = ?';
+                const [rows] = await db.query(query, assigned_student_id);
+                resolve({
+                    success: true,
+                    data: rows,
+                    message: "Successfully got the report data of the assigned_student_id"
+                })
+            }
+            catch {
+                reject({
+                    success: false,
+                    message: "Failed to get the report_id assigned"
+                })
+            }
+        })
+    }
+
     //submit report
 }
+
+module.exports = CourseService;
