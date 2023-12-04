@@ -78,7 +78,11 @@ const addCourse = async(req, res, next) => {
 
     }
     catch{
-
+        console.error(error);
+        res.status(500).json({
+            success: false,
+            message: "Internal Server Error",
+        });
     }
 }
 
@@ -104,5 +108,6 @@ const addCourse = async(req, res, next) => {
 
 module.exports = {
     getAllCourses,
-    getReportDataByAssignedId
+    getReportDataByAssignedId,
+    addCourse
 };

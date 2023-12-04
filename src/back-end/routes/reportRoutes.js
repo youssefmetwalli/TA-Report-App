@@ -1,8 +1,10 @@
 const express = require('express');
 const router = express.Router();
-const CourseService = require('../services/courseService');
-const ShiftService = require ('../services/shiftService');
+const {getAllCourses,
+    getReportDataByAssignedId,
+    addCourse } = require('../controllers/reportManagerController')
 
-router.get('/', async function(req, res, next){
-    
-})
+router.post('/:student_id', addCourse);
+router.get('/:student_id', getAllCourses);
+
+module.exports = router;
