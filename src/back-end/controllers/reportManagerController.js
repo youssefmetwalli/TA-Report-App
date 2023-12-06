@@ -1,15 +1,15 @@
-const courseService = require('../services/courseService')
-const assignedCourseDto = require('../dto/assignedCoursesDto')
-const courseDto = require ('../dto/coursesDto')
+const {courseService, getAllAssignedCourses} = require('../services/courseService');
+const assignedCourseDto = require('../dto/assignedCoursesDto');
+const courseDto = require ('../dto/coursesDto');
 
 
 //get all the assigned courses data for the student_id
-const getAllCourses = async (req, res) => {
+const getAllAssignedCoursesRoute = async function (req, res) {
     try {
-        const { params } = req; // Assuming studentId is in the route parameters
-        const { studentId } = params;
-        const result = await courseService.getAllAssignedCourses(studentId);
-        
+        // const { params } = req; // Assuming studentId is in the route parameters
+        const student_id  = req.body.student_id;
+        const result = await getAllAssignedCourses(student_id);
+
         if (result.success) {
             res.json(result);
         } else {
@@ -25,7 +25,7 @@ const getAllCourses = async (req, res) => {
 }
 
 //get report data given the assigned_course_id
-const getReportDataByAssignedId = async (req, res) =>{
+const getReportDataByAssignedId =  async function (req, res) {
     try {
         const assigned_course_id = req.body.assigned_course_id;
         const result = await courseService.getReportData(assigned_course_id);
@@ -45,10 +45,10 @@ const getReportDataByAssignedId = async (req, res) =>{
 }
 
 //add a course
-const addCourse = async(req, res, next) => {
+const addCourseRoute = function (req, res)  {
     try{
         //params and body
-        const student_id = req.params.studentId;
+        const student_id = req.params.student_id;
         const prof_id = req.body.prof_id;
         const course_id = req.body.course_id;
         const status = req.body.prof_id;
@@ -62,7 +62,7 @@ const addCourse = async(req, res, next) => {
         const newCourse = new courseDto(course_id, course_name, quarter, semester);
 
         //add and assign new course
-        const addingCourse = courseService.addCourse(courseDto);
+        const addingCourse = courseService.addCourse(newCourse);
         const assigningCourse = courseService.assignCourseToStudent(assignedCourse);
 
         if (addingCourse.success) {
@@ -107,7 +107,7 @@ const addCourse = async(req, res, next) => {
 // }
 
 module.exports = {
-    getAllCourses,
+    getAllAssignedCoursesRoute,
     getReportDataByAssignedId,
-    addCourse
+    addCourseRoute
 };

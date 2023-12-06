@@ -1,10 +1,9 @@
 const express = require('express');
 const router = express.Router();
-const {getAllCourses,
-    getReportDataByAssignedId,
-    addCourse } = require('../controllers/reportManagerController')
+const {getAllAssignedCoursesRoute,
+    addCourseRoute } = require('../controllers/reportManagerController')
 
-router.post('/:student_id', addCourse);
-router.get('/:student_id', getAllCourses);
+router.post('/:student_id', addCourseRoute);
+router.get('/assigned/route', getAllAssignedCoursesRoute);
 
 module.exports = router;
