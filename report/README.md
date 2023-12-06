@@ -21,5 +21,5 @@ We defined the user interface, and described the user-diagram
 ### Week 5
 we started front-end with reactJS but moved to flutter (dart)
 
-###week 6
+### week 6
 we created database and started working on API
