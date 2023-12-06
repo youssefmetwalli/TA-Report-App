@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:ta_report_app/screens/student/shift_addition.dart';
 
 class CourseInputDialog extends StatefulWidget {
   @override
@@ -14,6 +15,8 @@ class _CourseInputDialogState extends State<CourseInputDialog> {
   final TextEditingController courseNameController = TextEditingController();
   final TextEditingController instructorNameController =
       TextEditingController();
+  final TextEditingController maximumHoursController = TextEditingController();
+  final TextEditingController statusController = TextEditingController();
 
   final _formKey = GlobalKey<FormState>();
 
@@ -82,7 +85,6 @@ class _CourseInputDialogState extends State<CourseInputDialog> {
                       child: buildTextField(
                         'Course Name',
                         courseNameController,
-                        enabled: false,
                       ),
                     ),
                     const SizedBox(width: 16.0),
@@ -90,7 +92,23 @@ class _CourseInputDialogState extends State<CourseInputDialog> {
                       child: buildTextField(
                         'Instructor Name',
                         instructorNameController,
-                        enabled: false,
+                      ),
+                    ),
+                  ],
+                ),
+                Row(
+                  children: [
+                    Expanded(
+                      child: buildTextField(
+                        'Status',
+                        statusController,
+                      ),
+                    ),
+                    const SizedBox(width: 16.0),
+                    Expanded(
+                      child: buildTextField(
+                        'Maximum Hours',
+                        maximumHoursController,
                       ),
                     ),
                   ],
@@ -100,7 +118,11 @@ class _CourseInputDialogState extends State<CourseInputDialog> {
                   onPressed: () {
                     // Handle registration logic
                     if (_formKey.currentState!.validate()) {
-                      Navigator.of(context).pop();
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (context) => ShiftAddition(),
+                        ),
+                      );
                     }
                   },
                   style: ElevatedButton.styleFrom(

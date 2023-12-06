@@ -9,21 +9,39 @@ class _LoginFormState extends State<LoginForm> {
   String username = '';
   String password = '';
   String userType = 'student'; // Default user type
+  final _formKey = GlobalKey<FormState>();
+
+  String? validateUsername(String? value) {
+    if (value == null || !value.contains('@')) {
+      return 'Username must contain @';
+    }
+    return null;
+  }
+
+  String? validatePassword(String? value) {
+    if (value == null || !RegExp(r'(?=.*[0-9])(?=.*[A-Z])').hasMatch(value)) {
+      return 'Password must contain at least one numerical value and one upper case letter';
+    }
+    return null;
+  }
 
   void handleLogin() {
-    // Add authentication logic here
-    // You can replace this with your authentication logic
+    // Validate the form before processing the login
+    if (_formKey.currentState!.validate()) {
+      // Add authentication logic here
+      // You can replace this with your authentication logic
 
-    // Navigate based on user type
-    if (userType == 'student') {
-      // Navigate to /report for students
-      Navigator.pushReplacementNamed(context, '/student_screen');
-    } else if (userType == 'faculty') {
-      // Navigate to /faculty_screen for faculty
-      Navigator.pushReplacementNamed(context, '/faculty_screen');
-    } else if (userType == 'admin') {
-      // Navigate to /admin_screen for admin
-      Navigator.pushReplacementNamed(context, '/admin_screen');
+      // Navigate based on user type
+      if (userType == 'student') {
+        // Navigate to /report for students
+        Navigator.pushReplacementNamed(context, '/student_screen');
+      } else if (userType == 'faculty') {
+        // Navigate to /faculty_screen for faculty
+        Navigator.pushReplacementNamed(context, '/faculty_screen');
+      } else if (userType == 'admin') {
+        // Navigate to /admin_screen for admin
+        Navigator.pushReplacementNamed(context, '/admin_screen');
+      }
     }
   }
 
@@ -52,61 +70,66 @@ class _LoginFormState extends State<LoginForm> {
               ],
             ),
             width: 300,
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text(
-                  'Login',
-                  style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.green[600],
+            child: Form(
+              key: _formKey,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    'Login',
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.green[600],
+                    ),
                   ),
-                ),
-                SizedBox(height: 20),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    userTypeRadioButton('student', 'Student'),
-                    userTypeRadioButton('faculty', 'Faculty'),
-                    userTypeRadioButton('admin', 'Admin'),
-                  ],
-                ),
-                SizedBox(height: 20),
-                TextField(
-                  onChanged: (value) {
-                    setState(() {
-                      username = value;
-                    });
-                  },
-                  decoration: InputDecoration(
-                    labelText: 'Username',
-                    border: OutlineInputBorder(),
+                  SizedBox(height: 20),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      userTypeRadioButton('student', 'Student'),
+                      userTypeRadioButton('faculty', 'Faculty'),
+                      userTypeRadioButton('admin', 'Admin'),
+                    ],
                   ),
-                ),
-                SizedBox(height: 10),
-                TextField(
-                  onChanged: (value) {
-                    setState(() {
-                      password = value;
-                    });
-                  },
-                  obscureText: true,
-                  decoration: InputDecoration(
-                    labelText: 'Password',
-                    border: OutlineInputBorder(),
+                  SizedBox(height: 20),
+                  TextFormField(
+                    onChanged: (value) {
+                      setState(() {
+                        username = value;
+                      });
+                    },
+                    validator: validateUsername,
+                    decoration: InputDecoration(
+                      labelText: 'Username',
+                      border: OutlineInputBorder(),
+                    ),
                   ),
-                ),
-                SizedBox(height: 20),
-                ElevatedButton(
-                  onPressed: handleLogin,
-                  style: ElevatedButton.styleFrom(
-                    primary: Colors.blue[500],
-                    onPrimary: Colors.white,
+                  SizedBox(height: 10),
+                  TextFormField(
+                    onChanged: (value) {
+                      setState(() {
+                        password = value;
+                      });
+                    },
+                    obscureText: true,
+                    validator: validatePassword,
+                    decoration: InputDecoration(
+                      labelText: 'Password',
+                      border: OutlineInputBorder(),
+                    ),
                   ),
-                  child: Text('Login'),
-                ),
-              ],
+                  SizedBox(height: 20),
+                  ElevatedButton(
+                    onPressed: handleLogin,
+                    style: ElevatedButton.styleFrom(
+                      primary: Colors.blue[500],
+                      onPrimary: Colors.white,
+                    ),
+                    child: Text('Login'),
+                  ),
+                ],
+              ),
             ),
           ),
         ),
