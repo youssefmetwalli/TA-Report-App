@@ -1,8 +1,9 @@
 ### Run the back-end
 
-npm install mysql express
-npm install
-run the code: `npm run dev`
+    cd src/back-end
+    npm install mysql express
+    npm install
+    run the code: `npm run dev`
 
 ## Technologies
 
