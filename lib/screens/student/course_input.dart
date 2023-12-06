@@ -16,7 +16,7 @@ class _CourseInputDialogState extends State<CourseInputDialog> {
   final TextEditingController instructorNameController =
       TextEditingController();
   final TextEditingController maximumHoursController = TextEditingController();
-  final TextEditingController statusController = TextEditingController();
+  final TextEditingController workCategoryController = TextEditingController();
 
   final _formKey = GlobalKey<FormState>();
 
@@ -96,12 +96,15 @@ class _CourseInputDialogState extends State<CourseInputDialog> {
                     ),
                   ],
                 ),
+                const SizedBox(
+                  height: 16,
+                ),
                 Row(
                   children: [
                     Expanded(
                       child: buildTextField(
-                        'Status',
-                        statusController,
+                        'Work Category',
+                        workCategoryController,
                       ),
                     ),
                     const SizedBox(width: 16.0),

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:ta_report_app/screens/login.dart';
 import 'package:ta_report_app/screens/student/course_input.dart';
+import 'package:ta_report_app/screens/student/report_form.dart';
 import 'package:ta_report_app/screens/student/shift_addition.dart';
 
 class StudentScreen extends StatefulWidget {
@@ -101,7 +102,11 @@ class _StudentScreenState extends State<StudentScreen> {
                   child: ListTile(
                     title: Text(itemList[index]),
                     onTap: () {
-                      print('Tapped on: ${itemList[index]}');
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (context) => const ReportForm(),
+                        ),
+                      );
                     },
                   ),
                 );

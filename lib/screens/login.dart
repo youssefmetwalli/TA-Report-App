@@ -13,14 +13,14 @@ class _LoginFormState extends State<LoginForm> {
 
   String? validateUsername(String? value) {
     if (value == null || !value.contains('@')) {
-      return 'Username must contain @';
+      return 'Please Enter a Valid Email Address';
     }
     return null;
   }
 
   String? validatePassword(String? value) {
     if (value == null || !RegExp(r'(?=.*[0-9])(?=.*[A-Z])').hasMatch(value)) {
-      return 'Password must contain at least one numerical value and one upper case letter';
+      return 'One numerical value and one upper case letter are required';
     }
     return null;
   }
@@ -101,7 +101,7 @@ class _LoginFormState extends State<LoginForm> {
                     },
                     validator: validateUsername,
                     decoration: InputDecoration(
-                      labelText: 'Username',
+                      labelText: 'Email',
                       border: OutlineInputBorder(),
                     ),
                   ),
