@@ -8,7 +8,7 @@ const getAllAssignedCoursesRoute = async function (req, res) {
     try {
         // const { params } = req; // Assuming studentId is in the route parameters
         const student_id  = req.body.student_id;
-        const result = await getAllAssignedCourses(student_id);
+        const result =  await getAllAssignedCourses(student_id);
 
         if (result.success) {
             res.json(result);

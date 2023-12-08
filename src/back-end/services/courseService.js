@@ -4,36 +4,36 @@ const db = require('./dbService');
 const courseDto = require('../dto/coursesDto')
 const assignedCoursesDto = require('../dto/assignedCoursesDto')
 
-class CourseService{
-    constructor(connection){
-        this.connection = connection;
-    };
+
+/*--------COURSES---------*/
 
     //check if course in Courses table
-    doesCourseExist(course_id){
+   function doesCourseExist(course_id){
         return new Promise((resolve, reject) => {
-            const query = `SELECT COUNT(*) As count FROM Courses WHERE ID = ${course_id}`;
-            db.DB.query(query, (error, results)=>{
+            const query = 'SELECT COUNT(*) As count FROM Courses WHERE ID = ?';
+            db.DB.query(query, course_id,(error, results)=>{
                 if (error){
                     console.log("Internal serval error");
                     reject(error);
-                    return;
                 }
 
                 const course_count = results[0].count;
                 const course_exists = course_count>0;
 
-                resolve(course_exists)　// returns true if the course exists
+                resolve({
+                    success: course_exists, // returns true if the course exists
+                    results: results
+                })
             })
         });
     };
 
     // add a new course of courseDTO type
-    addCourse(courseDto){
+    function addCourse(courseDto){
         return new Promise((resolve, reject) =>{
 
-            this.doesCourseExist(courseDto.id).then((course_exists) => {
-                if (course_exists) {
+            doesCourseExist(courseDto.id).then((course_exists) => {
+                if (course_exists.success) {
                     console.log(`course ${courseDto.id} already exists in the database`)
                     resolve({
                         success: true,
@@ -42,12 +42,12 @@ class CourseService{
                 }
                 else{
                     console.log('adding the course...');
-                    const query = `INSERT INTO Courses (Name, Quarter, Semester, ID) VALUES (${courseDto.name}, ${courseDto.quarter}, ${courseDto.semester}, ${courseDto.id})`;
-                    db.DB.query(query, (error, results) => {
+                    const query = 'INSERT INTO Courses (Name, Month, Year, ID) VALUES (?, ?, ?, ?)';
+                    const params = [courseDto.name, courseDto.month, courseDto.year, courseDto.id];
+                    db.DB.query(query, params, (error, results) => {
                         if(error){
                             console.log("Error 2: Internal server adding a course. ", error);
                             reject(error);
-                            return;
                         }
                         console.log('Course added successfully:', results);
                         resolve({
@@ -57,15 +57,38 @@ class CourseService{
                         })
                     })
                 }
-            }).finally(() => {
-                db.DB.end(); // Close the database connection
-              });
+            })
         })
     }
 
-    //ASSIGNED COURSES
-    assignCourseToStudent(assignedCoursesDto) {
+/*----------ASSIGNED COURSES---------*/
+
+    //assign a new course
+    function assignCourseToStudent(assignedCoursesDto) {
         return new Promise((resolve, reject) => {
+
+            //check if course already assigned
+            const check_query = 'SELECT COUNT(*) As count FROM AssignedCourses WHERE course_id = ?';
+                    const params = assignedCoursesDto.course_id;
+                    db.DB.query(check_query, params,(error, results)=>{
+                        if (error){
+                            console.log("Internal serval error");
+                            reject(error);
+                        }
+        
+                        const assigned_count = results[0].count;
+                        const course_assigned = assigned_count>0;
+        
+                        if(course_assigned) //stops func if assigned else inserts
+                        {
+                            resolve({
+                            success: (!course_assigned), // returns false if the course is already assigned
+                            results: results,
+                            message: "the course is already assigned !"
+                        })}
+                    });
+
+
           const query = 'INSERT INTO Assigned_courses (student_id, course_id, prof_id, status, max_hours) VALUES (?, ?, ?, ?, ?)';
           
           dp.DB.query(query, [assignedCoursesDto.studentId, assignedCoursesDto.courseId, assignedCoursesDto.professorId, assignedCoursesDto.status, assignedCoursesDto.maxHours], (error, results) => {
@@ -76,7 +99,6 @@ class CourseService{
                 message: "Internal Server Error",
                 error: error
             });
-              return;
             }
             console.log('Course assigned to student successfully:', results);
             resolve(
@@ -90,12 +112,12 @@ class CourseService{
         });
       }
 
-    
-    deleteAssignedCourse(assigned_course_id){
+    // delete assigned course by assigned course id [auto deletes the report]
+    function deleteAssignedCourseById(assigned_course_id){
         return new Promise((resolve, reject) => {
             const query = 'DELETE FROM AssignedCourses WHERE ID = ?';
 
-            db.DB.query(query, [assigned_course_id], (error, results) => {
+            db.DB.query(query, assigned_course_id, (error, results) => {
                 if(error){
                     console.log(`Error 5: cannot delete the assigned course of ID: ${assigned_course_id}`);
                     reject(error);
@@ -106,14 +128,83 @@ class CourseService{
             })
         })
     }
-    
 
-    //   REPORT
-    createReport(assignedCourseId, reportDate, reportDescription){
+    // delete assigned course by course id [auto deletes the report]
+    function deleteAssignedCourseByCourseId(course_id){
+        return new Promise((resolve, reject) => {
+            const query = 'DELETE FROM AssignedCourses WHERE course_id = ?';
+
+            db.DB.query(query, course_id, (error, results) => {
+                if(error){
+                    console.log(`Error 5: cannot delete the assigned course of course_id: ${course_id}`);
+                    reject(error);
+                    return;
+                }
+                console.log(`Deleted the assigned course of course_id: ${course_id}`);
+                resolve(results)
+            })
+        })
+    }
+
+//get  assigned courses data by student id
+function getAllAssignedCourses(student_idd){
+    return new Promise(async (resolve, reject) =>{
+        try {
+            const query = 'SELECT * FROM AssignedCourses WHERE student_id = ?';
+            db.DB.query(query, student_idd, (err, results) =>{
+                if (err){
+                  throw err;
+                }
+                resolve({
+                    success: true,
+                    result: results,
+                    message: "Successfully got all the course_id assigned"
+                });
+            });
+            
+        }
+        catch {
+            reject({
+                success: false,
+                message: "Failed to get all the course data assigned"
+            })
+        }
+    })
+}
+//get assigned_course_id by course_id
+function getAssignedCourseId(course_id){
+    return new Promise(async (resolve, reject) =>{
+        try {
+            const query = 'SELECT assigned_course_id FROM AssignedCourses WHERE course_id = ?';
+            db.DB.query(query, course_id, (err, results) =>{
+                if (err){
+                  throw err;
+                }
+                resolve({
+                    success: true,
+                    result: results,
+                    message: "Successfully got the assigned_course_id"
+                });
+            });
+            
+        }
+        catch {
+            reject({
+                success: false,
+                message: "Failed to get the assigned_course_id"
+            })
+        }
+    })
+}
+
+/*----------REPORT---------*/
+
+    //create report
+    function createReport(reportDto){
         return new Promise((resolve, reject) => {
             const query = 'INSERT INTO Report (assigned_course_id, report_date, report_description) VALUES (?, ?, ?)';
 
-            db.DB.query(query, [assignedCourseId, reportDate, reportDescription], (error, results) =>{
+            db.DB.query(query, [reportDto.assignedCourseId, reportDto.reportDate, reportDto.reportDescription], (error, results) =>{
                 if (error) {
                     console.log("Error4: Could not create a new report")
                     reject(error);
@@ -130,7 +221,7 @@ class CourseService{
     }
 
     //delete report by report_id
-    deleteReportById(report_id){
+    function deleteReportById(report_id){
         return new Promise((resolve, reject) => {
             const query = 'DELETE FROM Report WHERE report_id = ?';
 
@@ -146,49 +237,42 @@ class CourseService{
         });
     }
 
-    //get  report_id by assigned student id
-    getReportData(assigned_student_id){
+    //get  report_id by assigned course id
+    function getReportData(assigned_course_id){
         return new Promise(async (resolve, reject) =>{
             try {
                 const query = 'SELECT * FROM AssignedCourses WHERE assigned_course_id = ?';
-                const [rows] = await db.DB.query(query, assigned_student_id);
-                resolve({
-                    success: true,
-                    data: rows,
-                    message: "Successfully got the report data of the assigned_student_id"
-                })
+                const [rows] = db.DB.query(query, assigned_course_id, (error, results) =>{
+                    if (error) {
+                        console.log("Error4: Internal server error. Could not get the report")
+                        reject(error);
+                    }
+                    resolve({
+                        success: true,
+                        data: rows,
+                        result: results,
+                        message: "Successfully got the report data of the assigned_student_id"
+                    })
+                });
             }
             catch {
                 reject({
                     success: false,
-                    message: "Failed to get the report_id assigned"
+                    message: "Failed to get the report"
                 })
             }
         })
     }
 
     //submit report
-}
 
-//get  assigned course data by student id
-function getAllAssignedCourses(studentId){
-    return new Promise(async (resolve, reject) =>{
-        try {
-            const query = 'SELECT * FROM AssignedCourses WHERE student_id = ?';
-            const [rows] = await db.DB.query(query, studentId);
-            resolve({
-                success: true,
-                data: rows,
-                message: "Successfully got all the course_id assigned"
-            })
-        }
-        catch {
-            reject({
-                success: false,
-                message: "Failed to get all the course_id assigned"
-            })
-        }
-    })
-}
 
-module.exports = {CourseService, getAllAssignedCourses};
+
+module.exports = {
+    getAllAssignedCourses,
+    getAssignedCourseId,
+    addCourse, 
+    deleteAssignedCourseByCourseId, 
+    deleteAssignedCourseById,
+    assignCourseToStudent
+};

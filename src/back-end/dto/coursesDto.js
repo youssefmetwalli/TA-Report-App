@@ -1,10 +1,10 @@
 // dto/coursesDto.js
 class CoursesDto {
-    constructor(id, name, quarter, semester) {
+    constructor(id, name, month, year) {
       this.id = id;
       this.name = name;
-      this.quarter = quarter;
-      this.semester = semester;
+      this.month = month;
+      this.year = year;
     }
   }
   
