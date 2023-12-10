@@ -1,12 +1,13 @@
 // dto/assignedCoursesDto.js
 class AssignedCoursesDto {
-    constructor(id, studentId, courseId, profId, status, maxHours) {
+    constructor(studentId, courseId, profId, status, maxHours) {
       this.studentId = studentId;
       this.courseId = courseId;
       this.profId = profId;
       this.status = status; //sa or ta
       this.maxHours = maxHours;
-      this.id = id; //auto-generated in db
+      // this.report_id=report_id //auto added from report table
+      // this.id = id; //auto-generated in db
     }
   }
   

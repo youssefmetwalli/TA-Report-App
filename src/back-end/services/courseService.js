@@ -22,7 +22,7 @@ const assignedCoursesDto = require('../dto/assignedCoursesDto')
 
                 resolve({
                     success: course_exists, // returns true if the course exists
-                    results: results
+                    result: results
                 })
             })
         });
@@ -36,7 +36,7 @@ const assignedCoursesDto = require('../dto/assignedCoursesDto')
                 if (course_exists.success) {
                     console.log(`course ${courseDto.id} already exists in the database`)
                     resolve({
-                        success: true,
+                        success: false,
                         message: "course exists!"
                     })
                 }
@@ -69,48 +69,55 @@ const assignedCoursesDto = require('../dto/assignedCoursesDto')
 
             //check if course already assigned
             const check_query = 'SELECT COUNT(*) As count FROM AssignedCourses WHERE course_id = ?';
-                    const params = assignedCoursesDto.course_id;
+                    const params = assignedCoursesDto.courseId;
                     db.DB.query(check_query, params,(error, results)=>{
                         if (error){
                             console.log("Internal serval error");
                             reject(error);
+                            return;
                         }
-        
+                        console.log("the count is: "+ results[0].count)
+                        console.log(results);
                         const assigned_count = results[0].count;
                         const course_assigned = assigned_count>0;
         
-                        if(course_assigned) //stops func if assigned else inserts
-                        {
-                            resolve({
-                            success: (!course_assigned), // returns false if the course is already assigned
-                            results: results,
-                            message: "the course is already assigned !"
-                        })}
-                    });
+         if(course_assigned) //stops func if assigned else inserts
+        {
+            console.log("the course is already assigned !")
+             resolve({
+                success: (!course_assigned), // returns false if the course is already assigned
+                result: results,
+                message: "the course is already assigned !"
+            });
+            return;
+        }
 
-
-          const query = 'INSERT INTO Assigned_courses (student_id, course_id, prof_id, status, max_hours) VALUES (?, ?, ?, ?, ?)';
+        const query = 'INSERT INTO AssignedCourses (student_id, course_id, prof_id, status, max_hours, report_id) VALUES (?, ?, ?, ?, ?, NUll)';
           
-          dp.DB.query(query, [assignedCoursesDto.studentId, assignedCoursesDto.courseId, assignedCoursesDto.professorId, assignedCoursesDto.status, assignedCoursesDto.maxHours], (error, results) => {
-            if (error) {
-              console.log("Error 3: Internal server assigning a course. ", error);
-              reject({
+        db.DB.query(query, [assignedCoursesDto.studentId, assignedCoursesDto.courseId, assignedCoursesDto.profId, assignedCoursesDto.status, assignedCoursesDto.maxHours], (error, results) => {
+        if (error) {
+            console.log("Error 3: Internal server assigning a course. ", error);
+            reject({
                 success: false,
                 message: "Internal Server Error",
                 error: error
             });
+            return;
+        }
+        console.log('Course assigned to student successfully:', results);
+
+        //automatically creates a report
+        resolve(
+            {
+                success: true,
+                message: "course assigned!",
+                result: results
             }
-            console.log('Course assigned to student successfully:', results);
-            resolve(
-                {
-                    success: true,
-                    message: "course assigned!",
-                    result: results
-                }
-            );
-          });
+        );
         });
-      }
+        });
+        });
+    }
 
     // delete assigned course by assigned course id [auto deletes the report]
     function deleteAssignedCourseById(assigned_course_id){
@@ -129,29 +136,35 @@ const assignedCoursesDto = require('../dto/assignedCoursesDto')
         })
     }
 
-    // delete assigned course by course id [auto deletes the report]
-    function deleteAssignedCourseByCourseId(course_id){
+    // delete assigned course by course id and student_id [auto deletes the report which auto deletes all the shifts with that report_id]
+    function deleteAssignedCourseByCourseId(course_id, student_id){
         return new Promise((resolve, reject) => {
-            const query = 'DELETE FROM AssignedCourses WHERE course_id = ?';
+            const query = 'DELETE FROM AssignedCourses WHERE course_id = ? and student_id = ? ';
 
-            db.DB.query(query, course_id, (error, results) => {
+            db.DB.query(query, [course_id, student_id], (error, results) => {
                 if(error){
                     console.log(`Error 5: cannot delete the assigned course of course_id: ${course_id}`);
-                    reject(error);
+                    reject({
+                        success: false,
+                        error: error
+                    });
                     return;
                 }
-                console.log(`Deleted the assigned course of course_id: ${course_id}`);
-                resolve(results)
+                console.log(`Deleted the assigned course of course_id: ${course_id} for ${student_id}`);
+                resolve({
+                    success: true,
+                    result: results
+                })
             })
         })
     }
 
 //get  assigned courses data by student id
-function getAllAssignedCourses(student_idd){
+function getAllAssignedCourses(student_id){
     return new Promise(async (resolve, reject) =>{
         try {
             const query = 'SELECT * FROM AssignedCourses WHERE student_id = ?';
-            db.DB.query(query, student_idd, (err, results) =>{
+            db.DB.query(query, student_id, (err, results) =>{
                 if (err){
                   throw err;
                 }
@@ -171,11 +184,11 @@ function getAllAssignedCourses(student_idd){
         }
     })
 }
-//get assigned_course_id by course_id
+//get assigned_course_id by course_id NOT NECESSARY?
 function getAssignedCourseId(course_id){
     return new Promise(async (resolve, reject) =>{
         try {
-            const query = 'SELECT assigned_course_id FROM AssignedCourses WHERE course_id = ?';
+            const query = 'SELECT ID FROM AssignedCourses WHERE course_id = ?';
             db.DB.query(query, course_id, (err, results) =>{
                 if (err){
                   throw err;
@@ -237,12 +250,12 @@ function getAssignedCourseId(course_id){
         });
     }
 
-    //get  report_id by assigned course id
-    function getReportData(assigned_course_id){
+    //get  report data  by report id
+    function getReportData(report_id){
         return new Promise(async (resolve, reject) =>{
             try {
-                const query = 'SELECT * FROM AssignedCourses WHERE assigned_course_id = ?';
-                const [rows] = db.DB.query(query, assigned_course_id, (error, results) =>{
+                const query = 'SELECT * FROM AssignedCourses WHERE report_id = ?';
+                const [rows] = db.DB.query(query, report_id, (error, results) =>{
                     if (error) {
                         console.log("Error4: Internal server error. Could not get the report")
                         reject(error);
@@ -251,7 +264,7 @@ function getAssignedCourseId(course_id){
                         success: true,
                         data: rows,
                         result: results,
-                        message: "Successfully got the report data of the assigned_student_id"
+                        message: "Successfully got the report data of the report_id"
                     })
                 });
             }
@@ -274,5 +287,8 @@ module.exports = {
     addCourse, 
     deleteAssignedCourseByCourseId, 
     deleteAssignedCourseById,
-    assignCourseToStudent
+    assignCourseToStudent,
+    createReport,
+    deleteReportById,
+    getReportData
 };
