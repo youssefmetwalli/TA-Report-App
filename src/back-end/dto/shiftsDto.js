@@ -8,8 +8,8 @@ class ShiftsDto {
       this.breakTime = breakTime;
       this.workingHours = workingHours;
       this.workCategoryId = workCategoryId;
-      this.id = id;
-      this.report_id = this.report_id
+      this.id = id; //auto
+      this.report_id = report_id
     }
   }
   

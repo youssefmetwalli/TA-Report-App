@@ -103,6 +103,11 @@ class ShiftService {
   }
 }
 
+//get shift by report_id
+function getShiftByReportId(){
+  
+}
+
 module.exports = ShiftService;
 
 
