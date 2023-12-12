@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-class ReportForm extends StatelessWidget {
-  const ReportForm({Key? key}) : super(key: key);
+class FacultyForm extends StatelessWidget {
+  const FacultyForm({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -23,8 +23,8 @@ class ReportForm extends StatelessWidget {
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
               colors: [
-                Color.fromARGB(255, 0, 128, 0),
-                Color.fromARGB(255, 0, 64, 0)
+                Color.fromARGB(255, 150, 171, 248),
+                Color.fromARGB(255, 114, 201, 245)
               ],
             ),
           ),

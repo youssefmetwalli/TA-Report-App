@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:ta_report_app/screens/admin.dart';
-import 'package:ta_report_app/screens/faculty.dart';
+import 'package:ta_report_app/screens/admin/admin.dart';
+import 'package:ta_report_app/screens/faculty/faculty.dart';
 import 'package:ta_report_app/screens/login.dart';
 import 'package:ta_report_app/screens/student/report_list.dart';
 
