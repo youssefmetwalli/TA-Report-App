@@ -6,7 +6,7 @@ class AssignedCoursesDto {
       this.profId = profId;
       this.status = status; //sa or ta
       this.maxHours = maxHours;
-      // this.report_id=report_id //auto added from report table
+      // this.assigned_course_report_id= assigned_course_report_id //auto added from AssignedCoursesReports table
       // this.id = id; //auto-generated in db
     }
   }
