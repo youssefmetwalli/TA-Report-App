@@ -1,41 +1,69 @@
 const db = require('./dbService');
 const shiftsDto = require('../dto/shiftsDto'); // Adjust the path based on your project structure
+require('dotenv').config();
 
-class ShiftService {
+NEEDS_TO_BREAK_HOURS = 6;
+MAX_DAY_HOURS = 8;
+MAX_WEEK_HOURS_JP = 40;
+MAX_WEEK_HOURS_INT = 28;
+MAX_MONTH_HOURS = 120;
 
-  addNewShift(shiftDto) {
-    return new Promise((resolve, reject) => {
-      const query = 'INSERT INTO Shifts (date, start_time, end_time, break_time, working_hours, work_category_id, report_id) VALUES (?, ?, ?, ?, ?, ?, ?)';
-    
-      this.connection.query(
-        query,
-        [
-          shiftDto.date,
-          shiftDto.startTime,
-          shiftDto.endTime,
-          shiftDto.breakTime,
-          shiftDto.workingHours,
-          shiftDto.workCategoryId,
-          shiftDto.report_id
-        ],
-        (error, results) => {
-          if (error) {
-            reject(error);
-            return;
+function addNewShift(shiftDto, student_status) {
+  return new Promise(async(resolve, reject) => {
+    try{
+      //checks
+      const isShiftValid = await checkShiftsValidity(shiftDto, student_status);
+      console.log("isShiftValid?");
+      console.log(isShiftValid);
+      if(isShiftValid){
+        console.log(isShiftValid);
+        const query = 'INSERT INTO Shifts (date, start_time, end_time, break_time, working_hours, work_category_id, report_id) VALUES (?, ?, ?, ?, ?, ?, ?)';
+      
+        db.DB.query(
+          query,
+          [
+            shiftDto.date,
+            shiftDto.startTime,
+            shiftDto.endTime,
+            shiftDto.breakTime,
+            shiftDto.workingHours,
+            shiftDto.workCategoryId,
+            shiftDto.reportId
+          ],
+          (error, results) => {
+            if (error) {
+              reject({
+                success: false,
+                error: error
+              });
+              return;
+            }
+
+            resolve({
+              success: true,
+              result: results
+              });
           }
-
-          resolve(results);
-        }
-      );
+        );
+      }
+      else{
+        console.log("the shift is not valid");
+        resolve({success: false, message: "Wrong Input, Make sure the daily and weekly limits are ensured"});
+      }
+    }
+    catch{
+      console.log("error in service of adding the shift")
+      reject({success: false, error: "Error 2: Internal server error"})
+    }
     });
   }
 
-  //update shift
-  updateShift(shiftDto) {
-    return new Promise((resolve, reject) => {
-      const query = 'UPDATE Shifts SET date = ?, start_time = ?, end_time = ?, break_time = ?, working_hours = ?, work_category_id = ? WHERE id = ?';
+  //update shift 
+  function updateShift(shiftDto) {
+    return new Promise(async (resolve, reject) => {
+      const query = 'UPDATE Shifts SET date = ?, start_time = ?, end_time = ?, break_time = ?, working_hours = ?, work_category_id = ? WHERE report_id = ?';
     
-      this.connection.query(
+      db.DB.query(
         query,
         [
           shiftDto.date,
@@ -44,7 +72,7 @@ class ShiftService {
           shiftDto.breakTime,
           shiftDto.workingHours,
           shiftDto.workCategoryId,
-          shiftDto.id
+          shiftDto.reportId
         ],
         (error, results) => {
           if (error) {
@@ -59,11 +87,11 @@ class ShiftService {
   }
 
   //delete shift by shift id
-  deleteShift(shiftId) {
-    return new Promise((resolve, reject) => {
+  function deleteShiftByShiftId(shiftId) {
+    return new Promise(async (resolve, reject) => {
       const query = 'DELETE FROM Shifts WHERE id = ?';
     
-      this.connection.query(
+      db.DB.query(
         query,
         [shiftId],
         (error, results) => {
@@ -78,52 +106,225 @@ class ShiftService {
     });
   }
 
-  //delete shift by report id
-  deleteShift(reportId) {
-    return new Promise((resolve, reject) => {
+//delete shift by report id
+function deleteShiftsByReportId(reportId) {
+  return new Promise(async (resolve, reject) => {
+    try{
       const query = 'DELETE FROM Shifts WHERE report_id = ?';
     
-      this.connection.query(
+      db.DB.query(
         query,
         [reportId],
         (error, results) => {
           if (error) {
-            reject(error);
+            console.log("ERROR: could not delete the shift")
+            reject({
+              success: false,
+              error: error
+            });
             return;
           }
 
-          resolve(results);
+          resolve({
+            success: true,
+            result: results
+          });
         }
       );
-    });
-  }
-
-  closeConnection() {
-    this.connection.end();
-  }
-}
-
-//get shift by report_id
-function getShiftByReportId(){
-  
-}
-
-module.exports = ShiftService;
-
-
-//usage
-const shiftService = new ShiftService();
-
-// Example shift details using ShiftsDto
-const shiftDto = new shiftsDto('2023-11-20', '08:00:00', '16:00:00', '01:00:00', 7, 1, null);
-
-shiftService.addNewShift(shiftDto)
-  .then((result) => {
-    console.log('Shift added successfully:', result);
-  })
-  .catch((error) => {
-    console.error('Error adding shift:', error);
-  })
-  .finally(() => {
-    shiftService.closeConnection(); // Close the database connection
+    }
+    catch{
+      console.log("internal server error");
+      reject({
+        success: false,
+        error: error
+      });
+    }
   });
+}
+
+//get all shifts by report_id
+function getAllShiftsByReportId(reportId){
+  return new Promise(async (resolve, reject) => {
+    try{
+      const query = 'Select * FROM Shifts WHERE report_id = ?';
+    
+      db.DB.query(
+        query,
+        [reportId],
+        (error, results) => {
+          if (error) {
+            console.log("ERROR: could not fetch all the shifts")
+            reject({
+              success: false,
+              error: `internal server error: ${error}`
+            });
+            return;
+          }
+
+          resolve({
+            success: true,
+            result: results
+          });
+        }
+      );
+    }
+    catch{
+      console.log("ERROR::S1:: internal server error");
+      reject({
+        success: false,
+        error: error
+      });
+    }
+  });
+}
+
+//helper functions
+
+//get week_total_work_hours
+function getTotalWeekWorkHours(first_last_days){
+  return new Promise(async (resolve, reject) =>{
+    try{
+      const query = "SELECT SUM(working_hours) AS sum FROM Shifts WHERE date >=? and date <= ?";
+    const first_day = new Date(first_last_days.firstDayOfWeek);
+    const last_day = new Date(first_last_days.lastDayOfWeek);
+    db.DB.query(
+      query, 
+      [first_day, last_day], 
+      (error, results)=>{
+        if (error){
+          console.log("error 1: couldn't to get total_work_hours_week", error);
+          reject({
+            success: false,
+            error: error
+          })
+        }
+        const total_week_work_hours= results[0].sum; //the sum before adding the current date working hours
+        console.log("am here")
+        console.log(total_week_work_hours)
+        console.log(results)
+        resolve({
+          success: true,
+          result: total_week_work_hours
+        })
+    })
+    }
+    catch{
+      console.log("error 4: cant get toal hours of weekly work")
+      reject({
+        success: false,
+        error: "error getting total hours "
+      })
+    }
+  })
+}
+
+// Convert time strings to minutes
+function timeToMinutes(time) {
+  console.log(time);
+  console.log(typeof time)
+  const [hours, minutes] = time.split(':').map(Number);
+  return hours * 60 + minutes;
+}
+
+//return first and last days of the week' dates
+function firstLastDaysOfWeekDates(today_date){
+  console.log( today_date.getDate() - today_date.getDay())
+  const firstDayOfWeek = new Date(today_date.getFullYear(), today_date.getMonth(), today_date.getDate() - today_date.getDay()+1).toISOString();
+  const lastDayOfWeek = new Date(today_date.getFullYear(), today_date.getMonth(), today_date.getDate() + (7 - today_date.getDay())).toISOString();
+  console.log(firstDayOfWeek)
+  console.log(lastDayOfWeek)
+  return {
+    lastDayOfWeek:lastDayOfWeek,
+    firstDayOfWeek:firstDayOfWeek
+  }
+
+}
+
+//daily check: return workingHours if valid
+function dailyHoursCheck(shiftDto){
+  // new Promise((resolve, reject) =>{
+    try{
+      if(shiftDto.breakTime == null){
+      shiftDto.breakTime = "00:00";
+    }
+  
+    shiftDto.workingHours = (timeToMinutes(shiftDto.endTime) - timeToMinutes(shiftDto.startTime) - timeToMinutes(shiftDto.breakTime))/60;
+    console.log(shiftDto.workingHours)
+  
+    if(shiftDto.workingHours > MAX_DAY_HOURS){
+      console.log("no more than 8 hours of daily work!!"); 
+      // reject ({success: false, message: "no more than 8 hours of daily work!!"});
+      return false;
+    }
+    console.log(timeToMinutes(shiftDto.breakTime));
+    if (shiftDto.workingHours > NEEDS_TO_BREAK_HOURS){
+      if (timeToMinutes(shiftDto.breakTime)<60){
+        console.log("needs a break!!"); 
+        // reject ({success: false, message: "you need at least 1 hour break"});
+        return false;
+      }
+    }
+    // resolve ({success: true, working_hours: shiftDto.workingHours});
+    return true;
+  }
+  catch{
+    console.log("error 8: internal server error")
+    return false;
+  }
+}
+
+//weekly check: return true  if valid
+function weeklyHoursCheck(week_total_work_hours, today_work_hours, student_status ){
+  // return new Promise ((resolve, reject) => {
+    console.log("*********st");
+    console.log(student_status);
+    console.log(student_status == process.env.JAPANESE);
+    console.log(today_work_hours);
+    if(student_status == process.env.JAPANESE){
+      if((week_total_work_hours+today_work_hours) > MAX_WEEK_HOURS_JP){
+        console.log(`cannot go beyond ${MAX_WEEK_HOURS_JP} hours a week!`);
+        // return ({success: false, message:`cannot go beyond ${MAX_WEEK_HOURS_JP} hours a week!`});
+        return false;
+      }
+    }
+    else if(student_status==process.env.INTERNATIONAL){
+      if(week_total_work_hours+today_work_hours > MAX_WEEK_HOURS_INT){
+        console.log(`cannot go beyond ${MAX_WEEK_HOURS_INT} hours a week!`);
+        // return ({success: false, message:`cannot go beyond ${MAX_WEEK_HOURS_INT} hours a week!`});
+        return false;
+      }
+    }
+    return true;
+  }
+
+//check shift validity for all
+async function checkShiftsValidity(shiftDto, student_status){
+  // if daily check is ok
+  const day_check = dailyHoursCheck(shiftDto);
+  if(day_check){
+    console.log("working hours");
+    console.log(shiftDto.workingHours);
+    const first_last_days = firstLastDaysOfWeekDates(shiftDto.date);
+    const total_week_work_hours = await getTotalWeekWorkHours(first_last_days);
+    console.log(total_week_work_hours);
+
+    if(total_week_work_hours.success){
+      const week_check = weeklyHoursCheck(total_week_work_hours.result,shiftDto.workingHours, student_status);
+      console.log("week check");
+      console.log(week_check);
+      return week_check; //return true if valid
+    }
+    console.log("error 9: internal server error while getting total week hours")
+    return false;
+  }
+  return false;
+}
+
+module.exports = {
+  deleteShiftByShiftId,
+  deleteShiftsByReportId,
+  addNewShift,
+  updateShift,
+  getAllShiftsByReportId
+}
+
