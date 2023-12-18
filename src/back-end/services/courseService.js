@@ -92,7 +92,7 @@ const assignedCoursesDto = require('../dto/assignedCoursesDto')
             return;
         }
 
-        const query = 'INSERT INTO AssignedCourses (student_id, course_id, prof_id, status, max_hours, report_id) VALUES (?, ?, ?, ?, ?, NUll)';
+        const query = 'INSERT INTO AssignedCourses (student_id, course_id, prof_id, status, max_hours) VALUES (?, ?, ?, ?, ?)';
           
         db.DB.query(query, [assignedCoursesDto.studentId, assignedCoursesDto.courseId, assignedCoursesDto.profId, assignedCoursesDto.status, assignedCoursesDto.maxHours], (error, results) => {
         if (error) {
@@ -119,12 +119,12 @@ const assignedCoursesDto = require('../dto/assignedCoursesDto')
         });
     }
 
-    // delete assigned course by assigned course id [auto deletes the report]
-    function deleteAssignedCourseById(assigned_course_id){
+    // delete assigned course by assigned course id [auto deletes the report] for a specific student
+    function deleteAssignedCourseById(assigned_course_id, student_id){
         return new Promise((resolve, reject) => {
-            const query = 'DELETE FROM AssignedCourses WHERE ID = ?';
+            const query = 'DELETE FROM AssignedCourses WHERE ID = ? AND student_id = ?';
 
-            db.DB.query(query, assigned_course_id, (error, results) => {
+            db.DB.query(query, [assigned_course_id, student_id], (error, results) => {
                 if(error){
                     console.log(`Error 5: cannot delete the assigned course of ID: ${assigned_course_id}`);
                     reject(error);
