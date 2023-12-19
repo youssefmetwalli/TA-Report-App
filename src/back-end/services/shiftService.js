@@ -8,15 +8,14 @@ MAX_WEEK_HOURS_JP = 40;
 MAX_WEEK_HOURS_INT = 28;
 MAX_MONTH_HOURS = 120;
 
+
+//create a new shift
 function addNewShift(shiftDto, student_status) {
   return new Promise(async(resolve, reject) => {
     try{
       //checks
       const isShiftValid = await checkShiftsValidity(shiftDto, student_status);
-      console.log("isShiftValid?");
-      console.log(isShiftValid);
       if(isShiftValid){
-        console.log(isShiftValid);
         const query = 'INSERT INTO Shifts (date, start_time, end_time, break_time, working_hours, work_category_id, report_id) VALUES (?, ?, ?, ?, ?, ?, ?)';
       
         db.DB.query(
@@ -58,12 +57,15 @@ function addNewShift(shiftDto, student_status) {
     });
   }
 
-  //update shift 
-  function updateShift(shiftDto) {
+  //update shift
+  function updateShift(shiftDto, student_status, id) {
     return new Promise(async (resolve, reject) => {
-      const query = 'UPDATE Shifts SET date = ?, start_time = ?, end_time = ?, break_time = ?, working_hours = ?, work_category_id = ? WHERE report_id = ?';
+      const query = 'UPDATE Shifts SET date = ?, start_time = ?, end_time = ?, break_time = ?, working_hours = ?, work_category_id = ? WHERE report_id = ? AND ID = ?';
+      const isShiftValid = await checkShiftsValidity(shiftDto, student_status);
     
-      db.DB.query(
+      if (isShiftValid)
+      {
+        db.DB.query(
         query,
         [
           shiftDto.date,
@@ -72,49 +74,55 @@ function addNewShift(shiftDto, student_status) {
           shiftDto.breakTime,
           shiftDto.workingHours,
           shiftDto.workCategoryId,
-          shiftDto.reportId
+          shiftDto.reportId,
+          id
         ],
         (error, results) => {
           if (error) {
-            reject(error);
-            return;
+            reject({success: false, error: error});
           }
 
-          resolve(results);
+          resolve({success: true, result: results});
         }
       );
+    }
+    else {
+      console.log("wrong input error!");
+      reject({success: false, message: "Wrong Input, Make sure the daily and weekly limits are ensured"});
+    }
+
     });
   }
 
   //delete shift by shift id
-  function deleteShiftByShiftId(shiftId) {
+  function deleteShiftByShiftId(shift_id) {
     return new Promise(async (resolve, reject) => {
-      const query = 'DELETE FROM Shifts WHERE id = ?';
+      const query = 'DELETE FROM Shifts WHERE ID = ?';
     
       db.DB.query(
         query,
-        [shiftId],
+        [shift_id],
         (error, results) => {
           if (error) {
-            reject(error);
+            reject({success: false, message: `Internal server error, ${error}`});
             return;
           }
 
-          resolve(results);
+          resolve({success: true, result: results});
         }
       );
     });
   }
 
 //delete shift by report id
-function deleteShiftsByReportId(reportId) {
+function deleteShiftsByReportId(report_id) {
   return new Promise(async (resolve, reject) => {
     try{
       const query = 'DELETE FROM Shifts WHERE report_id = ?';
     
       db.DB.query(
         query,
-        [reportId],
+        [report_id],
         (error, results) => {
           if (error) {
             console.log("ERROR: could not delete the shift")
@@ -133,7 +141,7 @@ function deleteShiftsByReportId(reportId) {
       );
     }
     catch{
-      console.log("internal server error");
+      console.log("ERROR::S2:: internal server error");
       reject({
         success: false,
         error: error
@@ -158,7 +166,6 @@ function getAllShiftsByReportId(reportId){
               success: false,
               error: `internal server error: ${error}`
             });
-            return;
           }
 
           resolve({
@@ -169,7 +176,7 @@ function getAllShiftsByReportId(reportId){
       );
     }
     catch{
-      console.log("ERROR::S1:: internal server error");
+      console.log("ERROR::S3:: internal server error");
       reject({
         success: false,
         error: error
@@ -228,11 +235,8 @@ function timeToMinutes(time) {
 
 //return first and last days of the week' dates
 function firstLastDaysOfWeekDates(today_date){
-  console.log( today_date.getDate() - today_date.getDay())
   const firstDayOfWeek = new Date(today_date.getFullYear(), today_date.getMonth(), today_date.getDate() - today_date.getDay()+1).toISOString();
   const lastDayOfWeek = new Date(today_date.getFullYear(), today_date.getMonth(), today_date.getDate() + (7 - today_date.getDay())).toISOString();
-  console.log(firstDayOfWeek)
-  console.log(lastDayOfWeek)
   return {
     lastDayOfWeek:lastDayOfWeek,
     firstDayOfWeek:firstDayOfWeek
@@ -276,10 +280,6 @@ function dailyHoursCheck(shiftDto){
 //weekly check: return true  if valid
 function weeklyHoursCheck(week_total_work_hours, today_work_hours, student_status ){
   // return new Promise ((resolve, reject) => {
-    console.log("*********st");
-    console.log(student_status);
-    console.log(student_status == process.env.JAPANESE);
-    console.log(today_work_hours);
     if(student_status == process.env.JAPANESE){
       if((week_total_work_hours+today_work_hours) > MAX_WEEK_HOURS_JP){
         console.log(`cannot go beyond ${MAX_WEEK_HOURS_JP} hours a week!`);
@@ -302,16 +302,11 @@ async function checkShiftsValidity(shiftDto, student_status){
   // if daily check is ok
   const day_check = dailyHoursCheck(shiftDto);
   if(day_check){
-    console.log("working hours");
-    console.log(shiftDto.workingHours);
     const first_last_days = firstLastDaysOfWeekDates(shiftDto.date);
     const total_week_work_hours = await getTotalWeekWorkHours(first_last_days);
-    console.log(total_week_work_hours);
 
     if(total_week_work_hours.success){
       const week_check = weeklyHoursCheck(total_week_work_hours.result,shiftDto.workingHours, student_status);
-      console.log("week check");
-      console.log(week_check);
       return week_check; //return true if valid
     }
     console.log("error 9: internal server error while getting total week hours")
