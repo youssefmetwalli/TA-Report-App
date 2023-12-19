@@ -2,6 +2,7 @@ const express = require("express");
 const app = express();
 const coursesRoutes = require('./routes/courseRoutes');
 const shiftsRoutes = require('./routes/shiftsRoute');
+const reportRoutes = require('./routes/reportRoutes');
 const db = require('./services/dbService');
 
 const port = 3000;
@@ -42,6 +43,9 @@ app.use('/courses', coursesRoutes);
 /********/
 app.use('/shifts', shiftsRoutes);
 
+//REPORT
+/********/
+app.use('/reports', reportRoutes);
 //submit report
 
 app.listen(port, () => {

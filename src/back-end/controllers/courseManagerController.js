@@ -1,7 +1,6 @@
 const {
     addCourse, 
-    assignCourseToStudent, 
-    getReportData, 
+    assignCourseToStudent,
     getAllAssignedCourses, 
     getAssignedCourseId,
     deleteAssignedCourseByCourseId,
@@ -19,26 +18,6 @@ const getAllAssignedCoursesRoute = async function (req, res) {
         const student_id  = req.body.student_id;
         const result =  await getAllAssignedCourses(student_id);
 
-        if (result.success) {
-            res.json(result);
-        } else {
-            res.status(500).json(result); // Adjust the status code as needed
-        }
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({
-            success: false,
-            message: "Internal Server Error",
-        });
-    }
-}
-
-//get report data given the report_id
-const getReportDataByIdRoute =  async function (req, res) {
-    try {
-        const report_id = req.body.report_id;
-        const result = await getReportData(report_id);
-        
         if (result.success) {
             res.json(result);
         } else {
@@ -127,11 +106,10 @@ const deleteAssignedCourseByCourseIdRoute = async function(req, res){
     }
 }
 
-//TODO update the assigned course data (change month, year)
+//TODO remove  month, year from courses table and add them on reports table instead
 
 module.exports = {
     getAllAssignedCoursesRoute,
-    getReportDataByIdRoute,
     addCourseRoute,
     deleteAssignedCourseByCourseIdRoute
 };

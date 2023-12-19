@@ -65,4 +65,6 @@ class UsersManagerService {
   }
 }
 
+//return student status given the student_id
+
 module.exports = UsersManagerService;

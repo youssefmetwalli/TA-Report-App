@@ -68,8 +68,8 @@ const assignedCoursesDto = require('../dto/assignedCoursesDto')
         return new Promise((resolve, reject) => {
 
             //check if course already assigned
-            const check_query = 'SELECT COUNT(*) As count FROM AssignedCourses WHERE course_id = ?';
-                    const params = assignedCoursesDto.courseId;
+            const check_query = 'SELECT COUNT(*) As count FROM AssignedCourses WHERE course_id = ? AND student_id = ?';
+                    const params = [assignedCoursesDto.courseId, assignedCoursesDto.studentId];
                     db.DB.query(check_query, params,(error, results)=>{
                         if (error){
                             console.log("Internal serval error");
@@ -220,7 +220,7 @@ function getAssignedCourseId(course_id){
             db.DB.query(query, [reportDto.assignedCourseId, reportDto.reportDate, reportDto.reportDescription], (error, results) =>{
                 if (error) {
                     console.log("Error4: Could not create a new report")
-                    reject(error);
+                    reject({success: false, result: error});
                     return;
                 }
                 console.log('Report created successfully');
@@ -251,20 +251,45 @@ function getAssignedCourseId(course_id){
     }
 
     //get  report data  by report id
-    function getReportData(report_id){
+    function getReportByReportId(report_id){
         return new Promise(async (resolve, reject) =>{
             try {
-                const query = 'SELECT * FROM AssignedCourses WHERE report_id = ?';
-                const [rows] = db.DB.query(query, report_id, (error, results) =>{
+                const query = 'SELECT * FROM Report WHERE report_id = ?';
+                db.DB.query(query, report_id, (error, results) =>{
                     if (error) {
                         console.log("Error4: Internal server error. Could not get the report")
-                        reject(error);
+                        reject({success: false, message: `Internal server error, ${error}`});
                     }
                     resolve({
                         success: true,
-                        data: rows,
                         result: results,
                         message: "Successfully got the report data of the report_id"
+                    })
+                });
+            }
+            catch {
+                reject({
+                    success: false,
+                    message: "Failed to get the report"
+                })
+            }
+        })
+    }
+
+    //get  report data  by assigned course id
+    function getReportsByAssignedId(assigned_course_id){
+        return new Promise(async (resolve, reject) =>{
+            try {
+                const query = 'SELECT * FROM Report WHERE assigned_course_id = ?';
+                db.DB.query(query, assigned_course_id, (error, results) =>{
+                    if (error) {
+                        console.log("Error4: Internal server error. Could not get the report")
+                        reject({success: true, message: `Internal server error, ${error}`});
+                    }
+                    resolve({
+                        success: true,
+                        result: results,
+                        message: "Successfully got the reports data of the assigned_course_id"
                     })
                 });
             }
@@ -290,5 +315,6 @@ module.exports = {
     assignCourseToStudent,
     createReport,
     deleteReportById,
-    getReportData
+    getReportByReportId,
+    getReportsByAssignedId
 };
