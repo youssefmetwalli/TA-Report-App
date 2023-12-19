@@ -1,21 +1,23 @@
 import 'package:flutter/material.dart';
 
 class FacultyScreen extends StatelessWidget {
+  const FacultyScreen({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Faculty Screen'),
+        title: const Text('Faculty Screen'),
         actions: [
           IconButton(
-            icon: Icon(Icons.notifications),
+            icon: const Icon(Icons.notifications),
             onPressed: () {
               // Handle notification button press
               // You can show a notification sidebar or navigate to a new screen
             },
           ),
           IconButton(
-            icon: Icon(Icons.exit_to_app),
+            icon: const Icon(Icons.exit_to_app),
             onPressed: () {
               // Handle logout button press
               // You can perform logout logic here
@@ -27,7 +29,7 @@ class FacultyScreen extends StatelessWidget {
         child: ListView(
           padding: EdgeInsets.zero,
           children: [
-            DrawerHeader(
+            const DrawerHeader(
               decoration: BoxDecoration(
                 color: Colors.blue,
               ),
@@ -40,13 +42,13 @@ class FacultyScreen extends StatelessWidget {
               ),
             ),
             ListTile(
-              title: Text('Item 1'),
+              title: const Text('Item 1'),
               onTap: () {
                 // Handle item 1 tap
               },
             ),
             ListTile(
-              title: Text('Item 2'),
+              title: const Text('Item 2'),
               onTap: () {
                 // Handle item 2 tap
               },
@@ -55,7 +57,7 @@ class FacultyScreen extends StatelessWidget {
           ],
         ),
       ),
-      body: Center(
+      body: const Center(
         child: Text('Your main content goes here'),
       ),
     );

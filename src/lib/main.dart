@@ -7,20 +7,22 @@ import 'package:ta_report_app/screens/student/report_list.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  runApp(MyApp());
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Your App Title',
       initialRoute: '/', // Set your initial route as needed
       routes: {
-        '/': (context) => LoginForm(),
-        '/student_screen': (context) => StudentScreen(),
-        '/faculty_screen': (context) => FacultyScreen(),
-        '/admin_screen': (context) => AdminScreen(),
+        '/': (context) => const LoginForm(),
+        '/student_screen': (context) => const StudentScreen(),
+        '/faculty_screen': (context) => const FacultyScreen(),
+        '/admin_screen': (context) => const AdminScreen(),
         // Add other routes as needed
       },
       debugShowCheckedModeBanner: false,

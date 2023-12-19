@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
 class LoginForm extends StatefulWidget {
+  const LoginForm({super.key});
+
   @override
   _LoginFormState createState() => _LoginFormState();
 }
@@ -83,7 +85,7 @@ class _LoginFormState extends State<LoginForm> {
                       color: Colors.green[600],
                     ),
                   ),
-                  SizedBox(height: 20),
+                  const SizedBox(height: 20),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
@@ -92,7 +94,7 @@ class _LoginFormState extends State<LoginForm> {
                       userTypeRadioButton('admin', 'Admin'),
                     ],
                   ),
-                  SizedBox(height: 20),
+                  const SizedBox(height: 20),
                   TextFormField(
                     onChanged: (value) {
                       setState(() {
@@ -100,12 +102,12 @@ class _LoginFormState extends State<LoginForm> {
                       });
                     },
                     validator: validateUsername,
-                    decoration: InputDecoration(
+                    decoration: const InputDecoration(
                       labelText: 'Email',
                       border: OutlineInputBorder(),
                     ),
                   ),
-                  SizedBox(height: 10),
+                  const SizedBox(height: 10),
                   TextFormField(
                     onChanged: (value) {
                       setState(() {
@@ -114,19 +116,18 @@ class _LoginFormState extends State<LoginForm> {
                     },
                     obscureText: true,
                     validator: validatePassword,
-                    decoration: InputDecoration(
+                    decoration: const InputDecoration(
                       labelText: 'Password',
                       border: OutlineInputBorder(),
                     ),
                   ),
-                  SizedBox(height: 20),
+                  const SizedBox(height: 20),
                   ElevatedButton(
                     onPressed: handleLogin,
                     style: ElevatedButton.styleFrom(
-                      primary: Colors.blue[500],
-                      onPrimary: Colors.white,
+                      foregroundColor: Colors.white, backgroundColor: Colors.blue[500],
                     ),
-                    child: Text('Login'),
+                    child: const Text('Login'),
                   ),
                 ],
               ),

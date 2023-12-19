@@ -41,7 +41,7 @@ class AdminForm extends StatelessWidget {
                 child: Container(
                   color: Colors.green,
                   padding: const EdgeInsets.all(8),
-                  child: Center(
+                  child: const Center(
                       child: Text('選択', style: TextStyle(color: Colors.white))),
                 ),
               ),
@@ -49,7 +49,7 @@ class AdminForm extends StatelessWidget {
                 child: Container(
                   color: Colors.green,
                   padding: const EdgeInsets.all(8),
-                  child: Center(
+                  child: const Center(
                       child:
                           Text('会社名', style: TextStyle(color: Colors.white))),
                 ),
@@ -58,7 +58,7 @@ class AdminForm extends StatelessWidget {
                 child: Container(
                   color: Colors.green,
                   padding: const EdgeInsets.all(8),
-                  child: Center(
+                  child: const Center(
                       child:
                           Text('電話番号', style: TextStyle(color: Colors.white))),
                 ),
@@ -67,7 +67,7 @@ class AdminForm extends StatelessWidget {
                 child: Container(
                   color: Colors.green,
                   padding: const EdgeInsets.all(8),
-                  child: Center(
+                  child: const Center(
                       child:
                           Text('FAX番号', style: TextStyle(color: Colors.white))),
                 ),
@@ -76,7 +76,7 @@ class AdminForm extends StatelessWidget {
                 child: Container(
                   color: Colors.green,
                   padding: const EdgeInsets.all(8),
-                  child: Center(
+                  child: const Center(
                       child: Text('住所', style: TextStyle(color: Colors.white))),
                 ),
               ),
@@ -89,7 +89,7 @@ class AdminForm extends StatelessWidget {
                 TableCell(
                   child: Container(
                     constraints:
-                        BoxConstraints(minHeight: 50), // ここで最小の高さを設定します。
+                        const BoxConstraints(minHeight: 50), // ここで最小の高さを設定します。
                     color: i % 2 == 0 ? Colors.white : Colors.grey[200],
                     padding: const EdgeInsets.all(8),
                     child: Center(child: Text(select[i])),
@@ -98,7 +98,7 @@ class AdminForm extends StatelessWidget {
                 TableCell(
                   child: Container(
                     constraints:
-                        BoxConstraints(minHeight: 50), // ここで最小の高さを設定します。
+                        const BoxConstraints(minHeight: 50), // ここで最小の高さを設定します。
                     color: i % 2 == 0 ? Colors.white : Colors.grey[200],
                     padding: const EdgeInsets.all(8),
                     child: Center(child: Text(companyName[i])),
@@ -107,7 +107,7 @@ class AdminForm extends StatelessWidget {
                 TableCell(
                   child: Container(
                     constraints:
-                        BoxConstraints(minHeight: 50), // ここで最小の高さを設定します。
+                        const BoxConstraints(minHeight: 50), // ここで最小の高さを設定します。
                     color: i % 2 == 0 ? Colors.white : Colors.grey[200],
                     padding: const EdgeInsets.all(8),
                     child: Center(child: Text(phoneNumber[i])),
@@ -116,7 +116,7 @@ class AdminForm extends StatelessWidget {
                 TableCell(
                   child: Container(
                     constraints:
-                        BoxConstraints(minHeight: 50), // ここで最小の高さを設定します。
+                        const BoxConstraints(minHeight: 50), // ここで最小の高さを設定します。
                     color: i % 2 == 0 ? Colors.white : Colors.grey[200],
                     padding: const EdgeInsets.all(8),
                     child: Center(child: Text(fax[i])),
@@ -125,7 +125,7 @@ class AdminForm extends StatelessWidget {
                 TableCell(
                   child: Container(
                     constraints:
-                        BoxConstraints(minHeight: 50), // ここで最小の高さを設定します。
+                        const BoxConstraints(minHeight: 50), // ここで最小の高さを設定します。
                     color: i % 2 == 0 ? Colors.white : Colors.grey[200],
                     padding: const EdgeInsets.all(8),
                     child: Center(child: Text(address[i])),

@@ -1,0 +1,8 @@
+version: "Apple Swift version 5.8.1 (swiftlang-5.8.0.124.5 clang-1403.0.22.11.100)"
+options: "b0fd6945b8718381e263ae063aa49f346eb23587bec516909f35fb57dac3e09c"
+build_start_time: [1702967645, 312952000]
+build_end_time: [1702967653, 218922000]
+inputs:
+  "/Users/merci/github/ie04-project-2023-pikachu/src/macos/Flutter/GeneratedPluginRegistrant.swift": [1702967628, 230971240]
+  "/Users/merci/github/ie04-project-2023-pikachu/src/macos/Runner/AppDelegate.swift": [1702966347, 461438902]
+  "/Users/merci/github/ie04-project-2023-pikachu/src/macos/Runner/MainFlutterWindow.swift": [1702966347, 462979973]

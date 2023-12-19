@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
 class AdminScreen extends StatefulWidget {
+  const AdminScreen({super.key});
+
   @override
   _AdminScreenState createState() => _AdminScreenState();
 }
@@ -26,10 +28,10 @@ class _AdminScreenState extends State<AdminScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Admin Screen'),
+        title: const Text('Admin Screen'),
         actions: [
           IconButton(
-            icon: Icon(Icons.exit_to_app),
+            icon: const Icon(Icons.exit_to_app),
             onPressed: () {
               // Handle logout button press
               // Add your logout logic here
@@ -37,7 +39,7 @@ class _AdminScreenState extends State<AdminScreen> {
           ),
         ],
         flexibleSpace: Container(
-          decoration: BoxDecoration(
+          decoration: const BoxDecoration(
             gradient: LinearGradient(
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
@@ -50,7 +52,7 @@ class _AdminScreenState extends State<AdminScreen> {
         ),
       ),
       body: Container(
-        decoration: BoxDecoration(
+        decoration: const BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
@@ -65,7 +67,7 @@ class _AdminScreenState extends State<AdminScreen> {
           child: ListView.separated(
             itemCount: itemList.length,
             separatorBuilder: (context, index) {
-              return SizedBox(height: 8.0); // Adjust the height of the separator
+              return const SizedBox(height: 8.0); // Adjust the height of the separator
             },
             itemBuilder: (context, index) {
               return Container(
@@ -75,7 +77,7 @@ class _AdminScreenState extends State<AdminScreen> {
                     color: Colors.black, // Border color
                     width: 1.0, // Border width
                   ),
-                  borderRadius: BorderRadius.all(
+                  borderRadius: const BorderRadius.all(
                     Radius.circular(8.0), // Border radius
                   ),
                 ),
@@ -96,7 +98,7 @@ class _AdminScreenState extends State<AdminScreen> {
         child: ListView(
           padding: EdgeInsets.zero,
           children: [
-            DrawerHeader(
+            const DrawerHeader(
               decoration: BoxDecoration(
                 gradient: LinearGradient(
                   begin: Alignment.topLeft,
