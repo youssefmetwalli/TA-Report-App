@@ -7,8 +7,11 @@
 
 #import <Foundation/Foundation.h>
 
+<<<<<<< HEAD
+=======
 #include <stdint.h>
 
+>>>>>>> 2eb7488e4d734ddd52f0380996fda809163697bb
 #import "FlutterBinaryMessenger.h"
 #import "FlutterDartProject.h"
 #import "FlutterMacros.h"
@@ -17,6 +20,8 @@
 
 // TODO: Merge this file with the iOS FlutterEngine.h.
 
+<<<<<<< HEAD
+=======
 /**
  * The view ID for APIs that don't support multi-view.
  *
@@ -28,13 +33,17 @@
  */
 extern const uint64_t kFlutterDefaultViewId;
 
+>>>>>>> 2eb7488e4d734ddd52f0380996fda809163697bb
 @class FlutterViewController;
 
 /**
  * Coordinates a single instance of execution of a Flutter engine.
+<<<<<<< HEAD
+=======
  *
  * A FlutterEngine can only be attached with one controller from the native
  * code.
+>>>>>>> 2eb7488e4d734ddd52f0380996fda809163697bb
  */
 FLUTTER_DARWIN_EXPORT
 @interface FlutterEngine : NSObject <FlutterTextureRegistry, FlutterPluginRegistry>
@@ -79,6 +88,9 @@ FLUTTER_DARWIN_EXPORT
 - (BOOL)runWithEntrypoint:(nullable NSString*)entrypoint;
 
 /**
+<<<<<<< HEAD
+ * The `FlutterViewController` associated with this engine, if any.
+=======
  * The `FlutterViewController` of this engine, if any.
  *
  * This view is used by legacy APIs that assume a single view.
@@ -91,6 +103,7 @@ FLUTTER_DARWIN_EXPORT
  *
  * Setting this field from non-nil to a different non-nil FlutterViewController
  * is prohibited and will throw an assertion error.
+>>>>>>> 2eb7488e4d734ddd52f0380996fda809163697bb
  */
 @property(nonatomic, nullable, weak) FlutterViewController* viewController;
 

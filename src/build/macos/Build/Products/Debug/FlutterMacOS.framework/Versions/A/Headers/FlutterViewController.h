@@ -25,6 +25,8 @@ typedef NS_ENUM(NSInteger, FlutterMouseTrackingMode) {
 
 /**
  * Controls a view that displays Flutter content and manages input.
+<<<<<<< HEAD
+=======
  *
  * A FlutterViewController works with a FlutterEngine. Upon creation, the view
  * controller is always added to an engine, either a given engine, or it implicitly
@@ -44,6 +46,7 @@ typedef NS_ENUM(NSInteger, FlutterMouseTrackingMode) {
  * it automatically removes itself from its attached engine. When a FlutterEngine
  * has no FlutterViewControllers attached, it might shut down itself or not depending
  * on its configuration.
+>>>>>>> 2eb7488e4d734ddd52f0380996fda809163697bb
  */
 FLUTTER_DARWIN_EXPORT
 @interface FlutterViewController : NSViewController <FlutterPluginRegistry>
@@ -54,6 +57,8 @@ FLUTTER_DARWIN_EXPORT
 @property(nonatomic, nonnull, readonly) FlutterEngine* engine;
 
 /**
+<<<<<<< HEAD
+=======
  * The identifier for this view controller.
  *
  * The ID is assigned by FlutterEngine when the view controller is attached.
@@ -64,6 +69,7 @@ FLUTTER_DARWIN_EXPORT
 @property(nonatomic, readonly) uint64_t viewId;
 
 /**
+>>>>>>> 2eb7488e4d734ddd52f0380996fda809163697bb
  * The style of mouse tracking to use for the view. Defaults to
  * FlutterMouseTrackingModeInKeyWindow.
  */
@@ -72,12 +78,15 @@ FLUTTER_DARWIN_EXPORT
 /**
  * Initializes a controller that will run the given project.
  *
+<<<<<<< HEAD
+=======
  * In this initializer, this controller creates an engine, and is attached to
  * that engine as the default controller. In this way, this controller can not
  * be set to other engines. This initializer is suitable for the first Flutter
  * view controller of the app. To use the controller with an existing engine,
  * use initWithEngine:nibName:bundle: instead.
  *
+>>>>>>> 2eb7488e4d734ddd52f0380996fda809163697bb
  * @param project The project to run in this view controller. If nil, a default `FlutterDartProject`
  *                will be used.
  */
@@ -88,6 +97,8 @@ FLUTTER_DARWIN_EXPORT
                                  bundle:(nullable NSBundle*)nibBundleOrNil
     NS_DESIGNATED_INITIALIZER;
 - (nonnull instancetype)initWithCoder:(nonnull NSCoder*)nibNameOrNil NS_DESIGNATED_INITIALIZER;
+<<<<<<< HEAD
+=======
 /**
  * Initializes this FlutterViewController with an existing `FlutterEngine`.
  *
@@ -108,6 +119,7 @@ FLUTTER_DARWIN_EXPORT
  * Return YES if the view controller is attached to an engine.
  */
 - (BOOL)attached;
+>>>>>>> 2eb7488e4d734ddd52f0380996fda809163697bb
 
 /**
  * Invoked by the engine right before the engine is restarted.
@@ -117,6 +129,8 @@ FLUTTER_DARWIN_EXPORT
  */
 - (void)onPreEngineRestart;
 
+<<<<<<< HEAD
+=======
 /**
  * The contentView (FlutterView)'s background color is set to black during
  * its instantiation.
@@ -161,4 +175,5 @@ FLUTTER_DARWIN_EXPORT
  */
 @property(readwrite, nonatomic, nullable, copy) NSColor* backgroundColor;
 
+>>>>>>> 2eb7488e4d734ddd52f0380996fda809163697bb
 @end
