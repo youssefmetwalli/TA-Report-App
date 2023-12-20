@@ -30,6 +30,7 @@ FLUTTER_DARWIN_EXPORT
     NS_DESIGNATED_INITIALIZER;
 
 /**
+<<<<<<< HEAD
  * If set, allows the Flutter project to use the dart:mirrors library.
  *
  * Deprecated: This function is temporary and will be removed in a future release.
@@ -37,6 +38,8 @@ FLUTTER_DARWIN_EXPORT
 @property(nonatomic) bool enableMirrors;
 
 /**
+=======
+>>>>>>> 2eb7488e4d734ddd52f0380996fda809163697bb
  * An NSArray of NSStrings to be passed as command line arguments to the Dart entrypoint.
  *
  * If this is not explicitly set, this will default to the contents of
@@ -44,7 +47,11 @@ FLUTTER_DARWIN_EXPORT
  *
  * Set this to nil to pass no arguments to the Dart entrypoint.
  */
+<<<<<<< HEAD
 @property(nonatomic, nullable) NSArray<NSString*>* dartEntrypointArguments;
+=======
+@property(nonatomic, nullable, copy) NSArray<NSString*>* dartEntrypointArguments;
+>>>>>>> 2eb7488e4d734ddd52f0380996fda809163697bb
 
 @end
 

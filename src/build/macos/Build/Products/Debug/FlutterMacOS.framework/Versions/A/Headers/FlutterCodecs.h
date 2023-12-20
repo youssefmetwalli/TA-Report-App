@@ -344,17 +344,29 @@ FLUTTER_DARWIN_EXPORT
 /**
  * The type of the encoded values.
  */
+<<<<<<< HEAD
 @property(readonly, nonatomic) FlutterStandardDataType type;
+=======
+@property(readonly, nonatomic, assign) FlutterStandardDataType type;
+>>>>>>> 2eb7488e4d734ddd52f0380996fda809163697bb
 
 /**
  * The number of value items encoded.
  */
+<<<<<<< HEAD
 @property(readonly, nonatomic) UInt32 elementCount;
+=======
+@property(readonly, nonatomic, assign) UInt32 elementCount;
+>>>>>>> 2eb7488e4d734ddd52f0380996fda809163697bb
 
 /**
  * The number of bytes used by the encoding of a single value item.
  */
+<<<<<<< HEAD
 @property(readonly, nonatomic) UInt8 elementSize;
+=======
+@property(readonly, nonatomic, assign) UInt8 elementSize;
+>>>>>>> 2eb7488e4d734ddd52f0380996fda809163697bb
 @end
 
 /**

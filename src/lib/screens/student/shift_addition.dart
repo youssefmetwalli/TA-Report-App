@@ -22,11 +22,11 @@ class _ShiftAdditionState extends State<ShiftAddition> {
         title: const Text('Shifts'),
         actions: [
           IconButton(
-            icon: Icon(Icons.exit_to_app),
+            icon: const Icon(Icons.exit_to_app),
             onPressed: () {
               Navigator.of(context).push(
                 MaterialPageRoute(
-                  builder: (context) => LoginForm(),
+                  builder: (context) => const LoginForm(),
                 ),
               );
             },
@@ -46,8 +46,8 @@ class _ShiftAdditionState extends State<ShiftAddition> {
         ),
       ),
       body: Container(
-        constraints: BoxConstraints.expand(),
-        decoration: BoxDecoration(
+        constraints: const BoxConstraints.expand(),
+        decoration: const BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
@@ -79,7 +79,7 @@ class _ShiftAdditionState extends State<ShiftAddition> {
                         },
                         isSelected: selectedRowIndex == index,
                       ),
-                      SizedBox(height: 16.0),
+                      const SizedBox(height: 16.0),
                     ],
                   ),
               ],
@@ -93,7 +93,7 @@ class _ShiftAdditionState extends State<ShiftAddition> {
           // Add the desired functionality when the button is pressed
           // For example, navigate to a new screen for creating a report
         },
-        label: Text('Create Report'),
+        label: const Text('Create Report'),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
     );
@@ -174,7 +174,7 @@ class _ShiftRowState extends State<ShiftRow> {
             },
           ),
         ),
-        SizedBox(width: 8.0),
+        const SizedBox(width: 8.0),
         Expanded(
           child: TextFormField(
             decoration: const InputDecoration(
@@ -199,13 +199,13 @@ class _ShiftRowState extends State<ShiftRow> {
             },
           ),
         ),
-        SizedBox(width: 8.0),
+        const SizedBox(width: 8.0),
         Expanded(
           child: BreakTimePicker(
             controller: widget.shiftData.breakTimeController,
           ),
         ),
-        SizedBox(width: 8.0),
+        const SizedBox(width: 8.0),
         Expanded(
           child: TextFormField(
             decoration: const InputDecoration(
@@ -228,7 +228,7 @@ class _ShiftRowState extends State<ShiftRow> {
             },
           ),
         ),
-        SizedBox(width: 8.0),
+        const SizedBox(width: 8.0),
         ElevatedButton(
           onPressed: () {
             if (validateTime()) {
@@ -238,8 +238,8 @@ class _ShiftRowState extends State<ShiftRow> {
                 context: context,
                 builder: (BuildContext context) {
                   return AlertDialog(
-                    title: Text('Error'),
-                    content: Text(
+                    title: const Text('Error'),
+                    content: const Text(
                       'Selected time must be between 07:00 AM and 11:59 PM.',
                     ),
                     actions: [
@@ -247,7 +247,7 @@ class _ShiftRowState extends State<ShiftRow> {
                         onPressed: () {
                           Navigator.of(context).pop();
                         },
-                        child: Text('OK'),
+                        child: const Text('OK'),
                       ),
                     ],
                   );

@@ -2,9 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:ta_report_app/screens/login.dart';
 import 'package:ta_report_app/screens/student/course_input.dart';
 import 'package:ta_report_app/screens/student/report_form.dart';
-import 'package:ta_report_app/screens/student/shift_addition.dart';
 
 class StudentScreen extends StatefulWidget {
+  const StudentScreen({super.key});
+
   @override
   _StudentScreenState createState() => _StudentScreenState();
 }
@@ -26,7 +27,7 @@ class _StudentScreenState extends State<StudentScreen> {
   ];
 
   // Controllers for text form fields in the dialog
-  List<TextEditingController> _textFieldControllers =
+  final List<TextEditingController> _textFieldControllers =
       List.generate(6, (index) => TextEditingController());
 
   // Function to show the create report dialog
@@ -34,7 +35,7 @@ class _StudentScreenState extends State<StudentScreen> {
     showDialog(
       context: context,
       builder: (BuildContext context) {
-        return CourseInputDialog();
+        return const CourseInputDialog();
       },
     );
   }
@@ -43,14 +44,14 @@ class _StudentScreenState extends State<StudentScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: Text('Current Reports'),
+          title: const Text('Current Reports'),
           actions: [
             IconButton(
-              icon: Icon(Icons.exit_to_app),
+              icon: const Icon(Icons.exit_to_app),
               onPressed: () {
                 Navigator.of(context).push(
                   MaterialPageRoute(
-                    builder: (context) => LoginForm(),
+                    builder: (context) => const LoginForm(),
                   ),
                 );
               },
@@ -85,7 +86,7 @@ class _StudentScreenState extends State<StudentScreen> {
             child: ListView.separated(
               itemCount: itemList.length,
               separatorBuilder: (context, index) {
-                return SizedBox(height: 8.0);
+                return const SizedBox(height: 8.0);
               },
               itemBuilder: (context, index) {
                 return Container(
@@ -95,7 +96,7 @@ class _StudentScreenState extends State<StudentScreen> {
                       color: Colors.black,
                       width: 1.0,
                     ),
-                    borderRadius: BorderRadius.all(
+                    borderRadius: const BorderRadius.all(
                       Radius.circular(8.0),
                     ),
                   ),
@@ -118,7 +119,7 @@ class _StudentScreenState extends State<StudentScreen> {
           child: ListView(
             padding: EdgeInsets.zero,
             children: [
-              DrawerHeader(
+              const DrawerHeader(
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
                     begin: Alignment.topLeft,

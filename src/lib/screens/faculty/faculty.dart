@@ -2,9 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:ta_report_app/screens/login.dart';
 import 'package:ta_report_app/screens/student/course_input.dart';
 import 'package:ta_report_app/screens/student/report_form.dart';
-import 'package:ta_report_app/screens/student/shift_addition.dart';
 
 class FacultyScreen extends StatefulWidget {
+  const FacultyScreen({super.key});
+
   @override
   _FacultyScreenState createState() => _FacultyScreenState();
 }
@@ -26,7 +27,7 @@ class _FacultyScreenState extends State<FacultyScreen> {
   ];
 
   // Controllers for text form fields in the dialog
-  List<TextEditingController> _textFieldControllers =
+  final List<TextEditingController> _textFieldControllers =
       List.generate(6, (index) => TextEditingController());
 
   // Function to show the create report dialog
@@ -34,7 +35,7 @@ class _FacultyScreenState extends State<FacultyScreen> {
     showDialog(
       context: context,
       builder: (BuildContext context) {
-        return CourseInputDialog();
+        return const CourseInputDialog();
       },
     );
   }
@@ -46,11 +47,11 @@ class _FacultyScreenState extends State<FacultyScreen> {
         title: const Text('Faculty Screen'),
         actions: [
           IconButton(
-            icon: Icon(Icons.exit_to_app),
+            icon: const Icon(Icons.exit_to_app),
             onPressed: () {
               Navigator.of(context).push(
                 MaterialPageRoute(
-                  builder: (context) => LoginForm(),
+                  builder: (context) => const LoginForm(),
                 ),
               );
             },
@@ -85,7 +86,7 @@ class _FacultyScreenState extends State<FacultyScreen> {
           child: ListView.separated(
             itemCount: itemList.length,
             separatorBuilder: (context, index) {
-              return SizedBox(height: 8.0);
+              return const SizedBox(height: 8.0);
             },
             itemBuilder: (context, index) {
               return Container(
@@ -95,7 +96,7 @@ class _FacultyScreenState extends State<FacultyScreen> {
                     color: Colors.black,
                     width: 1.0,
                   ),
-                  borderRadius: BorderRadius.all(
+                  borderRadius: const BorderRadius.all(
                     Radius.circular(8.0),
                   ),
                 ),

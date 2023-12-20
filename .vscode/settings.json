@@ -1,0 +1,8 @@
+{
+    "cSpell.words": [
+        "adcourse",
+        "addcourse"
+    ],
+    "css.customData": [".vscode/tailwind.json"],
+    "css.lint.unknownAtRules": "ignore"
+}

@@ -39,9 +39,15 @@
 
 #if __has_feature(objc_arc)
 #define FLUTTER_ASSERT_ARC
+<<<<<<< HEAD
 #define FLUTTER_ASSERT_NOT_ARC #error ARC must be disabled!
 #else
 #define FLUTTER_ASSERT_ARC #error ARC must be enabled!
+=======
+#define FLUTTER_ASSERT_NOT_ARC #error ARC must be disabled !
+#else
+#define FLUTTER_ASSERT_ARC #error ARC must be enabled !
+>>>>>>> 2eb7488e4d734ddd52f0380996fda809163697bb
 #define FLUTTER_ASSERT_NOT_ARC
 #endif
 
