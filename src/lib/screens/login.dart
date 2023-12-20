@@ -1,4 +1,6 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 
 class LoginForm extends StatefulWidget {
   const LoginForm({super.key});
@@ -27,22 +29,34 @@ class _LoginFormState extends State<LoginForm> {
     return null;
   }
 
-  void handleLogin() {
-    // Validate the form before processing the login
+  Future<void> handleLogin() async {
     if (_formKey.currentState!.validate()) {
-      // Add authentication logic here
-      // You can replace this with your authentication logic
+      final response = await http.post(
+        Uri.parse('http://your_nodejs_server_ip:3000/api/login'),
+        headers: <String, String>{'Content-Type': 'application/json'},
+        body:
+            jsonEncode(<String, dynamic>{'id': username, 'password': password}),
+      );
 
-      // Navigate based on user type
-      if (userType == 'student') {
-        // Navigate to /report for students
-        Navigator.pushReplacementNamed(context, '/student_screen');
-      } else if (userType == 'faculty') {
-        // Navigate to /faculty_screen for faculty
-        Navigator.pushReplacementNamed(context, '/faculty_screen');
-      } else if (userType == 'admin') {
-        // Navigate to /admin_screen for admin
-        Navigator.pushReplacementNamed(context, '/admin_screen');
+      if (response.statusCode == 200) {
+        final Map<String, dynamic> data = json.decode(response.body);
+        if (data['success']) {
+          // Navigate based on user type
+          if (userType == 'student') {
+            Navigator.pushReplacementNamed(context, '/student_screen');
+          } else if (userType == 'faculty') {
+            Navigator.pushReplacementNamed(context, '/faculty_screen');
+          } else if (userType == 'admin') {
+            Navigator.pushReplacementNamed(context, '/admin_screen');
+          }
+        } else {
+          // ignore: avoid_print
+          print(data['Incorrect email or password']);
+        }
+      } else {
+        // Handle other HTTP response codes
+        // ignore: avoid_print
+        print('Request failed with status: ${response.statusCode}');
       }
     }
   }
