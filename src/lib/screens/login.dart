@@ -125,9 +125,10 @@ class _LoginFormState extends State<LoginForm> {
                   ElevatedButton(
                     onPressed: handleLogin,
                     style: ElevatedButton.styleFrom(
-                      foregroundColor: Colors.white, backgroundColor: Colors.blue[500],
+                      primary: Colors.blue[500],
+                      onPrimary: Colors.white,
                     ),
-                    child: const Text('Login'),
+                    child: Text('Login'),
                   ),
                 ],
               ),

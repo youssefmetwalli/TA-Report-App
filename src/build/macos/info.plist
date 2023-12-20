@@ -3,8 +3,14 @@
 <plist version="1.0">
 <dict>
 	<key>LastAccessedDate</key>
+<<<<<<< HEAD
+	<date>2023-12-12T06:22:09Z</date>
+	<key>WorkspacePath</key>
+	<string>/Users/ymetwalli/Flutter-TA Report App/ie04-project-2023-pikachu/src/macos/Runner.xcworkspace</string>
+=======
 	<date>2023-12-19T06:33:52Z</date>
 	<key>WorkspacePath</key>
 	<string>/Users/merci/github/ie04-project-2023-pikachu/src/macos/Runner.xcworkspace</string>
+>>>>>>> 2eb7488e4d734ddd52f0380996fda809163697bb
 </dict>
 </plist>
