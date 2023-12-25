@@ -6,6 +6,21 @@
 	<dict>
 		<key>Resources/AppIcon.icns</key>
 		<data>
+<<<<<<< HEAD
+		H4osk2kAsQW0CEQ3FVPjpzwY8+I=
+		</data>
+		<key>Resources/Assets.car</key>
+		<data>
+		auSmqlNmdDReUKuwTl28XdvfT0o=
+		</data>
+		<key>Resources/Base.lproj/MainMenu.nib/keyedobjects-101300.nib</key>
+		<data>
+		iOduksqC8ScbhKC5Bxe4+o+diVw=
+		</data>
+		<key>Resources/Base.lproj/MainMenu.nib/keyedobjects.nib</key>
+		<data>
+		SoTDzXG22AKzWJBOSYcM+KJaOXs=
+=======
 		rhe+Rtss1cy2mX3Bxyd0Ikkk5xo=
 		</data>
 		<key>Resources/Assets.car</key>
@@ -15,6 +30,7 @@
 		<key>Resources/Base.lproj/MainMenu.nib</key>
 		<data>
 		ffTiNfwssQpTHIqjRow2GyC2wF0=
+>>>>>>> 2eb7488e4d734ddd52f0380996fda809163697bb
 		</data>
 	</dict>
 	<key>files2</key>
@@ -23,19 +39,33 @@
 		<dict>
 			<key>cdhash</key>
 			<data>
+<<<<<<< HEAD
+			TkIi3Yd9+7BpK2MXpUn7iOIJSj4=
+			</data>
+			<key>requirement</key>
+			<string>cdhash H"16dde378e1b63ec229763d9801f6a6b4fce167c4" or cdhash H"4e4222dd877dfbb0692b6317a549fb88e2094a3e"</string>
+=======
 			NJBSq/R4AxgWQ5W7T9/EyllukU0=
 			</data>
 			<key>requirement</key>
 			<string>cdhash H"349052abf4780318164395bb4fdfc4ca596e914d"</string>
+>>>>>>> 2eb7488e4d734ddd52f0380996fda809163697bb
 		</dict>
 		<key>Frameworks/FlutterMacOS.framework</key>
 		<dict>
 			<key>cdhash</key>
 			<data>
+<<<<<<< HEAD
+			EmYOsiZxXPKlJrSmzo8kSW++kw4=
+			</data>
+			<key>requirement</key>
+			<string>cdhash H"9ad7014f915082684b97795277d701b982171337" or cdhash H"12660eb226715cf2a526b4a6ce8f24496fbe930e"</string>
+=======
 			LRQbqrNyrqxkAPTKqBlWBFIW/zs=
 			</data>
 			<key>requirement</key>
 			<string>cdhash H"2d141baab372aeac6400f4caa81956045216ff3b"</string>
+>>>>>>> 2eb7488e4d734ddd52f0380996fda809163697bb
 		</dict>
 		<key>Frameworks/libswiftAppKit.dylib</key>
 		<dict>
@@ -192,13 +222,54 @@
 		</dict>
 		<key>Resources/AppIcon.icns</key>
 		<dict>
+<<<<<<< HEAD
+			<key>hash</key>
+			<data>
+			H4osk2kAsQW0CEQ3FVPjpzwY8+I=
+			</data>
+			<key>hash2</key>
+			<data>
+			cNOcZfJM7nFaHVMl7JL0QphD9rVYByn+3XIjcLCBwIE=
+=======
 			<key>hash2</key>
 			<data>
 			TBJg0RrcdjtYtrtJYHE1NZdQdsPIkm48rA61upaxL88=
+>>>>>>> 2eb7488e4d734ddd52f0380996fda809163697bb
 			</data>
 		</dict>
 		<key>Resources/Assets.car</key>
 		<dict>
+<<<<<<< HEAD
+			<key>hash</key>
+			<data>
+			auSmqlNmdDReUKuwTl28XdvfT0o=
+			</data>
+			<key>hash2</key>
+			<data>
+			K/tNtlQ6svNKKwhn4YcLs/vvDrNYzWHA+xxJbLbdSrY=
+			</data>
+		</dict>
+		<key>Resources/Base.lproj/MainMenu.nib/keyedobjects-101300.nib</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			iOduksqC8ScbhKC5Bxe4+o+diVw=
+			</data>
+			<key>hash2</key>
+			<data>
+			Be2MHH5vyMZGBC8JzSAy9vw2RBFwb7gupiVOqzk9iDw=
+			</data>
+		</dict>
+		<key>Resources/Base.lproj/MainMenu.nib/keyedobjects.nib</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			SoTDzXG22AKzWJBOSYcM+KJaOXs=
+			</data>
+			<key>hash2</key>
+			<data>
+			NJ/T0uEjrpe+4RrRIpGbBIeOE3Q+06pM0kRyauEBwf8=
+=======
 			<key>hash2</key>
 			<data>
 			wqJf7VzGfd61k5xWUpOOfgdYatMwd4QVeuFj56DuTtg=
@@ -209,6 +280,7 @@
 			<key>hash2</key>
 			<data>
 			2UWfwyJ+Z0PZ06yrG4cpYIeIsfyVm5HsfrurZ4LTymI=
+>>>>>>> 2eb7488e4d734ddd52f0380996fda809163697bb
 			</data>
 		</dict>
 	</dict>
