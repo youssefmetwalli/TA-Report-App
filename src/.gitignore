@@ -35,3 +35,7 @@ build/
 macos/
 windws/
 linux/
+test/
+web/
+ios/
+android/
