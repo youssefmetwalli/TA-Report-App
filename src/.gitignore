@@ -30,3 +30,8 @@ node_modules
 .environment
 .env
 node_modules/
+/.dart_tool/
+build/
+macos/
+windws/
+linux/
