@@ -62,11 +62,13 @@ const db = require('./dbService');
               reject({success: false, message: `Internal server error, ${error}`});
               return;
             }
-  
-            resolve({success: true, result: results});
+            if(results.length>0){
+              resolve({success: true, result: results});
+            }
+            else{
+              resolve({success: false, message: `Wrong Password or ID`});
+            }
             console.log(results);
-            console.log('wtf??');
-            console.log(password);
           });
       } catch (error) {
         console.error('Error checking login:', error.message);

@@ -13,7 +13,7 @@ const loginRoute = async function (req, res){
             res.json(loggingIn);
         }
         else{
-            res.status(500).json(loggingIn); //wrong credentials
+            res.status(401).json(loggingIn); //wrong credentials
         }
     }
     catch(error){
