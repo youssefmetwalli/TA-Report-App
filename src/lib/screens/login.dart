@@ -32,8 +32,11 @@ class _LoginFormState extends State<LoginForm> {
   Future<void> handleLogin() async {
     if (_formKey.currentState!.validate()) {
       final response = await http.post(
-        Uri.parse('http://your_nodejs_server_ip:3000/api/login'),
-        headers: <String, String>{'Content-Type': 'application/json'},
+        Uri.parse('http://localhost:3000'),
+        headers: <String, String>{
+          'Content-Type': 'application/json',
+          'Access-Control-Allow-Origin': '*'
+        },
         body:
             jsonEncode(<String, dynamic>{'id': username, 'password': password}),
       );

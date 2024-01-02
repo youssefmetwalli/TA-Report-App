@@ -1,4 +1,5 @@
 const express = require("express");
+const cors = require('cors');
 const app = express();
 const coursesRoutes = require('./routes/courseRoutes');
 const shiftsRoutes = require('./routes/shiftsRoute');
@@ -16,17 +17,8 @@ app.use(
   })
 );
 app.use(express.json());
-
-//get all users
-// app.get("/", (req, res) => {
-//   console.dir(req.body);
-//   db.DB.query("SELECT * FROM Users", (err, results) =>{
-//     if (err){
-//       throw err;
-//     }
-//     res.json({result:results});
-//   });
-// })
+// Use CORS middleware
+app.use(cors());
 
 /* Error handler middleware */
 app.use((err, req, res, next) => {

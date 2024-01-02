@@ -10,7 +10,7 @@ const{
 //create report
 const createReportRoute = async function (req, res){
     try{
-        const assigned_course_id = req.body.assigned_course_id;
+        const assigned_course_id = req.body.assigned_course_id; //change to course_id
         const report_date = req.body.report_date;
         const report_description = req.body.report_description;
         const newReport = new ReportsDto(assigned_course_id, report_date, report_description);

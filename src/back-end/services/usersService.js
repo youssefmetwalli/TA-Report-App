@@ -65,6 +65,8 @@ const db = require('./dbService');
   
             resolve({success: true, result: results});
             console.log(results);
+            console.log('wtf??');
+            console.log(password);
           });
       } catch (error) {
         console.error('Error checking login:', error.message);
