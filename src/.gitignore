@@ -30,3 +30,9 @@ node_modules
 .environment
 .env
 node_modules/
+build/
+ios/
+linux/
+macos/
+android/
+.dart_tool/
