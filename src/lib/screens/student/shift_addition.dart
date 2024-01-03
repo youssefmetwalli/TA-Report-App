@@ -20,7 +20,7 @@ class _ShiftAdditionState extends State<ShiftAddition> {
     try {
       final response = await http.post(
         Uri.parse(
-            'http://localhost:3000/courses/add'), // Replace with your API endpoint
+            'http://localhost:3000/shifts/add'), // Replace with your API endpoint
         body: {
           'date': shifts[0].dateController.text,
           'start_time': shifts[0].startTimeController.text,
