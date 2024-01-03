@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:ta_report_app/screens/login.dart';
 import 'package:ta_report_app/screens/student/course_input.dart';
 import 'package:ta_report_app/screens/student/report_form.dart';
+import 'package:ta_report_app/screens/student/shift_addition.dart';
 
 class StudentScreen extends StatefulWidget {
   const StudentScreen({super.key});
@@ -30,12 +31,19 @@ class _StudentScreenState extends State<StudentScreen> {
   final List<TextEditingController> _textFieldControllers =
       List.generate(6, (index) => TextEditingController());
 
+  void _addCourseToItemList(String academicYear, String month, String courseName, String courseId) {
+    setState(() {
+      itemList.add('$courseName $academicYear'); // Adjust this line as needed
+    });
+  }
   // Function to show the create report dialog
   void _showCreateReportDialog() {
     showDialog(
       context: context,
       builder: (BuildContext context) {
-        return const CourseInputDialog();
+        return CourseInputDialog(
+          onCourseAdded: _addCourseToItemList,
+        );
       },
     );
   }
@@ -105,7 +113,7 @@ class _StudentScreenState extends State<StudentScreen> {
                     onTap: () {
                       Navigator.of(context).push(
                         MaterialPageRoute(
-                          builder: (context) => const ReportForm(),
+                          builder: (context) => const ShiftAddition(),
                         ),
                       );
                     },
