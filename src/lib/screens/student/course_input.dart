@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:ta_report_app/screens/student/shift_addition.dart';
+import 'package:http/http.dart' as http;
 
 class CourseInputDialog extends StatefulWidget {
   final Function(String, String, String, String) onCourseAdded;
@@ -15,7 +16,7 @@ class CourseInputDialog extends StatefulWidget {
 class _CourseInputDialogState extends State<CourseInputDialog> {
   final TextEditingController academicYearController = TextEditingController();
   final TextEditingController monthController = TextEditingController();
-  final TextEditingController studentNameController = TextEditingController();
+  final TextEditingController statusController = TextEditingController();
   final TextEditingController studentIDController = TextEditingController();
   final TextEditingController courseNameController = TextEditingController();
   final TextEditingController instructorNameController =
@@ -24,6 +25,36 @@ class _CourseInputDialogState extends State<CourseInputDialog> {
   final TextEditingController workCategoryController = TextEditingController();
 
   final _formKey = GlobalKey<FormState>();
+
+  Future<void> addCourse() async {
+    try {
+      final response = await http.post(
+        Uri.parse(
+            'http://localhost:3000/courses/add'), // Replace with your API endpoint
+        body: {
+          'student_id': studentIDController.text,
+          'prof_id': instructorNameController.text,
+          'course_id': courseNameController.text,
+          'status': statusController,
+          'max_hours': maximumHoursController.text,
+          'course_name': courseNameController.text,
+          'month': monthController.text,
+          'year': academicYearController.text,
+        },
+      );
+
+      if (response.statusCode == 200) {
+        // Course added successfully
+        print('Course added successfully');
+      } else {
+        // Handle errors
+        print('Failed to add course. Status code: ${response.statusCode}');
+      }
+    } catch (error) {
+      // Handle network errors or other exceptions
+      print('Error: $error');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -73,8 +104,8 @@ class _CourseInputDialogState extends State<CourseInputDialog> {
                   children: [
                     Expanded(
                       child: buildTextField(
-                        'Student Name',
-                        studentNameController,
+                        'Status',
+                        statusController,
                       ),
                     ),
                     const SizedBox(width: 16.0),
@@ -124,17 +155,17 @@ class _CourseInputDialogState extends State<CourseInputDialog> {
                 const SizedBox(height: 40.0),
                 ElevatedButton(
                   onPressed: () {
-                    
-                      // Handle registration logic
-                      if (_formKey.currentState!.validate()) {
-                        widget.onCourseAdded(
-                          academicYearController.text,
-                          monthController.text,
-                          courseNameController.text,
-                          studentIDController.text,
-                        );
-                        Navigator.of(context).pop();
-                      }
+                    // Handle registration logic
+                    if (_formKey.currentState!.validate()) {
+                      widget.onCourseAdded(
+                        academicYearController.text,
+                        monthController.text,
+                        courseNameController.text,
+                        studentIDController.text,
+                      );
+                      addCourse();
+                      Navigator.of(context).pop();
+                    }
                   },
                   style: ElevatedButton.styleFrom(
                     padding: const EdgeInsets.symmetric(
