@@ -32,6 +32,7 @@ class _LoginFormState extends State<LoginForm> {
   Future<void> handleLogin() async {
     if (_formKey.currentState!.validate()) {
       final response = await http.post(
+
         Uri.parse('http://localhost:3000/login'),
         headers: <String, String>{'Content-Type': 'application/json'},
         body:
@@ -51,7 +52,8 @@ class _LoginFormState extends State<LoginForm> {
           }
         } else {
           // ignore: avoid_print
-          print(data['error']);
+
+          print(data['Incorrect email or password']);
         }
       } else {
         // Handle other HTTP response codes
