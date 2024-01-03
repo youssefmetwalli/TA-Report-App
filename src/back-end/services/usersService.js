@@ -2,9 +2,8 @@
 const UsersDto = require('../dto/usersDto');
 const db = require('./dbService');
 
-class UsersManagerService {
   //add user
-  addUser(usersDto){
+  function addUser(usersDto){
     return new Promise((resolve, reject) =>{
       //check if the user already exists
       if (this.userExists(usersDto.ID, usersDto.username)){
@@ -26,45 +25,60 @@ class UsersManagerService {
         console.log({ message: 'User added successfully' });
         resolve(results)
         })
-      })
-  };
+      });
+  }
 
-  userExists(id, username) {
-    try {
+  // check if the user exists
+  function userExists(id, username) {
+    return new Promise((resolve, reject)=>{
+      try {
+        db.DB.query(
+          'SELECT * FROM Users WHERE ID = ?',
+          [id, username],
+          (error, results) => {
+            if (error) {
+              reject({success: false, message: `Internal server error, ${error}`});
+              return;
+            }
   
-      // check if the user exists
-      const [rows] = db.query(
-        'SELECT * FROM Users WHERE ID = ? OR username = ?',
-        [id, username]
-      );
-
-      // Return true if the user exists, false otherwise
-      return rows.length > 0;
-    } catch (error) {
-      console.error('Error checking user existence:', error.message);
-      return false; // Assume the user doesn't exist in case of an error
-    }
+            resolve({success: true, result: results});
+          });
+      } catch (error) {
+        console.error('Error checking user existence:', error.message);
+        reject({success: false, message: `Internal server error, ${error}`}); // Assume the user doesn't exist in case of an error
+      }
+    });
   }
 
   //TODO login auth
-  async loginUser(id, password) {
-    try {
-  
-      // Use a prepared statement to check if the user with the provided ID and password exists
-      const [rows] = await db.query(
-        'SELECT * FROM Users WHERE ID = ? AND password = ?',
-        [id, password]
-      );
-
-      // Return true if the user with the provided ID and password exists, false otherwise
-      return rows.length > 0;
-    } catch (error) {
-      console.error('Error checking login:', error.message);
-      return false; // Assume login fails in case of an error
-    }
+  function loginUser(id, password) {
+    return new Promise((resolve, reject)=>{
+      try {
+        // Use a prepared statement to check if the user with the provided ID and password exists
+        db.DB.query(
+          'SELECT * FROM Users WHERE ID = ? AND password = ?',
+          [id, password], (error, results) => {
+            if (error) {
+              reject({success: false, message: `Internal server error, ${error}`});
+              return;
+            }
+            if(results.length>0){
+              resolve({success: true, result: results});
+            }
+            else{
+              resolve({success: false, message: `Wrong Password or ID`});
+            }
+            console.log(results);
+          });
+      } catch (error) {
+        console.error('Error checking login:', error.message);
+        reject({success: false, message: `Internal server error, ${error}`}); 
+      }
+    })
+    
   }
-}
+
 
 //return student status given the student_id
 
-module.exports = UsersManagerService;
+module.exports = {loginUser, userExists};
