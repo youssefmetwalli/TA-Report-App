@@ -2,7 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:ta_report_app/screens/student/shift_addition.dart';
 
 class CourseInputDialog extends StatefulWidget {
-  const CourseInputDialog({super.key});
+  final Function(String, String, String, String) onCourseAdded;
+
+  const CourseInputDialog({Key? key, required this.onCourseAdded})
+      : super(key: key);
 
   @override
   // ignore: library_private_types_in_public_api
@@ -121,14 +124,17 @@ class _CourseInputDialogState extends State<CourseInputDialog> {
                 const SizedBox(height: 40.0),
                 ElevatedButton(
                   onPressed: () {
-                    // Handle registration logic
-                    if (_formKey.currentState!.validate()) {
-                      Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: (context) => const ShiftAddition(),
-                        ),
-                      );
-                    }
+                    
+                      // Handle registration logic
+                      if (_formKey.currentState!.validate()) {
+                        widget.onCourseAdded(
+                          academicYearController.text,
+                          monthController.text,
+                          courseNameController.text,
+                          studentIDController.text,
+                        );
+                        Navigator.of(context).pop();
+                      }
                   },
                   style: ElevatedButton.styleFrom(
                     padding: const EdgeInsets.symmetric(
