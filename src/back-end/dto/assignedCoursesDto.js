@@ -1,8 +1,9 @@
 // dto/assignedCoursesDto.js
 class AssignedCoursesDto {
-    constructor(studentId, courseId, profId, status, maxHours) {
+    constructor(studentId, courseId, courseName, profId, status, maxHours) {
       this.studentId = studentId;
       this.courseId = courseId;
+      this.courseName = courseName;
       this.profId = profId;
       this.status = status; //sa or ta
       this.maxHours = maxHours;

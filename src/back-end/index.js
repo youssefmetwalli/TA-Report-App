@@ -30,7 +30,7 @@ app.use((err, req, res, next) => {
 
 //USERS
 /********/
-app.use('/', loginRoute);
+app.use('/login', loginRoute);
 
 //get all assigned courses BY student_id and assign new course. report is created automatically
 //restrictions:  student_id, prof_id must already be known in the database tables

@@ -28,6 +28,32 @@ const assignedCoursesDto = require('../dto/assignedCoursesDto')
         });
     };
 
+    //get courses data by course id
+    function getAllCourses(course_id){
+    return new Promise(async (resolve, reject) =>{
+        try {
+            const query = 'SELECT * FROM Courses WHERE course_id = ?';
+            db.DB.query(query, course_id, (err, results) =>{
+                if (err){
+                  throw err;
+                }
+                resolve({
+                    success: true,
+                    result: results,
+                    message: "Successfully got all the courses"
+                });
+            });
+            
+        }
+        catch {
+            reject({
+                success: false,
+                message: "Failed to get all the course data assigned"
+            })
+        }
+    })
+}
+
     // add a new course of courseDTO type
     function addCourse(courseDto){
         return new Promise((resolve, reject) =>{
@@ -42,8 +68,8 @@ const assignedCoursesDto = require('../dto/assignedCoursesDto')
                 }
                 else{
                     console.log('adding the course...');
-                    const query = 'INSERT INTO Courses (Name, Month, Year, ID) VALUES (?, ?, ?, ?)';
-                    const params = [courseDto.name, courseDto.month, courseDto.year, courseDto.id];
+                    const query = 'INSERT INTO Courses (Name, ID) VALUES (?, ?)';
+                    const params = [courseDto.name, courseDto.id];
                     db.DB.query(query, params, (error, results) => {
                         if(error){
                             console.log("Error 2: Internal server adding a course. ", error);
@@ -85,16 +111,16 @@ const assignedCoursesDto = require('../dto/assignedCoursesDto')
         {
             console.log("the course is already assigned !")
              resolve({
-                success: (!course_assigned), // returns false if the course is already assigned
+                success: (course_assigned), // returns true even if the course is already assigned
                 result: results,
                 message: "the course is already assigned !"
             });
             return;
         }
 
-        const query = 'INSERT INTO AssignedCourses (student_id, course_id, prof_id, status, max_hours) VALUES (?, ?, ?, ?, ?)';
+        const query = 'INSERT INTO AssignedCourses (student_id, course_id, prof_id, status, max_hours, course_name) VALUES (?, ?, ?, ?, ?, ?)';
           
-        db.DB.query(query, [assignedCoursesDto.studentId, assignedCoursesDto.courseId, assignedCoursesDto.profId, assignedCoursesDto.status, assignedCoursesDto.maxHours], (error, results) => {
+        db.DB.query(query, [assignedCoursesDto.studentId, assignedCoursesDto.courseId, assignedCoursesDto.profId, assignedCoursesDto.status, assignedCoursesDto.maxHours, assignedCoursesDto.courseName], (error, results) => {
         if (error) {
             console.log("Error 3: Internal server assigning a course. ", error);
             reject({
@@ -215,9 +241,9 @@ function getAssignedCourseId(course_id){
     //create report
     function createReport(reportDto){
         return new Promise((resolve, reject) => {
-            const query = 'INSERT INTO Report (assigned_course_id, report_date, report_description) VALUES (?, ?, ?)';
+            const query = 'INSERT INTO Report (assigned_course_id, report_date, report_description, year, month) VALUES (?, ?, ?, ?, ?)';
 
-            db.DB.query(query, [reportDto.assignedCourseId, reportDto.reportDate, reportDto.reportDescription], (error, results) =>{
+            db.DB.query(query, [reportDto.assignedCourseId, reportDto.reportDate, reportDto.reportDescription, reportDto.year, reportDto.month], (error, results) =>{
                 if (error) {
                     console.log("Error4: Could not create a new report")
                     reject({success: false, result: error});
@@ -316,5 +342,6 @@ module.exports = {
     createReport,
     deleteReportById,
     getReportByReportId,
-    getReportsByAssignedId
+    getReportsByAssignedId,
+    getAllCourses
 };

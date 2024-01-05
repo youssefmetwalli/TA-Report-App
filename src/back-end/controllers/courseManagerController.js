@@ -46,8 +46,8 @@ const addCourseRoute = async function (req, res)  {
         const year = req.body.year
 
         //dto
-        const assignedCourse = new assignedCourseDto(student_id, course_id, prof_id, status, max_hours);
-        const newCourse = new courseDto(course_id, course_name, month, year);
+        const assignedCourse = new assignedCourseDto(student_id, course_id, course_name, prof_id, status, max_hours);
+        const newCourse = new courseDto(course_id, course_name);
 
         //add and assign new course
         const addingCourse = await addCourse(newCourse);
@@ -71,12 +71,13 @@ const addCourseRoute = async function (req, res)  {
             }
             // console.log(assigned_course_id);
             const date = new Date();
-            const newReport = new reportDto(assigned_course_id.result[0].ID, date, "new report")
+            const newReport = new reportDto(assigned_course_id.result[0].ID, date, "new report", year, month)
             const createNewReport = await createReport(newReport);
             if(!createNewReport.success){
                 res.status(500).json(createNewReport);
+                console.log(createNewReport);
             }
-            res.json(assigningCourse);
+            res.json(createNewReport);
         }
         else {
                 res.status(500).json(assigningCourse); // Adjust the status code as needed

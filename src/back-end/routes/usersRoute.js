@@ -4,7 +4,7 @@ const {
     loginRoute
 } = require('../controllers/usersManagerController')
 
-router.post('/login', loginRoute);
+router.post('', loginRoute);
 // router.get('/getall', getReportsByAssignedIdRoute);
 // router.get('/get', getReportByReportIdRoute);
 // router.delete('/delete', deleteReportRoute);
