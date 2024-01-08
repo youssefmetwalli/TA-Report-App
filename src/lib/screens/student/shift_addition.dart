@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:ta_report_app/screens/login.dart';
-
+import 'package:ta_report_app/screens/student/report_form.dart';
+import 'package:http/http.dart' as http;
 import 'components/break_time.dart';
 
 class ShiftAddition extends StatefulWidget {
@@ -14,6 +15,37 @@ class ShiftAddition extends StatefulWidget {
 class _ShiftAdditionState extends State<ShiftAddition> {
   List<ShiftData> shifts = [ShiftData()];
   int? selectedRowIndex;
+
+  Future<void> addShift() async {
+    try {
+      final response = await http.post(
+        Uri.parse(
+            'http://localhost:3000/shifts/add'), // Replace with your API endpoint
+        body: {
+          'date': shifts[0].dateController.text,
+          'start_time': shifts[0].startTimeController.text,
+          'end_time': shifts[0].endTimeController.text,
+          'break_time': shifts[0].breakTimeController.text,
+          'work_category_id': shifts[0].categoryController.text
+        },
+      );
+
+      if (response.statusCode == 200) {
+        // Course added successfully
+        print('Shift added successfully');
+      } else {
+        // Handle errors
+        print('Failed to shift. Status code: ${response.statusCode}');
+      }
+    } catch (error) {
+      // Handle network errors or other exceptions
+      print('Error: $error');
+    }
+  }
+
+  void addShiftFromRow() {
+    addShift();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -78,6 +110,7 @@ class _ShiftAdditionState extends State<ShiftAddition> {
                           });
                         },
                         isSelected: selectedRowIndex == index,
+                        addShiftCallback: addShift,
                       ),
                       const SizedBox(height: 16.0),
                     ],
@@ -89,9 +122,11 @@ class _ShiftAdditionState extends State<ShiftAddition> {
       ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () {
-          // Handle the 'Create Report' action here
-          // Add the desired functionality when the button is pressed
-          // For example, navigate to a new screen for creating a report
+          Navigator.of(context).push(
+            MaterialPageRoute(
+              builder: (context) => const ReportForm(),
+            ),
+          );
         },
         label: const Text('Create Report'),
       ),
@@ -104,12 +139,14 @@ class ShiftRow extends StatefulWidget {
   final ShiftData shiftData;
   final VoidCallback onAddEditShift;
   final bool isSelected;
+  final VoidCallback? addShiftCallback;
 
   const ShiftRow({
     Key? key,
     required this.shiftData,
     required this.onAddEditShift,
     required this.isSelected,
+    this.addShiftCallback,
   }) : super(key: key);
 
   @override
@@ -118,6 +155,14 @@ class ShiftRow extends StatefulWidget {
 
 class _ShiftRowState extends State<ShiftRow> {
   DateTime? selectedDate;
+
+  List<String> workCategories = [
+    'Assistance in lectures',
+    'Assistance in exam proctoring',
+    'Assistance in making teaching materials',
+    'Assistance in grading',
+    'Other',
+  ];
 
   bool validateTime() {
     bool isValid = true;
@@ -144,10 +189,71 @@ class _ShiftRowState extends State<ShiftRow> {
     return isValid;
   }
 
+  void _showWorkCategoryDropdown(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      builder: (BuildContext context) {
+        return Column(
+          mainAxisSize: MainAxisSize.min,
+          children: workCategories.map((String category) {
+            return ListTile(
+              title: Text(category),
+              onTap: () {
+                setState(() {
+                  widget.shiftData.categoryController.text = category;
+                });
+                Navigator.pop(context);
+              },
+            );
+          }).toList(),
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Row(
       children: [
+        Expanded(
+          child: InkWell(
+            onTap: () {
+              _showWorkCategoryDropdown(context);
+            },
+            child: InputDecorator(
+              decoration: const InputDecoration(
+                border: OutlineInputBorder(),
+                labelText: 'Work Category',
+              ),
+              child: DropdownButtonHideUnderline(
+                child: DropdownButton<String>(
+                  value: widget.shiftData.categoryController.text,
+                  isDense: true,
+                  isExpanded: true,
+                  style: const TextStyle(fontSize: 10),
+                  onChanged: (newValue) {
+                    setState(() {
+                      widget.shiftData.categoryController.text = newValue!;
+                    });
+                  },
+                  items: [
+                    'Assistance in lectures',
+                    'Assistance in exam proctoring',
+                    'Assistance in making teaching materials',
+                    'Assistance in grading',
+                    'Other',
+                  ].map<DropdownMenuItem<String>>((String value) {
+                    return DropdownMenuItem<String>(
+                      value: value,
+                      child: Text(value),
+                    );
+                  }).toList(),
+                ),
+              ),
+            ),
+          ),
+        ),
+        const SizedBox(width: 8.0),
         Expanded(
           child: TextFormField(
             decoration: const InputDecoration(
@@ -233,6 +339,10 @@ class _ShiftRowState extends State<ShiftRow> {
           onPressed: () {
             if (validateTime()) {
               widget.onAddEditShift();
+              if (widget.addShiftCallback != null) {
+                widget
+                    .addShiftCallback!(); // Call the callback function if not null
+              }
             } else {
               showDialog(
                 context: context,
@@ -263,6 +373,8 @@ class _ShiftRowState extends State<ShiftRow> {
 }
 
 class ShiftData {
+  final TextEditingController categoryController =
+      TextEditingController(text: 'Assistance in lectures');
   final TextEditingController dateController = TextEditingController();
   final TextEditingController breakTimeController = TextEditingController();
   final TextEditingController startTimeController = TextEditingController();
