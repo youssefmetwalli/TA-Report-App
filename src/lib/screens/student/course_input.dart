@@ -29,25 +29,24 @@ class _CourseInputDialogState extends State<CourseInputDialog> {
   Future<void> addCourse() async {
     try {
       final response = await http.post(
-        Uri.parse(
-            'http://localhost:3000/courses/add'), // Replace with your API endpoint
+        Uri.parse('http://localhost:3000/courses/add'),
         body: {
           'student_id': studentIDController.text,
           'prof_id': instructorNameController.text,
           'course_id': courseNameController.text,
-          'status': statusController,
+          'status': statusController.text, // Fix: Access the text property
           'max_hours': maximumHoursController.text,
           'course_name': courseNameController.text,
           'month': monthController.text,
           'year': academicYearController.text,
         },
       );
-
       if (response.statusCode == 200) {
         // Course added successfully
+        //TODO let the user know that the course is added successfully
         print('Course added successfully');
       } else {
-        // Handle errors
+        //TODO Handle errors
         print('Failed to add course. Status code: ${response.statusCode}');
       }
     } catch (error) {

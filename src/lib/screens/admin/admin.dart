@@ -32,14 +32,14 @@ class _AdminScreenState extends State<AdminScreen> {
       List.generate(6, (index) => TextEditingController());
 
   // Function to show the create report dialog
-  void _showCreateReportDialog() {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return const CourseInputDialog();
-      },
-    );
-  }
+  // void _showCreateReportDialog() {
+  //   showDialog(
+  //     context: context,
+  //     builder: (BuildContext context) {
+  //       return const CourseInputDialog();
+  //     },
+  //   );
+  // }
 
   @override
   Widget build(BuildContext context) {
