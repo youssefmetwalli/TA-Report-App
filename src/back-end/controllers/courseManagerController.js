@@ -51,18 +51,17 @@ const addCourseRoute = async function (req, res)  {
 
         //add and assign new course
         const addingCourse = await addCourse(newCourse);
-        const assigningCourse = await assignCourseToStudent(assignedCourse);
-        console.log(assigningCourse)
-
         if (addingCourse.success) {
             console.log("Added the new course in the course database");
         }
         else{
             console.log("This course is already added in the course database");
         }
+        const assigningCourse = await assignCourseToStudent(assignedCourse);
+        console.log(assigningCourse)
+
         if (assigningCourse.success) {
             //if assigned a course, create a new report
-
             //get assigned_course_id
             const assigned_course_id = await getAssignedCourseId(course_id)
             if(!assigned_course_id.success){
@@ -85,7 +84,8 @@ const addCourseRoute = async function (req, res)  {
 
     }
     catch{
-        console.error("internal server error");
+        res.status(400).json("Invalid input!");
+        console.error("May be invalid input, internal server error");
     }
 }
 

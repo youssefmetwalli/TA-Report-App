@@ -93,55 +93,69 @@ const assignedCoursesDto = require('../dto/assignedCoursesDto')
     function assignCourseToStudent(assignedCoursesDto) {
         return new Promise((resolve, reject) => {
 
-            //check if course already assigned
-            const check_query = 'SELECT COUNT(*) As count FROM AssignedCourses WHERE course_id = ? AND student_id = ?';
-                    const params = [assignedCoursesDto.courseId, assignedCoursesDto.studentId];
-                    db.DB.query(check_query, params,(error, results)=>{
-                        if (error){
-                            console.log("Internal serval error");
-                            reject(error);
-                            return;
-                        }
-                        console.log("the count is: "+ results[0].count)
-                        console.log(results);
-                        const assigned_count = results[0].count;
-                        const course_assigned = assigned_count>0;
-        
-         if(course_assigned) //stops func if assigned else inserts
-        {
-            console.log("the course is already assigned !")
-             resolve({
-                success: (course_assigned), // returns true even if the course is already assigned
-                result: results,
-                message: "the course is already assigned !"
-            });
-            return;
-        }
+            try
+            {
+                 //check if course already assigned
+                const check_query = 'SELECT COUNT(*) As count FROM AssignedCourses WHERE course_id = ? AND student_id = ?';
+                const params = [assignedCoursesDto.courseId, assignedCoursesDto.studentId];
+                        db.DB.query(check_query, params,(error, results)=>{
+                            if (error){
+                                console.log("check the validity of the input, Internal serval error");
+                                reject({
+                                    success: false,
+                                    message: "Internal Server Error",
+                                    error: error
+                                });
+                                return;
+                            }
+                            console.log("the count is: "+ results[0].count)
+                            console.log(results);
+                            const assigned_count = results[0].count;
+                            const course_assigned = assigned_count>0;
+            
+            if(course_assigned) //stops func if assigned else inserts
+            {
+                console.log("the course is already assigned !")
+                resolve({
+                    success: (course_assigned), // returns true even if the course is already assigned
+                    result: results,
+                    message: "the course is already assigned !"
+                });
+                return;
+            }
 
-        const query = 'INSERT INTO AssignedCourses (student_id, course_id, prof_id, status, max_hours, course_name) VALUES (?, ?, ?, ?, ?, ?)';
-          
-        db.DB.query(query, [assignedCoursesDto.studentId, assignedCoursesDto.courseId, assignedCoursesDto.profId, assignedCoursesDto.status, assignedCoursesDto.maxHours, assignedCoursesDto.courseName], (error, results) => {
-        if (error) {
-            console.log("Error 3: Internal server assigning a course. ", error);
+            const query = 'INSERT INTO AssignedCourses (student_id, course_id, prof_id, status, max_hours, course_name) VALUES (?, ?, ?, ?, ?, ?)';
+            
+            db.DB.query(query, [assignedCoursesDto.studentId, assignedCoursesDto.courseId, assignedCoursesDto.profId, assignedCoursesDto.status, assignedCoursesDto.maxHours, assignedCoursesDto.courseName], (error, results) => {
+            if (error) {
+                console.log("Error 3: Internal server error assigning a course: ", error);
+                reject({
+                    success: false,
+                    message: "Internal Server Error",
+                    error: error
+                });
+                return;
+            }
+            console.log('Course assigned to student successfully:', results);
+
+            //automatically creates a report
+            resolve(
+                {
+                    success: true,
+                    message: "course assigned!",
+                    result: results
+                }
+            );
+            });
+            });
+        }
+        catch(error){
             reject({
                 success: false,
                 message: "Internal Server Error",
                 error: error
-            });
-            return;
+            })
         }
-        console.log('Course assigned to student successfully:', results);
-
-        //automatically creates a report
-        resolve(
-            {
-                success: true,
-                message: "course assigned!",
-                result: results
-            }
-        );
-        });
-        });
         });
     }
 
@@ -228,6 +242,7 @@ function getAssignedCourseId(course_id){
             
         }
         catch {
+            console.log("check the validity of the input, Internal serval error");
             reject({
                 success: false,
                 message: "Failed to get the assigned_course_id"
