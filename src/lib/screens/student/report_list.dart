@@ -31,11 +31,13 @@ class _StudentScreenState extends State<StudentScreen> {
   final List<TextEditingController> _textFieldControllers =
       List.generate(6, (index) => TextEditingController());
 
-  void _addCourseToItemList(String academicYear, String month, String courseName, String courseId) {
+  void _addCourseToItemList(
+      String academicYear, String month, String courseName, String courseId) {
     setState(() {
       itemList.add('$courseName $academicYear'); // Adjust this line as needed
     });
   }
+
   // Function to show the create report dialog
   void _showCreateReportDialog() {
     showDialog(
@@ -160,7 +162,7 @@ class _StudentScreenState extends State<StudentScreen> {
           onPressed: () {
             _showCreateReportDialog();
           },
-          label: const Text('Create New Report'),
+          label: const Text('Add Course'),
         ),
         floatingActionButtonLocation: FloatingActionButtonLocation.endFloat);
   }
