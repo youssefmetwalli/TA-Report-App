@@ -33,6 +33,7 @@ node_modules/
 
 build/
 ios/
+.dart_tool/
 
 android/
 .dart_tool/
