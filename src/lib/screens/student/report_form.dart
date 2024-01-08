@@ -1,18 +1,47 @@
 import 'package:flutter/material.dart';
+import 'package:pdf/pdf.dart';
+import 'package:pdf/widgets.dart' as pdfWidgets;
+import 'package:path_provider/path_provider.dart' as path_provider;
+import 'dart:io';
 
 class ReportForm extends StatelessWidget {
   const ReportForm({Key? key}) : super(key: key);
 
+  Future<void> launchPDFExport() async {
+    final pdf = pdfWidgets.Document();
+
+    // Add content to the PDF document
+    pdf.addPage(
+      pdfWidgets.Page(
+        build: (context) {
+          return pdfWidgets.Center(
+            child: pdfWidgets.Text('Hello, this is a PDF export!'),
+          );
+        },
+      ),
+    );
+
+    // Get the directory for storing the PDF file
+    final directory = await path_provider.getApplicationDocumentsDirectory();
+    final path = '${directory.path}/ta_report.pdf';
+
+    // Save the PDF to a file
+    final file = File(path);
+    await file.writeAsBytes(await pdf.save());
+
+    print('PDF Exported: $path');
+  }
+
   @override
   Widget build(BuildContext context) {
     // ダミーのデータ
-    List<String> select = List<String>.generate(10, (index) => '');
-    List<String> companyName = List<String>.generate(10, (index) => '〇〇株式会社');
-    List<String> phoneNumber =
-        List<String>.generate(10, (index) => '098-000-0000');
-    List<String> fax = List<String>.generate(10, (index) => '098-000-0000');
-    List<String> address =
-        List<String>.generate(10, (index) => '埼玉県〇〇市〇〇1−1−1');
+    List<String> select =
+        List<String>.generate(10, (index) => 'Assistance in lectures');
+    List<String> companyName =
+        List<String>.generate(10, (index) => '2024-01-08');
+    List<String> phoneNumber = List<String>.generate(10, (index) => '9:00');
+    List<String> fax = List<String>.generate(10, (index) => '1:00');
+    List<String> address = List<String>.generate(10, (index) => '14:00');
 
     return Scaffold(
       appBar: AppBar(
@@ -42,7 +71,8 @@ class ReportForm extends StatelessWidget {
                   color: Colors.green,
                   padding: const EdgeInsets.all(8),
                   child: const Center(
-                      child: Text('選択', style: TextStyle(color: Colors.white))),
+                      child: Text('Work Category',
+                          style: TextStyle(color: Colors.white))),
                 ),
               ),
               TableCell(
@@ -51,7 +81,7 @@ class ReportForm extends StatelessWidget {
                   padding: const EdgeInsets.all(8),
                   child: const Center(
                       child:
-                          Text('会社名', style: TextStyle(color: Colors.white))),
+                          Text('Date', style: TextStyle(color: Colors.white))),
                 ),
               ),
               TableCell(
@@ -59,8 +89,8 @@ class ReportForm extends StatelessWidget {
                   color: Colors.green,
                   padding: const EdgeInsets.all(8),
                   child: const Center(
-                      child:
-                          Text('電話番号', style: TextStyle(color: Colors.white))),
+                      child: Text('Start Time',
+                          style: TextStyle(color: Colors.white))),
                 ),
               ),
               TableCell(
@@ -68,8 +98,8 @@ class ReportForm extends StatelessWidget {
                   color: Colors.green,
                   padding: const EdgeInsets.all(8),
                   child: const Center(
-                      child:
-                          Text('FAX番号', style: TextStyle(color: Colors.white))),
+                      child: Text('Break Time',
+                          style: TextStyle(color: Colors.white))),
                 ),
               ),
               TableCell(
@@ -77,7 +107,8 @@ class ReportForm extends StatelessWidget {
                   color: Colors.green,
                   padding: const EdgeInsets.all(8),
                   child: const Center(
-                      child: Text('住所', style: TextStyle(color: Colors.white))),
+                      child: Text('End Time',
+                          style: TextStyle(color: Colors.white))),
                 ),
               ),
             ],
@@ -135,6 +166,14 @@ class ReportForm extends StatelessWidget {
             ),
         ],
       ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          launchPDFExport();
+        },
+        child: Icon(Icons.picture_as_pdf),
+        backgroundColor: Colors.blue,
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
     );
   }
 }

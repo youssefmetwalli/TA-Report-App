@@ -367,6 +367,36 @@ class _ShiftRowState extends State<ShiftRow> {
           },
           child: Text(widget.isSelected ? 'Add Shift' : 'Edit Shift'),
         ),
+        const SizedBox(width: 8.0),
+        // Delete Shift Button
+        ElevatedButton(
+          onPressed: () {
+            showDialog(
+              context: context,
+              builder: (BuildContext context) {
+                return AlertDialog(
+                  title: const Text('Confirm Deletion'),
+                  content:
+                      const Text('Are you sure you want to delete this shift?'),
+                  actions: [
+                    TextButton(
+                      onPressed: () {},
+                      child: const Text('Yes'),
+                    ),
+                    TextButton(
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                      child: const Text('No'),
+                    ),
+                  ],
+                );
+              },
+            );
+          },
+          style: ElevatedButton.styleFrom(primary: Colors.red),
+          child: const Text('Delete Shift'),
+        ),
       ],
     );
   }
