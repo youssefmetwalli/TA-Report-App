@@ -162,7 +162,7 @@ class _StudentScreenState extends State<StudentScreen> {
           onPressed: () {
             _showCreateReportDialog();
           },
-          label: const Text('Create New Report'),
+          label: const Text('Add Course'),
         ),
         floatingActionButtonLocation: FloatingActionButtonLocation.endFloat);
   }

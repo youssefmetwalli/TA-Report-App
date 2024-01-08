@@ -124,19 +124,19 @@ const assignedCoursesDto = require('../dto/assignedCoursesDto')
                 return;
             }
 
-            const query = 'INSERT INTO AssignedCourses (student_id, course_id, prof_id, status, max_hours, course_name) VALUES (?, ?, ?, ?, ?, ?)';
-            
-            db.DB.query(query, [assignedCoursesDto.studentId, assignedCoursesDto.courseId, assignedCoursesDto.profId, assignedCoursesDto.status, assignedCoursesDto.maxHours, assignedCoursesDto.courseName], (error, results) => {
-            if (error) {
-                console.log("Error 3: Internal server error assigning a course: ", error);
-                reject({
-                    success: false,
-                    message: "Internal Server Error",
-                    error: error
-                });
-                return;
-            }
-            console.log('Course assigned to student successfully:', results);
+        const query = 'INSERT INTO AssignedCourses (student_id, course_id, prof_id, status, max_hours) VALUES (?, ?, ?, ?, ?)';
+          
+        db.DB.query(query, [assignedCoursesDto.studentId, assignedCoursesDto.courseId, assignedCoursesDto.profId, assignedCoursesDto.status, assignedCoursesDto.maxHours], (error, results) => {
+        if (error) {
+            console.log("Error 3: Internal server assigning a course. ", error);
+            reject({
+                success: false,
+                message: "Internal Server Error",
+                error: error
+            });
+            return;
+        }
+        console.log('Course assigned to student successfully:', results);
 
             //automatically creates a report
             resolve(
