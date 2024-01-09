@@ -6,13 +6,14 @@ class AdminForm extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // ダミーのデータ
-    List<String> select = List<String>.generate(10, (index) => '');
-    List<String> companyName = List<String>.generate(10, (index) => '〇〇株式会社');
-    List<String> phoneNumber =
-        List<String>.generate(10, (index) => '098-000-0000');
-    List<String> fax = List<String>.generate(10, (index) => '098-000-0000');
-    List<String> address =
-        List<String>.generate(10, (index) => '埼玉県〇〇市〇〇1−1−1');
+    List<String> select =
+        List<String>.generate(10, (index) => 'Assistance in lectures');
+    List<String> companyName =
+        List<String>.generate(10, (index) => '2024-01-08');
+    List<String> phoneNumber = List<String>.generate(10, (index) => '9:00');
+    List<String> fax = List<String>.generate(10, (index) => '1:00');
+    List<String> address = List<String>.generate(10, (index) => '14:00');
+    ;
 
     return Scaffold(
       appBar: AppBar(
@@ -42,7 +43,8 @@ class AdminForm extends StatelessWidget {
                   color: Colors.green,
                   padding: const EdgeInsets.all(8),
                   child: const Center(
-                      child: Text('選択', style: TextStyle(color: Colors.white))),
+                      child: Text('Work Category',
+                          style: TextStyle(color: Colors.white))),
                 ),
               ),
               TableCell(
@@ -51,7 +53,7 @@ class AdminForm extends StatelessWidget {
                   padding: const EdgeInsets.all(8),
                   child: const Center(
                       child:
-                          Text('会社名', style: TextStyle(color: Colors.white))),
+                          Text('Date', style: TextStyle(color: Colors.white))),
                 ),
               ),
               TableCell(
@@ -59,8 +61,8 @@ class AdminForm extends StatelessWidget {
                   color: Colors.green,
                   padding: const EdgeInsets.all(8),
                   child: const Center(
-                      child:
-                          Text('電話番号', style: TextStyle(color: Colors.white))),
+                      child: Text('Start Time',
+                          style: TextStyle(color: Colors.white))),
                 ),
               ),
               TableCell(
@@ -68,8 +70,8 @@ class AdminForm extends StatelessWidget {
                   color: Colors.green,
                   padding: const EdgeInsets.all(8),
                   child: const Center(
-                      child:
-                          Text('FAX番号', style: TextStyle(color: Colors.white))),
+                      child: Text('Break Time',
+                          style: TextStyle(color: Colors.white))),
                 ),
               ),
               TableCell(
@@ -77,7 +79,8 @@ class AdminForm extends StatelessWidget {
                   color: Colors.green,
                   padding: const EdgeInsets.all(8),
                   child: const Center(
-                      child: Text('住所', style: TextStyle(color: Colors.white))),
+                      child: Text('End Time',
+                          style: TextStyle(color: Colors.white))),
                 ),
               ),
             ],
