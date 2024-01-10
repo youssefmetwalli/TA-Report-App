@@ -83,9 +83,11 @@ const addCourseRoute = async function (req, res)  {
             if(!createNewReport.success){
                 console.log(createNewReport);
                 res.status(422).json(createNewReport);
-                
+
             }
+            else{
             res.json(createNewReport);
+            }
         }
         else {
                 console.log(assigningCourse); 
@@ -93,7 +95,7 @@ const addCourseRoute = async function (req, res)  {
 
     }
     catch{
-        // res.status(500).json("Internal server error!");
+        res.status(500).json("Internal server error!");
         console.error("May be invalid input, internal server error");
     }
 }

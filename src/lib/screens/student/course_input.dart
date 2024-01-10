@@ -33,7 +33,7 @@ class _CourseInputDialogState extends State<CourseInputDialog> {
   bool suggestionsVisible = false;
   Map<String, int> status = {"SA": 0, "TA": 1};
 
-  Future<void> addCourse() async {
+  Future<bool> addCourse() async {
     try {
       final response = await http.post(
         Uri.parse('http://localhost:3000/courses/add'),
@@ -41,39 +41,39 @@ class _CourseInputDialogState extends State<CourseInputDialog> {
           'student_id': UserData.userId,
           'prof_id': instructorNameController.text.toString(),
           'course_id': courseIDController.text.toString(),
-          'status': status[statusController.text
-              .toString()], // Fix: Access the text property
+          'status': status[statusController.text].toString(),
           'max_hours': maximumHoursController.text,
           'course_name': courseNameController.text.toString(),
           'month': monthController.text.toString(),
           'year': academicYearController.text.toString(),
         },
       );
+      final Map<String, dynamic> responseData = json.decode(response.body);
       if (response.statusCode == 200) {
-        //TODO let the user know that the course is added successfully
-        final Map<String, dynamic> responseData = json.decode(response.body);
-
         if (responseData['success'] == true && responseData['result'] != null) {
           final int? insertId = responseData['result']['insertId'];
 
           AddedReportData.reportId = insertId!;
-          print('Course added successfully');
+          return true;
         } else {
-          print('Failed to add course. Status code: ${response.statusCode}');
-          _showErrorDialog(
-              'Failed to add course. Status code: ${response.statusCode}');
+          print('Failed to add course. ${responseData['message']}');
+          _showErrorDialog('Failed to add course. ${responseData['message']}');
+          return false;
         }
       } else {
-        print('Failed to add course. Status code: ${response.statusCode}');
+        // ignore: avoid_print
+        print(
+            'Failed to add course. ${responseData['message']} \n Status code: ${response.statusCode}');
         _showErrorDialog(
-            'Failed to add course. Status code: ${response.statusCode}');
+            'Failed to add course. ${responseData['message']} \n Status code: ${response.statusCode}');
+        return false;
       }
     } catch (error) {
-      // Handle network errors or other exceptions
-      print("am hete");
-      print(AddedReportData.reportId);
+      // ignore: avoid_print
       print('Error: $error');
-      _showErrorDialog('Error: $error');
+      _showErrorDialog(
+          'Error: Invalid input. Please write the year and the month in numbers');
+      return false;
     }
   }
 
@@ -176,17 +176,20 @@ class _CourseInputDialogState extends State<CourseInputDialog> {
                 ),
                 const SizedBox(height: 40.0),
                 ElevatedButton(
-                  onPressed: () {
+                  onPressed: () async {
                     // Handle registration logic
                     if (_formKey.currentState!.validate()) {
-                      widget.onCourseAdded(
-                        academicYearController.text,
-                        monthController.text,
-                        courseNameController.text,
-                        courseIDController.text,
-                      );
-                      addCourse();
-                      Navigator.of(context).pop();
+                      if (await addCourse()) {
+                        widget.onCourseAdded(
+                          academicYearController.text,
+                          monthController.text,
+                          courseNameController.text,
+                          courseIDController.text,
+                        );
+
+                        // ignore: use_build_context_synchronously
+                        Navigator.of(context).pop();
+                      }
                     }
                   },
                   style: ElevatedButton.styleFrom(
@@ -215,33 +218,35 @@ class _CourseInputDialogState extends State<CourseInputDialog> {
 
   Widget buildAutocompleteTextField(String labelText,
       TextEditingController controller, List<String> suggestions) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          labelText,
-          style: const TextStyle(fontSize: 20.0),
-        ),
-        const SizedBox(height: 8.0),
-        DropdownButtonFormField<String>(
-          decoration: const InputDecoration(
-            border: OutlineInputBorder(),
-          ),
-          value: suggestions[0],
-          items: suggestions.map<DropdownMenuItem<String>>((String value) {
-            return DropdownMenuItem<String>(
-              value: value,
-              child: Text(value),
-            );
-          }).toList(),
-          onChanged: (String? newValue) {
-            setState(() {
-              controller.text = newValue!;
-            });
-          },
-        ),
-      ],
-    );
+    return Form(
+        autovalidateMode: AutovalidateMode.always,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              labelText,
+              style: const TextStyle(fontSize: 20.0),
+            ),
+            const SizedBox(height: 8.0),
+            DropdownButtonFormField<String>(
+              decoration: const InputDecoration(
+                border: OutlineInputBorder(),
+              ),
+              value: suggestions[0],
+              items: suggestions.map<DropdownMenuItem<String>>((String value) {
+                return DropdownMenuItem<String>(
+                  value: value,
+                  child: Text(value),
+                );
+              }).toList(),
+              onChanged: (String? newValue) {
+                setState(() {
+                  controller.text = newValue!;
+                });
+              },
+            ),
+          ],
+        ));
   }
 
   Widget buildTextField(String label, TextEditingController controller,
