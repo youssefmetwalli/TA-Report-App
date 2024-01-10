@@ -44,6 +44,7 @@ class _StudentScreenState extends State<StudentScreen> {
   String userId = UserData.userId;
   List<dynamic> itemList = [];
   // late List<MapEntry<int, String>> reportKeys;
+  Map<int, String> status = {0: "SA", 1: "TA"};
 
   @override
   void initState() {
@@ -127,8 +128,9 @@ class _StudentScreenState extends State<StudentScreen> {
   void _addCourseToItemList(
       String academicYear, String month, String courseName, String courseId) {
     setState(() {
-      itemList.add(
-          '$courseId $courseName $academicYear $month'); // Adjust this line as needed
+      stateNotifier.displayList[AddedReportData.reportId] =
+          '$courseId $courseName $month/$academicYear ';
+      stateNotifier.setReportKeys(AddedReportData.reportId);
     });
   }
 
@@ -275,6 +277,9 @@ class _StudentScreenState extends State<StudentScreen> {
 class StudentScreenStateNotifier extends ChangeNotifier {
   Map<int, String> displayList = {};
   List<int> reportKeys = [];
+  void setReportKeys(reportId) {
+    reportKeys.add(reportId);
+  }
 
   void generateDisplayList() {
     for (var item in CoursesData.reportsList) {
@@ -286,7 +291,7 @@ class StudentScreenStateNotifier extends ChangeNotifier {
 
         // Assigning the displayString to the report_id as the key in the map
         displayList[report['report_id']] = displayString;
-        reportKeys.add(report['report_id']);
+        setReportKeys(report['report_id']);
       }
     }
 

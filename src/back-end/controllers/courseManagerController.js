@@ -81,18 +81,19 @@ const addCourseRoute = async function (req, res)  {
             const newReport = new reportDto(assigned_course_id.result[0].ID, date, "new report", year, month)
             const createNewReport = await createReport(newReport);
             if(!createNewReport.success){
-                res.status(500).json(createNewReport);
                 console.log(createNewReport);
+                res.status(422).json(createNewReport);
+                
             }
             res.json(createNewReport);
         }
         else {
-                res.status(500).json(assigningCourse); // Adjust the status code as needed
+                console.log(assigningCourse); 
         }
 
     }
     catch{
-        res.status(500).json("Invalid input!");
+        // res.status(500).json("Internal server error!");
         console.error("May be invalid input, internal server error");
     }
 }
