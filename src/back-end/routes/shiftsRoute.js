@@ -10,7 +10,7 @@ const {
 
 router.post('/add', addShiftRoute);
 router.put('/update', updateShiftRoute);
-router.get('/all', getAllShiftsByReportIdRoute);
+router.post('/getall', getAllShiftsByReportIdRoute);
 router.delete('/delete', deleteShiftByShiftIdRoute);
 router.delete('/delete/all', deleteShiftsByReportIdRoute);
 

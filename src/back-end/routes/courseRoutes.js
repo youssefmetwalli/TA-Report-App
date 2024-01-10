@@ -7,7 +7,7 @@ const {
 } = require('../controllers/courseManagerController')
 
 router.post('/add', addCourseRoute);
-router.get('/getall', getAllAssignedCoursesRoute);
+router.post('/getall', getAllAssignedCoursesRoute);
 router.delete('/delete', deleteAssignedCourseByCourseIdRoute)
 
 module.exports = router;
