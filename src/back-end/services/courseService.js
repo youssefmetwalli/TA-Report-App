@@ -279,7 +279,7 @@ function getAssignedCourseId(course_id){
         {
             console.log("the report is already created !")
             resolve({
-                success: (monthly_report), // returns true even if the course is already assigned
+                success: (!monthly_report), // returns true even if the course is already assigned
                 result: results,
                 message: "This month's report is already created!"
             });

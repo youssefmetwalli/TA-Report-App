@@ -13,7 +13,6 @@ class AdminForm extends StatelessWidget {
     List<String> phoneNumber = List<String>.generate(10, (index) => '9:00');
     List<String> fax = List<String>.generate(10, (index) => '1:00');
     List<String> address = List<String>.generate(10, (index) => '14:00');
-    ;
 
     return Scaffold(
       appBar: AppBar(

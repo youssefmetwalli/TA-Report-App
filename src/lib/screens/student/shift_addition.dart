@@ -74,8 +74,7 @@ class _ShiftAdditionState extends State<ShiftAddition> {
   Future<void> addShift() async {
     try {
       final response = await http.post(
-        Uri.parse(
-            'http://localhost:3000/shifts/add'), // Replace with your API endpoint
+        Uri.parse('http://localhost:3000/shifts/add'),
         body: {
           'date': shifts[0].dateController.text,
           'start_time': shifts[0].startTimeController.text,
@@ -465,7 +464,7 @@ class _ShiftRowState extends State<ShiftRow> {
               },
             );
           },
-          style: ElevatedButton.styleFrom(primary: Colors.red),
+          style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
           child: const Text('Delete Shift'),
         ),
       ],

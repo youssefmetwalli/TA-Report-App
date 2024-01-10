@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:ta_report_app/screens/login.dart';
-import 'package:ta_report_app/screens/student/course_input.dart';
 
 import 'admin_form.dart';
 
