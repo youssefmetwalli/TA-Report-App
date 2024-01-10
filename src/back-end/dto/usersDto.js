@@ -5,7 +5,7 @@ class UsersDto {
       this.name = name;
       this.password = password;
       this.role = role;
-      this.status = status;
+      this.status = status; //JP:0 or Int:1
     }
   }
   

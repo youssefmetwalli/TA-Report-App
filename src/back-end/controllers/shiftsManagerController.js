@@ -16,7 +16,7 @@ const addShiftRoute = async function(req, res) {
         const break_time = req.body.break_time;
         const work_category = req.body.work_category;
         const report_id = req.body.report_id;
-        const student_status = req.body.student_status //Jp or Int
+        const student_status = req.body.student_status //Jp:1 or Int:0
         const date_format = new Date(date);
 
         const newShift = new shiftDto(date_format, start_time, end_time, break_time, 0, work_category,report_id);

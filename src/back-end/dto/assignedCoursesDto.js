@@ -5,7 +5,7 @@ class AssignedCoursesDto {
     this.courseId = courseId;
     this.courseName = courseName;
     this.profId = profId;
-    this.status = status; //sa or ta
+    this.status = status; //sa:0 or ta:1
     this.maxHours = maxHours;
     // this.id = id; //auto-generated in db
   }
