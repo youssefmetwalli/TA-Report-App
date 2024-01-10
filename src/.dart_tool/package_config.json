@@ -146,6 +146,12 @@
       "languageVersion": "2.12"
     },
     {
+      "name": "nested",
+      "rootUri": "file:///Users/merci/.pub-cache/hosted/pub.dev/nested-1.0.0",
+      "packageUri": "lib/",
+      "languageVersion": "2.12"
+    },
+    {
       "name": "path",
       "rootUri": "file:///Users/merci/.pub-cache/hosted/pub.dev/path-1.8.3",
       "packageUri": "lib/",
@@ -222,6 +228,12 @@
       "rootUri": "file:///Users/merci/.pub-cache/hosted/pub.dev/pointycastle-3.7.3",
       "packageUri": "lib/",
       "languageVersion": "2.14"
+    },
+    {
+      "name": "provider",
+      "rootUri": "file:///Users/merci/.pub-cache/hosted/pub.dev/provider-6.1.1",
+      "packageUri": "lib/",
+      "languageVersion": "2.12"
     },
     {
       "name": "qr",
@@ -308,7 +320,7 @@
       "languageVersion": "2.17"
     }
   ],
-  "generated": "2024-01-08T09:41:59.309684Z",
+  "generated": "2024-01-09T02:45:19.688385Z",
   "generator": "pub",
   "generatorVersion": "3.0.3"
 }

@@ -124,9 +124,9 @@ const assignedCoursesDto = require('../dto/assignedCoursesDto')
                 return;
             }
 
-        const query = 'INSERT INTO AssignedCourses (student_id, course_id, prof_id, status, max_hours) VALUES (?, ?, ?, ?, ?)';
+        const query = 'INSERT INTO AssignedCourses (student_id, course_id, prof_id, status, max_hours, course_name) VALUES (?, ?, ?, ?, ?, ?)';
           
-        db.DB.query(query, [assignedCoursesDto.studentId, assignedCoursesDto.courseId, assignedCoursesDto.profId, assignedCoursesDto.status, assignedCoursesDto.maxHours], (error, results) => {
+        db.DB.query(query, [assignedCoursesDto.studentId, assignedCoursesDto.courseId, assignedCoursesDto.profId, assignedCoursesDto.status, assignedCoursesDto.maxHours, assignedCoursesDto.courseName], (error, results) => {
         if (error) {
             console.log("Error 3: Internal server assigning a course. ", error);
             reject({
@@ -256,7 +256,37 @@ function getAssignedCourseId(course_id){
     //create report
     function createReport(reportDto){
         return new Promise((resolve, reject) => {
-            const query = 'INSERT INTO Report (assigned_course_id, report_date, report_description, year, month) VALUES (?, ?, ?, ?, ?)';
+
+            //check if month report already created
+            const check_query = 'SELECT COUNT(*) As count FROM report WHERE assigned_course_id = ? AND Month = ?';
+            const params = [reportDto.assignedCourseId, reportDto.month];
+                    db.DB.query(check_query, params,(error, results)=>{
+                        if (error){
+                            console.log("check the validity of the input, Internal serval error");
+                            reject({
+                                success: false,
+                                message: "Internal Server Error",
+                                error: error
+                            });
+                            return;
+                        }
+                        console.log("the count is: "+ results[0].count)
+                        console.log(results);
+                        const report_count = results[0].count;
+                        const monthly_report = report_count>0;
+        
+        if(monthly_report) //stops func if the month report is there
+        {
+            console.log("the report is already created !")
+            resolve({
+                success: (monthly_report), // returns true even if the course is already assigned
+                result: results,
+                message: "This month's report is already created!"
+            });
+            return;
+        }
+    
+            const query = 'INSERT INTO Report (assigned_course_id, report_date, report_description, Year, Month) VALUES (?, ?, ?, ?, ?)';
 
             db.DB.query(query, [reportDto.assignedCourseId, reportDto.reportDate, reportDto.reportDescription, reportDto.year, reportDto.month], (error, results) =>{
                 if (error) {
@@ -272,6 +302,7 @@ function getAssignedCourseId(course_id){
                 })
             });
         });
+    });
     }
 
     //delete report by report_id

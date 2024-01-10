@@ -8,8 +8,8 @@ const {
 } = require('../controllers/reportManagerController')
 
 router.post('/add', createReportRoute);
-router.get('/getall', getReportsByAssignedIdRoute);
-router.get('/get', getReportByReportIdRoute);
+router.post('/getall', getReportsByAssignedIdRoute);
+router.post('/get', getReportByReportIdRoute);
 router.delete('/delete', deleteReportRoute);
 
 module.exports = router;

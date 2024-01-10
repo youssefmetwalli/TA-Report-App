@@ -16,7 +16,7 @@ function addNewShift(shiftDto, student_status) {
       //checks
       const isShiftValid = await checkShiftsValidity(shiftDto, student_status);
       if(isShiftValid){
-        const query = 'INSERT INTO Shifts (date, start_time, end_time, break_time, working_hours, work_category_id, report_id) VALUES (?, ?, ?, ?, ?, ?, ?)';
+        const query = 'INSERT INTO Shifts (date, start_time, end_time, break_time, working_hours, work_category, report_id) VALUES (?, ?, ?, ?, ?, ?, ?)';
       
         db.DB.query(
           query,
@@ -26,7 +26,7 @@ function addNewShift(shiftDto, student_status) {
             shiftDto.endTime,
             shiftDto.breakTime,
             shiftDto.workingHours,
-            shiftDto.workCategoryId,
+            shiftDto.workCategory,
             shiftDto.reportId
           ],
           (error, results) => {

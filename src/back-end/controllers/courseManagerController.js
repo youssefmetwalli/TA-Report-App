@@ -14,9 +14,16 @@ const reportDto = require('../dto/reportsDto');
 //get all the assigned courses data for the student_id
 const getAllAssignedCoursesRoute = async function (req, res) {
     try {
-        // const { params } = req; // Assuming studentId is in the route parameters
-        const student_id  = req.body.student_id;
-        const result =  await getAllAssignedCourses(student_id);
+        const student_id = req.body.id;
+
+        if (!student_id) {
+            return res.status(400).json({
+                success: false,
+                message: "Missing 'id' in the request body",
+            });
+        }
+
+        const result = await getAllAssignedCourses(student_id);
 
         if (result.success) {
             res.json(result);
@@ -30,7 +37,8 @@ const getAllAssignedCoursesRoute = async function (req, res) {
             message: "Internal Server Error",
         });
     }
-}
+};
+
 
 //add a course and assign to a student
 const addCourseRoute = async function (req, res)  {
@@ -84,7 +92,7 @@ const addCourseRoute = async function (req, res)  {
 
     }
     catch{
-        res.status(400).json("Invalid input!");
+        res.status(500).json("Invalid input!");
         console.error("May be invalid input, internal server error");
     }
 }

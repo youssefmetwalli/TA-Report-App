@@ -34,7 +34,7 @@ class _CourseInputDialogState extends State<CourseInputDialog> {
         body: {
           'student_id': studentIDController.text,
           'prof_id': instructorNameController.text,
-          'course_id': courseNameController.text,
+          'course_id': courseIDController.text,
           'status': statusController.text, // Fix: Access the text property
           'max_hours': maximumHoursController.text,
           'course_name': courseNameController.text,
