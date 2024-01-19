@@ -3,38 +3,51 @@ import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pdfWidgets;
 import 'package:path_provider/path_provider.dart' as path_provider;
 import 'dart:io';
+import 'dart:typed_data';
+import 'package:screenshot/screenshot.dart';
 
 class ReportForm extends StatelessWidget {
-  const ReportForm({Key? key}) : super(key: key);
+  ReportForm({Key? key}) : super(key: key);
+
+  final ScreenshotController _screenshotController = ScreenshotController();
 
   Future<void> launchPDFExport() async {
-    final pdf = pdfWidgets.Document();
+    final Uint8List? screenshot = await _screenshotController.capture();
 
-    // Add content to the PDF document
-    pdf.addPage(
-      pdfWidgets.Page(
-        build: (context) {
-          return pdfWidgets.Center(
-            child: pdfWidgets.Text('Hello, this is a PDF export!'),
-          );
-        },
-      ),
-    );
+    if (screenshot != null) {
+      final pdf = pdfWidgets.Document();
 
-    // Get the directory for storing the PDF file
-    final directory = await path_provider.getApplicationDocumentsDirectory();
-    final path = '${directory.path}/ta_report.pdf';
+      // Add content to the PDF document
+      pdf.addPage(
+        pdfWidgets.Page(
+          build: (context) {
+            return pdfWidgets.Center(
+              child: pdfWidgets.Image(
+                pdfWidgets.MemoryImage(screenshot),
+                fit: pdfWidgets.BoxFit.contain,
+              ),
+            );
+          },
+        ),
+      );
 
-    // Save the PDF to a file
-    final file = File(path);
-    await file.writeAsBytes(await pdf.save());
+      // Get the directory for storing the PDF file
+      final directory = await path_provider.getApplicationDocumentsDirectory();
+      final path = '${directory.path}/ta_report.pdf';
 
-    print('PDF Exported: $path');
+      // Save the PDF to a file
+      final file = File(path);
+      await file.writeAsBytes(await pdf.save());
+
+      print('PDF Exported: $path');
+    } else {
+      print('Error: Unable to capture screenshot');
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    // ダミーのデータ
+    // Dummy data
     List<String> select =
         List<String>.generate(10, (index) => 'Assistance in lectures');
     List<String> companyName =
@@ -53,118 +66,121 @@ class ReportForm extends StatelessWidget {
               end: Alignment.bottomRight,
               colors: [
                 Color.fromARGB(255, 0, 128, 0),
-                Color.fromARGB(255, 0, 64, 0)
+                Color.fromARGB(255, 0, 64, 0),
               ],
             ),
           ),
         ),
       ),
-      body: // テーブルを配置
-          Table(
-        defaultVerticalAlignment: TableCellVerticalAlignment.middle,
-        children: [
-          // ヘッダー部分
-          TableRow(
+      body: Screenshot(
+        controller: _screenshotController,
+        child: SingleChildScrollView(
+          scrollDirection: Axis.vertical,
+          child: Table(
+            defaultVerticalAlignment: TableCellVerticalAlignment.middle,
             children: [
-              TableCell(
-                child: Container(
-                  color: Colors.green,
-                  padding: const EdgeInsets.all(8),
-                  child: const Center(
-                      child: Text('Work Category',
-                          style: TextStyle(color: Colors.white))),
-                ),
+              TableRow(
+                children: [
+                  TableCell(
+                    child: Container(
+                      color: Colors.green,
+                      padding: const EdgeInsets.all(8),
+                      child: const Center(
+                        child: Text('Work Category',
+                            style: TextStyle(color: Colors.white)),
+                      ),
+                    ),
+                  ),
+                  TableCell(
+                    child: Container(
+                      color: Colors.green,
+                      padding: const EdgeInsets.all(8),
+                      child: const Center(
+                        child:
+                            Text('Date', style: TextStyle(color: Colors.white)),
+                      ),
+                    ),
+                  ),
+                  TableCell(
+                    child: Container(
+                      color: Colors.green,
+                      padding: const EdgeInsets.all(8),
+                      child: const Center(
+                        child: Text('Start Time',
+                            style: TextStyle(color: Colors.white)),
+                      ),
+                    ),
+                  ),
+                  TableCell(
+                    child: Container(
+                      color: Colors.green,
+                      padding: const EdgeInsets.all(8),
+                      child: const Center(
+                        child: Text('Break Time',
+                            style: TextStyle(color: Colors.white)),
+                      ),
+                    ),
+                  ),
+                  TableCell(
+                    child: Container(
+                      color: Colors.green,
+                      padding: const EdgeInsets.all(8),
+                      child: const Center(
+                        child: Text('End Time',
+                            style: TextStyle(color: Colors.white)),
+                      ),
+                    ),
+                  ),
+                ],
               ),
-              TableCell(
-                child: Container(
-                  color: Colors.green,
-                  padding: const EdgeInsets.all(8),
-                  child: const Center(
-                      child:
-                          Text('Date', style: TextStyle(color: Colors.white))),
+              for (int i = 0; i < 10; i++)
+                TableRow(
+                  children: [
+                    TableCell(
+                      child: Container(
+                        constraints: const BoxConstraints(minHeight: 50),
+                        color: i % 2 == 0 ? Colors.white : Colors.grey[200],
+                        padding: const EdgeInsets.all(8),
+                        child: Center(child: Text(select[i])),
+                      ),
+                    ),
+                    TableCell(
+                      child: Container(
+                        constraints: const BoxConstraints(minHeight: 50),
+                        color: i % 2 == 0 ? Colors.white : Colors.grey[200],
+                        padding: const EdgeInsets.all(8),
+                        child: Center(child: Text(companyName[i])),
+                      ),
+                    ),
+                    TableCell(
+                      child: Container(
+                        constraints: const BoxConstraints(minHeight: 50),
+                        color: i % 2 == 0 ? Colors.white : Colors.grey[200],
+                        padding: const EdgeInsets.all(8),
+                        child: Center(child: Text(phoneNumber[i])),
+                      ),
+                    ),
+                    TableCell(
+                      child: Container(
+                        constraints: const BoxConstraints(minHeight: 50),
+                        color: i % 2 == 0 ? Colors.white : Colors.grey[200],
+                        padding: const EdgeInsets.all(8),
+                        child: Center(child: Text(fax[i])),
+                      ),
+                    ),
+                    TableCell(
+                      child: Container(
+                        constraints: const BoxConstraints(minHeight: 50),
+                        color: i % 2 == 0 ? Colors.white : Colors.grey[200],
+                        padding: const EdgeInsets.all(8),
+                        child: Center(child: Text(address[i])),
+                      ),
+                    ),
+                  ],
                 ),
-              ),
-              TableCell(
-                child: Container(
-                  color: Colors.green,
-                  padding: const EdgeInsets.all(8),
-                  child: const Center(
-                      child: Text('Start Time',
-                          style: TextStyle(color: Colors.white))),
-                ),
-              ),
-              TableCell(
-                child: Container(
-                  color: Colors.green,
-                  padding: const EdgeInsets.all(8),
-                  child: const Center(
-                      child: Text('Break Time',
-                          style: TextStyle(color: Colors.white))),
-                ),
-              ),
-              TableCell(
-                child: Container(
-                  color: Colors.green,
-                  padding: const EdgeInsets.all(8),
-                  child: const Center(
-                      child: Text('End Time',
-                          style: TextStyle(color: Colors.white))),
-                ),
-              ),
             ],
           ),
-          // データ部分
-          for (int i = 0; i < 10; i++)
-            TableRow(
-              children: [
-                TableCell(
-                  child: Container(
-                    constraints:
-                        const BoxConstraints(minHeight: 50), // ここで最小の高さを設定します。
-                    color: i % 2 == 0 ? Colors.white : Colors.grey[200],
-                    padding: const EdgeInsets.all(8),
-                    child: Center(child: Text(select[i])),
-                  ),
-                ),
-                TableCell(
-                  child: Container(
-                    constraints:
-                        const BoxConstraints(minHeight: 50), // ここで最小の高さを設定します。
-                    color: i % 2 == 0 ? Colors.white : Colors.grey[200],
-                    padding: const EdgeInsets.all(8),
-                    child: Center(child: Text(companyName[i])),
-                  ),
-                ),
-                TableCell(
-                  child: Container(
-                    constraints:
-                        const BoxConstraints(minHeight: 50), // ここで最小の高さを設定します。
-                    color: i % 2 == 0 ? Colors.white : Colors.grey[200],
-                    padding: const EdgeInsets.all(8),
-                    child: Center(child: Text(phoneNumber[i])),
-                  ),
-                ),
-                TableCell(
-                  child: Container(
-                    constraints:
-                        const BoxConstraints(minHeight: 50), // ここで最小の高さを設定します。
-                    color: i % 2 == 0 ? Colors.white : Colors.grey[200],
-                    padding: const EdgeInsets.all(8),
-                    child: Center(child: Text(fax[i])),
-                  ),
-                ),
-                TableCell(
-                  child: Container(
-                    constraints:
-                        const BoxConstraints(minHeight: 50), // ここで最小の高さを設定します。
-                    color: i % 2 == 0 ? Colors.white : Colors.grey[200],
-                    padding: const EdgeInsets.all(8),
-                    child: Center(child: Text(address[i])),
-                  ),
-                ),
-              ],
-            ),
-        ],
+        ),
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {

@@ -5,8 +5,6 @@ import 'package:ta_report_app/screens/login.dart';
 import 'package:ta_report_app/screens/student/report_list.dart';
 
 void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-
   runApp(const MyApp());
 }
 
@@ -19,7 +17,7 @@ class MyApp extends StatelessWidget {
       title: 'Your App Title',
       initialRoute: '/', // Set your initial route as needed
       routes: {
-        '/': (context) => const LoginForm(),
+        '/': (context) => const StudentScreen(),
         '/student_screen': (context) => const StudentScreen(),
         '/faculty_screen': (context) => const FacultyScreen(),
         '/admin_screen': (context) => const AdminScreen(),
