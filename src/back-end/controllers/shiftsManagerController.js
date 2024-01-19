@@ -14,12 +14,12 @@ const addShiftRoute = async function(req, res) {
         const start_time = req.body.start_time;
         const end_time = req.body.end_time;
         const break_time = req.body.break_time;
-        const work_category_id = req.body.updateSgiftwork_category_id;
+        const work_category = req.body.work_category;
         const report_id = req.body.report_id;
-        const student_status = req.body.student_status //Jp or Int
+        const student_status = req.body.student_status //Jp:1 or Int:0
         const date_format = new Date(date);
 
-        const newShift = new shiftDto(date_format, start_time, end_time, break_time, 0, work_category_id,report_id);
+        const newShift = new shiftDto(date_format, start_time, end_time, break_time, 0, work_category,report_id);
         const addingShift = await addNewShift(newShift, student_status);
         if(!addingShift.success){
             res.status(422).json(addingShift);
@@ -40,13 +40,13 @@ const updateShiftRoute = async function(req, res){
         const start_time = req.body.start_time;
         const end_time = req.body.end_time;
         const break_time = req.body.break_time;
-        const work_category_id = req.body.work_category_id;
+        const work_category = req.body.work_category;
         const report_id = req.body.report_id;
         const student_status = req.body.student_status; //Jp or Int
         const shift_id = req.body.shift_id;
         const date_format = new Date(date);
 
-        const newShift = new shiftDto(date_format, start_time, end_time, break_time, 0, work_category_id,report_id);
+        const newShift = new shiftDto(date_format, start_time, end_time, break_time, 0, work_category,report_id);
         const updatedShift = await updateShift(newShift, student_status, shift_id);
         if(!updatedShift.success){
             res.status(422).json(updatedShift);

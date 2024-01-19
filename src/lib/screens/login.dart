@@ -2,6 +2,14 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
+class UserData {
+  static String userId = '';
+
+  static void setUserId(String id) {
+    userId = id;
+  }
+}
+
 class LoginForm extends StatefulWidget {
   const LoginForm({super.key});
 
@@ -44,6 +52,8 @@ class _LoginFormState extends State<LoginForm> {
       if (response.statusCode == 200) {
         final Map<String, dynamic> data = json.decode(response.body);
         if (data['success']) {
+          UserData.setUserId(username);
+          print(UserData.userId);
           // Navigate based on user type
           if (userType == 'student') {
             Navigator.pushReplacementNamed(context, '/student_screen');
@@ -143,10 +153,9 @@ class _LoginFormState extends State<LoginForm> {
                   ElevatedButton(
                     onPressed: handleLogin,
                     style: ElevatedButton.styleFrom(
-                      primary: Colors.blue[500],
-                      onPrimary: Colors.white,
+                      foregroundColor: Colors.white, backgroundColor: Colors.blue[500],
                     ),
-                    child: Text('Login'),
+                    child: const Text('Login'),
                   ),
                 ],
               ),

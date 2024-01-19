@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pdfWidgets;
 import 'package:path_provider/path_provider.dart' as path_provider;
 import 'dart:io';
@@ -186,8 +185,8 @@ class ReportForm extends StatelessWidget {
         onPressed: () {
           launchPDFExport();
         },
-        child: Icon(Icons.picture_as_pdf),
         backgroundColor: Colors.blue,
+        child: const Icon(Icons.picture_as_pdf),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
     );

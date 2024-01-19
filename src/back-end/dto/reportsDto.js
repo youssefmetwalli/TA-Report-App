@@ -11,4 +11,3 @@ class ReportsDto {
   }
   
   module.exports = ReportsDto;
-  

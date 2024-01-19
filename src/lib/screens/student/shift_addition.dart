@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:ta_report_app/screens/login.dart';
@@ -5,28 +7,82 @@ import 'package:ta_report_app/screens/student/report_form.dart';
 import 'package:http/http.dart' as http;
 import 'components/break_time.dart';
 
+class CurrentReport {
+  static String reportId = '';
+
+  static void setReportId(String id) {
+    reportId = id;
+  }
+}
+
 class ShiftAddition extends StatefulWidget {
-  const ShiftAddition({Key? key}) : super(key: key);
+  final int reportId;
+  const ShiftAddition({Key? key, required this.reportId}) : super(key: key);
 
   @override
   State<ShiftAddition> createState() => _ShiftAdditionState();
 }
 
 class _ShiftAdditionState extends State<ShiftAddition> {
-  List<ShiftData> shifts = [ShiftData()];
+  List<ShiftData> shifts = [
+    ShiftData(
+      breakTimeController: TextEditingController(text: "00:00"),
+      categoryController: TextEditingController(text: ""),
+      dateController: TextEditingController(text: ""),
+      endTimeController: TextEditingController(text: ""),
+      startTimeController: TextEditingController(text: ""),
+    )
+  ];
   int? selectedRowIndex;
+
+  @override
+  void initState() {
+    super.initState();
+    CurrentReport.setReportId(widget.reportId.toString());
+    fetchShifts();
+  }
+
+  Future<void> fetchShifts() async {
+    try {
+      final response = await http.post(
+        Uri.parse('http://localhost:3000/shifts/getall'),
+        body: {'report_id': CurrentReport.reportId},
+      );
+
+      if (response.statusCode == 200) {
+        final Map<String, dynamic> data = json.decode(response.body);
+        if (data['success']) {
+          final List<dynamic> shiftDataList = data['result'];
+          setState(() {
+            shifts = shiftDataList
+                .map((shiftData) => ShiftData.fromJson(shiftData))
+                .toList();
+          });
+          print('Shifts fetched successfully');
+        } else {
+          print('Failed to fetch shifts. Message: ${data['message']}');
+        }
+      } else {
+        print('Failed to fetch shifts. Status code: ${response.statusCode}');
+      }
+    } catch (error) {
+      // Handle network errors or other exceptions
+      print('Error: $error');
+    }
+  }
 
   Future<void> addShift() async {
     try {
       final response = await http.post(
-        Uri.parse(
-            'http://localhost:3000/shifts/add'), // Replace with your API endpoint
+        Uri.parse('http://localhost:3000/shifts/add'),
         body: {
           'date': shifts[0].dateController.text,
           'start_time': shifts[0].startTimeController.text,
           'end_time': shifts[0].endTimeController.text,
           'break_time': shifts[0].breakTimeController.text,
-          'work_category_id': shifts[0].categoryController.text
+          'work_category': shifts[0].categoryController.text,
+          'report_id': CurrentReport.reportId,
+          'student_status': 0
         },
       );
 
@@ -102,7 +158,20 @@ class _ShiftAdditionState extends State<ShiftAddition> {
                         onAddEditShift: () {
                           setState(() {
                             if (!shifts[index].isEditMode) {
-                              shifts.insert(index, ShiftData());
+                              shifts.insert(
+                                  index,
+                                  ShiftData(
+                                    breakTimeController:
+                                        TextEditingController(text: "00:00"),
+                                    categoryController: TextEditingController(
+                                        text: 'Assistance in lectures'),
+                                    dateController:
+                                        TextEditingController(text: ""),
+                                    endTimeController:
+                                        TextEditingController(text: ""),
+                                    startTimeController:
+                                        TextEditingController(text: ""),
+                                  ));
                             }
                             shifts[index].isEditMode =
                                 !shifts[index].isEditMode;
@@ -237,36 +306,37 @@ class _ShiftRowState extends State<ShiftRow> {
             onTap: () {
               _showWorkCategoryDropdown(context);
             },
-            child: InputDecorator(
-              decoration: const InputDecoration(
+            child: const InputDecorator(
+              decoration: InputDecoration(
                 border: OutlineInputBorder(),
                 labelText: 'Work Category',
               ),
-              child: DropdownButtonHideUnderline(
-                child: DropdownButton<String>(
-                  value: widget.shiftData.categoryController.text,
-                  isDense: true,
-                  isExpanded: true,
-                  style: const TextStyle(fontSize: 10),
-                  onChanged: (newValue) {
-                    setState(() {
-                      widget.shiftData.categoryController.text = newValue!;
-                    });
-                  },
-                  items: [
-                    'Assistance in lectures',
-                    'Assistance in exam proctoring',
-                    'Assistance in making teaching materials',
-                    'Assistance in grading',
-                    'Other',
-                  ].map<DropdownMenuItem<String>>((String value) {
-                    return DropdownMenuItem<String>(
-                      value: value,
-                      child: Text(value),
-                    );
-                  }).toList(),
-                ),
-              ),
+
+              // child: DropdownButtonHideUnderline(
+              //   child: DropdownButton<String>(
+              //     value: widget.shiftData.categoryController.text,
+              //     isDense: true,
+              //     isExpanded: true,
+              //     style: const TextStyle(fontSize: 10),
+              //     onChanged: (newValue) {
+              //       setState(() {
+              //         widget.shiftData.categoryController.text = newValue!;
+              //       });
+              //     },
+              //     items: [
+              //       'Assistance in lectures',
+              //       'Assistance in exam proctoring',
+              //       'Assistance in making teaching materials',
+              //       'Assistance in grading',
+              //       'Other',
+              //     ].map<DropdownMenuItem<String>>((String value) {
+              //       return DropdownMenuItem<String>(
+              //         value: value,
+              //         child: Text(value),
+              //       );
+              //     }).toList(),
+              //   ),
+              // ),
             ),
           ),
         ),
@@ -417,7 +487,7 @@ class _ShiftRowState extends State<ShiftRow> {
               },
             );
           },
-          style: ElevatedButton.styleFrom(primary: Colors.red),
+          style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
           child: const Text('Delete Shift'),
         ),
       ],
@@ -426,11 +496,55 @@ class _ShiftRowState extends State<ShiftRow> {
 }
 
 class ShiftData {
-  final TextEditingController categoryController =
-      TextEditingController(text: 'Assistance in lectures');
-  final TextEditingController dateController = TextEditingController();
-  final TextEditingController breakTimeController = TextEditingController();
-  final TextEditingController startTimeController = TextEditingController();
-  final TextEditingController endTimeController = TextEditingController();
+  late final int? id;
+  late final TextEditingController categoryController;
+  late final TextEditingController dateController;
+  late final TextEditingController breakTimeController;
+  late final TextEditingController startTimeController;
+  late final TextEditingController endTimeController;
   bool isEditMode = false;
+  late final double? workingHours;
+  late final int? reportId;
+
+  ShiftData({
+    this.id,
+    required this.categoryController,
+    required this.dateController,
+    required this.breakTimeController,
+    required this.startTimeController,
+    required this.endTimeController,
+    this.workingHours,
+    this.reportId,
+    this.isEditMode = false,
+  });
+
+  ShiftData.fromJson(Map<String, dynamic> json)
+      : id = json['ID'],
+        categoryController = TextEditingController(
+          text: json['work_category'] != null
+              ? json['work_category'].toString()
+              : 'Assistance in lectures',
+        ),
+        dateController = TextEditingController(text: json['date'] ?? ''),
+        breakTimeController =
+            TextEditingController(text: json['break_time'] ?? ''),
+        startTimeController =
+            TextEditingController(text: json['start_time'] ?? ''),
+        endTimeController = TextEditingController(text: json['end_time'] ?? ''),
+        workingHours = json['working_hours']?.toDouble(),
+        reportId = json['report_id'];
+
+  Map<String, dynamic> toJson() {
+    return {
+      'ID': id,
+      'work_category':
+          categoryController.text.isNotEmpty ? categoryController.text : null,
+      'date': dateController.text,
+      'break_time': breakTimeController.text,
+      'start_time': startTimeController.text,
+      'end_time': endTimeController.text,
+      'working_hours': workingHours,
+      'report_id': reportId,
+    };
+  }
 }

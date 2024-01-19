@@ -14,6 +14,7 @@ const loginRoute = async function (req, res){
         }
         else{
             res.status(401).json(loggingIn); //wrong credentials
+            console.log("wrong credentials");
         }
     }
     catch(error){

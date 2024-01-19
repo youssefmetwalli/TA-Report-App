@@ -14,9 +14,16 @@ const reportDto = require('../dto/reportsDto');
 //get all the assigned courses data for the student_id
 const getAllAssignedCoursesRoute = async function (req, res) {
     try {
-        // const { params } = req; // Assuming studentId is in the route parameters
-        const student_id  = req.body.student_id;
-        const result =  await getAllAssignedCourses(student_id);
+        const student_id = req.body.id;
+
+        if (!student_id) {
+            return res.status(400).json({
+                success: false,
+                message: "Missing 'id' in the request body",
+            });
+        }
+
+        const result = await getAllAssignedCourses(student_id);
 
         if (result.success) {
             res.json(result);
@@ -30,7 +37,8 @@ const getAllAssignedCoursesRoute = async function (req, res) {
             message: "Internal Server Error",
         });
     }
-}
+};
+
 
 //add a course and assign to a student
 const addCourseRoute = async function (req, res)  {
@@ -51,18 +59,17 @@ const addCourseRoute = async function (req, res)  {
 
         //add and assign new course
         const addingCourse = await addCourse(newCourse);
-        const assigningCourse = await assignCourseToStudent(assignedCourse);
-        console.log(assigningCourse)
-
         if (addingCourse.success) {
             console.log("Added the new course in the course database");
         }
         else{
             console.log("This course is already added in the course database");
         }
+        const assigningCourse = await assignCourseToStudent(assignedCourse);
+        console.log(assigningCourse)
+
         if (assigningCourse.success) {
             //if assigned a course, create a new report
-
             //get assigned_course_id
             const assigned_course_id = await getAssignedCourseId(course_id)
             if(!assigned_course_id.success){
@@ -74,18 +81,22 @@ const addCourseRoute = async function (req, res)  {
             const newReport = new reportDto(assigned_course_id.result[0].ID, date, "new report", year, month)
             const createNewReport = await createReport(newReport);
             if(!createNewReport.success){
-                res.status(500).json(createNewReport);
                 console.log(createNewReport);
+                res.status(422).json(createNewReport);
+
             }
+            else{
             res.json(createNewReport);
+            }
         }
         else {
-                res.status(500).json(assigningCourse); // Adjust the status code as needed
+                console.log(assigningCourse); 
         }
 
     }
     catch{
-        console.error("internal server error");
+        res.status(500).json("Internal server error!");
+        console.error("May be invalid input, internal server error");
     }
 }
 

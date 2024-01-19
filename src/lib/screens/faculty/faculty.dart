@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:ta_report_app/screens/faculty/faculty_form.dart';
 import 'package:ta_report_app/screens/login.dart';
-import 'package:ta_report_app/screens/student/course_input.dart';
 import 'package:ta_report_app/screens/student/report_form.dart';
 
 class FacultyScreen extends StatefulWidget {
