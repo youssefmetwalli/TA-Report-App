@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:ta_report_app/screens/admin/admin_form.dart';
+import 'package:ta_report_app/screens/faculty/faculty_form.dart';
 import 'package:ta_report_app/screens/login.dart';
-
-import 'admin_form.dart';
 
 class AdminScreen extends StatefulWidget {
   const AdminScreen({super.key});
@@ -26,25 +26,17 @@ class _AdminScreenState extends State<AdminScreen> {
     'Notification 3',
   ];
 
+  List<bool> approvalStatus = List.generate(4, (index) => false);
+
   // Controllers for text form fields in the dialog
   final List<TextEditingController> _textFieldControllers =
       List.generate(6, (index) => TextEditingController());
-
-  // Function to show the create report dialog
-  // void _showCreateReportDialog() {
-  //   showDialog(
-  //     context: context,
-  //     builder: (BuildContext context) {
-  //       return const CourseInputDialog();
-  //     },
-  //   );
-  // }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Faculty Screen'),
+        title: const Text('Admin Screen'),
         actions: [
           IconButton(
             icon: const Icon(Icons.exit_to_app),
@@ -64,7 +56,7 @@ class _AdminScreenState extends State<AdminScreen> {
               end: Alignment.bottomRight,
               colors: [
                 Color.fromARGB(255, 93, 179, 255),
-                Color.fromARGB(255, 151, 167, 239)
+                Color.fromARGB(255, 151, 167, 239),
               ],
             ),
           ),
@@ -91,7 +83,9 @@ class _AdminScreenState extends State<AdminScreen> {
             itemBuilder: (context, index) {
               return Container(
                 decoration: BoxDecoration(
-                  color: Colors.white,
+                  color: isItemApproved(index)
+                      ? const Color.fromARGB(255, 178, 218, 131)
+                      : Colors.white,
                   border: Border.all(
                     color: Colors.black,
                     width: 1.0,
@@ -105,7 +99,12 @@ class _AdminScreenState extends State<AdminScreen> {
                   onTap: () {
                     Navigator.of(context).push(
                       MaterialPageRoute(
-                        builder: (context) => const AdminForm(),
+                        builder: (context) => AdminForm(
+                          item: itemList[index],
+                          onApprovalStatusChanged: (status) {
+                            _updateApprovalStatus(index, status);
+                          },
+                        ),
                       ),
                     );
                   },
@@ -149,12 +148,15 @@ class _AdminScreenState extends State<AdminScreen> {
         ),
       ),
     );
-    // floatingActionButton: FloatingActionButton.extended(
-    //   onPressed: () {
-    //     _showCreateReportDialog();
-    //   },
-    //   label: const Text('Create New Report'),
-    // ),
-    // floatingActionButtonLocation: FloatingActionButtonLocation.endFloat);
+  }
+
+  bool isItemApproved(int index) {
+    return approvalStatus[index];
+  }
+
+  void _updateApprovalStatus(int index, bool status) {
+    setState(() {
+      approvalStatus[index] = status;
+    });
   }
 }

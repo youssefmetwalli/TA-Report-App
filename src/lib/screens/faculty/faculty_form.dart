@@ -1,7 +1,18 @@
 import 'package:flutter/material.dart';
 
-class FacultyForm extends StatelessWidget {
-  const FacultyForm({Key? key}) : super(key: key);
+class FacultyForm extends StatefulWidget {
+  const FacultyForm(
+      {Key? key, required this.item, required this.onApprovalStatusChanged})
+      : super(key: key);
+  final String item;
+  final Function(bool) onApprovalStatusChanged;
+
+  @override
+  _FacultyFormState createState() => _FacultyFormState();
+}
+
+class _FacultyFormState extends State<FacultyForm> {
+  bool isApproved = false;
 
   @override
   Widget build(BuildContext context) {
@@ -29,6 +40,21 @@ class FacultyForm extends StatelessWidget {
             ),
           ),
         ),
+        actions: [
+          ElevatedButton(
+              onPressed: () {
+                setState(() {
+                  isApproved = true;
+                });
+                widget.onApprovalStatusChanged(isApproved);
+                Navigator.of(context).pop();
+              },
+              child: const Text('Approve')),
+          const SizedBox(
+            width: 10,
+          ),
+          ElevatedButton(onPressed: () {}, child: const Text('Lock'))
+        ],
       ),
       body: // テーブルを配置
           Table(
