@@ -178,6 +178,13 @@ class _ShiftAdditionState extends State<ShiftAddition> {
                             selectedRowIndex = index;
                           });
                         },
+                        onDeleteShift: () {
+                          setState(() {
+                            shifts.removeAt(index);
+                            selectedRowIndex =
+                                null; // Reset the selected row index
+                          });
+                        },
                         isSelected: selectedRowIndex == index,
                         addShiftCallback: addShift,
                       ),
@@ -193,7 +200,7 @@ class _ShiftAdditionState extends State<ShiftAddition> {
         onPressed: () {
           Navigator.of(context).push(
             MaterialPageRoute(
-              builder: (context) => const ReportForm(),
+              builder: (context) => ReportForm(),
             ),
           );
         },
@@ -209,11 +216,13 @@ class ShiftRow extends StatefulWidget {
   final VoidCallback onAddEditShift;
   final bool isSelected;
   final VoidCallback? addShiftCallback;
+  final VoidCallback onDeleteShift;
 
   const ShiftRow({
     Key? key,
     required this.shiftData,
     required this.onAddEditShift,
+    required this.onDeleteShift,
     required this.isSelected,
     this.addShiftCallback,
   }) : super(key: key);
@@ -278,6 +287,14 @@ class _ShiftRowState extends State<ShiftRow> {
         );
       },
     );
+  }
+
+  void _onDeleteShift() {
+    // Remove the shift from the list
+    if (widget.addShiftCallback != null) {
+      widget.addShiftCallback!(); // Call the callback function if not null
+    }
+    widget.onDeleteShift(); // Call the onDeleteShift callback
   }
 
   @override
@@ -450,7 +467,13 @@ class _ShiftRowState extends State<ShiftRow> {
                       const Text('Are you sure you want to delete this shift?'),
                   actions: [
                     TextButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        // Close the confirmation dialog
+                        Navigator.of(context).pop();
+
+                        // Call the method to delete the shift
+                        widget.onDeleteShift();
+                      },
                       child: const Text('Yes'),
                     ),
                     TextButton(

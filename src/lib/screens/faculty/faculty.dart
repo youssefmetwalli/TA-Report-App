@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:ta_report_app/screens/faculty/faculty_form.dart';
 import 'package:ta_report_app/screens/login.dart';
-import 'package:ta_report_app/screens/student/report_form.dart';
 
 class FacultyScreen extends StatefulWidget {
   const FacultyScreen({super.key});
@@ -25,19 +25,11 @@ class _FacultyScreenState extends State<FacultyScreen> {
     'Notification 3',
   ];
 
+  List<bool> approvalStatus = List.generate(4, (index) => false);
+
   // Controllers for text form fields in the dialog
   final List<TextEditingController> _textFieldControllers =
       List.generate(6, (index) => TextEditingController());
-
-  // Function to show the create report dialog
-  // void _showCreateReportDialog() {
-  //   showDialog(
-  //     context: context,
-  //     builder: (BuildContext context) {
-  //       return const CourseInputDialog();
-  //     },
-  //   );
-  // }
 
   @override
   Widget build(BuildContext context) {
@@ -63,7 +55,7 @@ class _FacultyScreenState extends State<FacultyScreen> {
               end: Alignment.bottomRight,
               colors: [
                 Color.fromARGB(255, 93, 179, 255),
-                Color.fromARGB(255, 151, 167, 239)
+                Color.fromARGB(255, 151, 167, 239),
               ],
             ),
           ),
@@ -90,7 +82,9 @@ class _FacultyScreenState extends State<FacultyScreen> {
             itemBuilder: (context, index) {
               return Container(
                 decoration: BoxDecoration(
-                  color: Colors.white,
+                  color: isItemApproved(index)
+                      ? const Color.fromARGB(255, 178, 218, 131)
+                      : Colors.white,
                   border: Border.all(
                     color: Colors.black,
                     width: 1.0,
@@ -104,7 +98,12 @@ class _FacultyScreenState extends State<FacultyScreen> {
                   onTap: () {
                     Navigator.of(context).push(
                       MaterialPageRoute(
-                        builder: (context) => const ReportForm(),
+                        builder: (context) => FacultyForm(
+                          item: itemList[index],
+                          onApprovalStatusChanged: (status) {
+                            _updateApprovalStatus(index, status);
+                          },
+                        ),
                       ),
                     );
                   },
@@ -148,12 +147,15 @@ class _FacultyScreenState extends State<FacultyScreen> {
         ),
       ),
     );
-    // floatingActionButton: FloatingActionButton.extended(
-    //   onPressed: () {
-    //     _showCreateReportDialog();
-    //   },
-    //   label: const Text('Create New Report'),
-    // ),
-    // floatingActionButtonLocation: FloatingActionButtonLocation.endFloat);
+  }
+
+  bool isItemApproved(int index) {
+    return approvalStatus[index];
+  }
+
+  void _updateApprovalStatus(int index, bool status) {
+    setState(() {
+      approvalStatus[index] = status;
+    });
   }
 }
