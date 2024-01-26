@@ -43,7 +43,6 @@ class _StudentScreenState extends State<StudentScreen> {
   late StudentScreenStateNotifier stateNotifier;
   String userId = UserData.userId;
   List<dynamic> itemList = [];
-  // late List<MapEntry<int, String>> reportKeys;
   Map<int, String> status = {0: "SA", 1: "TA"};
 
   @override
@@ -78,6 +77,7 @@ class _StudentScreenState extends State<StudentScreen> {
         // After fetching all reports, trigger a rebuild of the UI
         stateNotifier.generateDisplayList();
         // Notify listeners to rebuild widgets using this data
+        // ignore: invalid_use_of_protected_member, invalid_use_of_visible_for_testing_member
         stateNotifier.notifyListeners();
         // reportKeys = stateNotifier.displayList.entries.toList();
         setState(() {});
@@ -122,6 +122,7 @@ class _StudentScreenState extends State<StudentScreen> {
   ];
 
   // Controllers for text form fields in the dialog
+  // ignore: unused_field
   final List<TextEditingController> _textFieldControllers =
       List.generate(6, (index) => TextEditingController());
 
@@ -217,8 +218,10 @@ class _StudentScreenState extends State<StudentScreen> {
                             Navigator.of(context).push(
                               MaterialPageRoute(
                                 //TODO Shifts handling
-                                builder: (context) =>
-                                    ShiftAddition(reportId: key),
+                                builder: (context) => ShiftAddition(
+                                  reportId: key,
+                                  reportTitle: notifier.displayList[key]!,
+                                ),
                               ),
                             );
                           },
