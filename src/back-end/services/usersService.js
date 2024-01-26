@@ -29,19 +29,19 @@ const db = require('./dbService');
   }
 
   // check if the user exists
-  function userExists(id, username) {
+  function userExists(id) {
     return new Promise((resolve, reject)=>{
       try {
         db.DB.query(
           'SELECT * FROM Users WHERE ID = ?',
-          [id, username],
+          id,
           (error, results) => {
             if (error) {
               reject({success: false, message: `Internal server error, ${error}`});
               return;
             }
   
-            resolve({success: true, result: results});
+            resolve({success: true, result: results[0].status});
           });
       } catch (error) {
         console.error('Error checking user existence:', error.message);
@@ -81,4 +81,4 @@ const db = require('./dbService');
 
 //return student status given the student_id
 
-module.exports = {loginUser, userExists};
+module.exports = {loginUser, userExists, addUser};

@@ -4,7 +4,7 @@ class UsersDto {
       this.id = id;
       this.name = name;
       this.password = password;
-      this.role = role;
+      this.role = role; //student, admin or faculty
       this.status = status; //JP:0 or Int:1
     }
   }

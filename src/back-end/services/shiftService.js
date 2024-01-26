@@ -14,8 +14,10 @@ function addNewShift(shiftDto, student_status) {
   return new Promise(async(resolve, reject) => {
     try{
       //checks
+      
       const isShiftValid = await checkShiftsValidity(shiftDto, student_status);
-      if(isShiftValid){
+      // console.log(isShiftValid);
+      if(isShiftValid.success){
         const query = 'INSERT INTO Shifts (date, start_time, end_time, break_time, working_hours, work_category, report_id) VALUES (?, ?, ?, ?, ?, ?, ?)';
       
         db.DB.query(
@@ -33,7 +35,9 @@ function addNewShift(shiftDto, student_status) {
             if (error) {
               reject({
                 success: false,
-                error: error
+                error: error,
+                message: `Error: ${error}`
+
               });
               return;
             }
@@ -97,13 +101,16 @@ function addNewShift(shiftDto, student_status) {
   //delete shift by shift id
   function deleteShiftByShiftId(shift_id) {
     return new Promise(async (resolve, reject) => {
+     
       const query = 'DELETE FROM Shifts WHERE ID = ?';
+      shift_id = parseInt(shift_id, 10);
     
       db.DB.query(
         query,
-        [shift_id],
+        shift_id,
         (error, results) => {
           if (error) {
+            console.log(`error: ${error}`);
             reject({success: false, message: `Internal server error, ${error}`});
             return;
           }
@@ -206,9 +213,9 @@ function getTotalWeekWorkHours(first_last_days){
           })
         }
         const total_week_work_hours= results[0].sum; //the sum before adding the current date working hours
-        console.log("am here")
-        console.log(total_week_work_hours)
-        console.log(results)
+        // console.log("am here")
+        console.log(total_week_work_hours);
+        // console.log(results)
         resolve({
           success: true,
           result: total_week_work_hours
@@ -227,8 +234,8 @@ function getTotalWeekWorkHours(first_last_days){
 
 // Convert time strings to minutes
 function timeToMinutes(time) {
-  console.log(time);
-  console.log(typeof time)
+//   console.log(time);
+//   console.log(typeof time)
   const [hours, minutes] = time.split(':').map(Number);
   return hours * 60 + minutes;
 }
@@ -248,60 +255,69 @@ function firstLastDaysOfWeekDates(today_date){
 function dailyHoursCheck(shiftDto){
   // new Promise((resolve, reject) =>{
     try{
-      if(shiftDto.breakTime == null){
+      if(shiftDto.breakTime == null || shiftDto.breakTime == ""){
       shiftDto.breakTime = "00:00";
     }
-  
+    if (timeToMinutes(shiftDto.endTime)<timeToMinutes(shiftDto.startTime)){
+      console.log("endTime must be greater than start time");
+      return ({success: false, message: "The endTime must be greater than start time"});
+      // return false;
+    }
     shiftDto.workingHours = (timeToMinutes(shiftDto.endTime) - timeToMinutes(shiftDto.startTime) - timeToMinutes(shiftDto.breakTime))/60;
-    console.log(shiftDto.workingHours)
+    // console.log(shiftDto.workingHours)
   
     if(shiftDto.workingHours > MAX_DAY_HOURS){
       console.log("no more than 8 hours of daily work!!"); 
-      // reject ({success: false, message: "no more than 8 hours of daily work!!"});
-      return false;
+      return ({success: false, message: "More than 8 hours of daily work is not allowed!"});
+      // return false;
     }
-    console.log(timeToMinutes(shiftDto.breakTime));
+    // console.log(timeToMinutes(shiftDto.breakTime));
     if (shiftDto.workingHours > NEEDS_TO_BREAK_HOURS){
       if (timeToMinutes(shiftDto.breakTime)<60){
         console.log("needs a break!!"); 
-        // reject ({success: false, message: "you need at least 1 hour break"});
-        return false;
+        return ({success: false, message: "You need at least 1 hour break"});
+        // return false;
       }
     }
     // resolve ({success: true, working_hours: shiftDto.workingHours});
-    return true;
+    return ({success: true, working_hours: shiftDto.workingHours});
   }
   catch{
-    console.log("error 8: internal server error")
-    return false;
+    console.log("error 8: internal server error");
+    return (({success: false, message: "internal server error"}));
+    // return false;
   }
 }
 
 //weekly check: return true  if valid
 function weeklyHoursCheck(week_total_work_hours, today_work_hours, student_status ){
   // return new Promise ((resolve, reject) => {
+    console.log("Here:2 isShiftValid");
     if(student_status == process.env.JAPANESE){
+      console.log("Here:2 isShiftValid");
       if((week_total_work_hours+today_work_hours) > MAX_WEEK_HOURS_JP){
         console.log(`cannot go beyond ${MAX_WEEK_HOURS_JP} hours a week!`);
-        // return ({success: false, message:`cannot go beyond ${MAX_WEEK_HOURS_JP} hours a week!`});
-        return false;
+        return ({success: false, message:`You cannot go beyond ${MAX_WEEK_HOURS_JP} hours a week!`});
+        // return false;
       }
     }
     else if(student_status==process.env.INTERNATIONAL){
       if(week_total_work_hours+today_work_hours > MAX_WEEK_HOURS_INT){
         console.log(`cannot go beyond ${MAX_WEEK_HOURS_INT} hours a week!`);
-        // return ({success: false, message:`cannot go beyond ${MAX_WEEK_HOURS_INT} hours a week!`});
-        return false;
+        return ({success: false, message:`You cannot go beyond ${MAX_WEEK_HOURS_INT} hours a week!`});
+        // return false;
       }
     }
-    return true;
+    return ({success: true, message: "Success"});
+    // return true;
   }
 
 //check shift validity for all
 async function checkShiftsValidity(shiftDto, student_status){
   // if daily check is ok
   const day_check = dailyHoursCheck(shiftDto);
-  if(day_check){
+  if(day_check.success){
+    console.log(shiftDto.date);
     const first_last_days = firstLastDaysOfWeekDates(shiftDto.date);
     const total_week_work_hours = await getTotalWeekWorkHours(first_last_days);
 
@@ -309,10 +325,12 @@ async function checkShiftsValidity(shiftDto, student_status){
       const week_check = weeklyHoursCheck(total_week_work_hours.result,shiftDto.workingHours, student_status);
       return week_check; //return true if valid
     }
-    console.log("error 9: internal server error while getting total week hours")
-    return false;
+    else{
+      console.log("error 9: internal server error while getting total week hours")
+      return total_week_work_hours;
+    }
   }
-  return false;
+  return day_check;
 }
 
 module.exports = {

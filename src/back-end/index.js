@@ -8,6 +8,8 @@ const usersRoutes = require('./routes/usersRoute');
 const db = require('./services/dbService');
 const { loginRoute } = require("./controllers/usersManagerController");
 
+//TODO add session to keep a user logged in: https://hackernoon.com/how-to-use-session-in-nodejs
+
 const port = 3000;
 
 // app.use(bodyParser);

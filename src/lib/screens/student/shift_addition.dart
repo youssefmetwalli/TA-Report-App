@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:js';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -7,38 +8,157 @@ import 'package:ta_report_app/screens/student/report_form.dart';
 import 'package:http/http.dart' as http;
 import 'components/break_time.dart';
 
+List<ShiftData> shifts = [
+  ShiftData(
+    breakTimeController: TextEditingController(text: "00:00"),
+    categoryController: TextEditingController(text: ""),
+    dateController: TextEditingController(text: ""),
+    endTimeController: TextEditingController(text: ""),
+    startTimeController: TextEditingController(text: ""),
+  )
+];
+
+Future<void> addShift(BuildContext context) async {
+  try {
+    print(UserData.userId);
+    final response = await http.post(
+      Uri.parse('http://localhost:3000/shifts/add'),
+      body: {
+        'date': shifts[shifts.length - 1].dateController.text.toString(),
+        'start_time':
+            shifts[shifts.length - 1].startTimeController.text.toString(),
+        'end_time': shifts[shifts.length - 1].endTimeController.text.toString(),
+        'break_time':
+            shifts[shifts.length - 1].breakTimeController.text.toString(),
+        'work_category':
+            shifts[shifts.length - 1].categoryController.text.toString(),
+        'report_id': CurrentReport.reportId,
+        'student_id': UserData.userId
+      },
+    );
+
+    // ignore: avoid_print
+    print(shifts[shifts.length - 1].dateController.text.toString());
+    print(shifts[shifts.length - 1].startTimeController.text.toString());
+    print(shifts[shifts.length - 1].endTimeController.text.toString());
+    print(shifts[shifts.length - 1].breakTimeController.text.toString());
+    print(shifts[shifts.length - 1].categoryController.text.toString());
+
+    final Map<String, dynamic> responseData = json.decode(response.body);
+    print(responseData);
+
+    if (response.statusCode == 200) {
+      print("shift added!!!");
+      // ignore: use_build_context_synchronously
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Work added successfully'),
+          duration: Duration(seconds: 5),
+        ),
+      );
+    } else {
+      // Handle errors
+
+      // ignore: use_build_context_synchronously
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('${responseData["message"]}'),
+          duration: const Duration(seconds: 5),
+        ),
+      );
+    }
+  } catch (error) {
+    // ignore: use_build_context_synchronously
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('Something went wrong'),
+        duration: Duration(seconds: 5),
+      ),
+    );
+  }
+}
+
+Future<void> deleteShift(
+  BuildContext context,
+  int? id,
+) async {
+  try {
+    final response = await http.delete(
+      Uri.parse('http://localhost:3000/shifts/delete'),
+      // body: {"shift_id": shifts[shifts.length - 1].id.toString()},
+      body: {"shift_id": id.toString()},
+    );
+
+    // ignore: avoid_print
+    print(shifts[shifts.length - 1].id);
+
+    final Map<String, dynamic> responseData = json.decode(response.body);
+
+    if (response.statusCode == 200) {
+      print("shift deleted!!!");
+      // ignore: use_build_context_synchronously
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Work deleted successfully'),
+          duration: Duration(seconds: 5),
+        ),
+      );
+    } else {
+      // Handle errors
+
+      // ignore: use_build_context_synchronously
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('${responseData["message"]}'),
+          duration: const Duration(seconds: 5),
+        ),
+      );
+    }
+  } catch (error) {
+    // ignore: avoid_print
+    print("ERROR: ${error}");
+    // ignore: use_build_context_synchronously
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('Something went wrong'),
+        duration: Duration(seconds: 5),
+      ),
+    );
+  }
+}
+
 class CurrentReport {
   static String reportId = '';
+  static String reportTitle = '';
 
   static void setReportId(String id) {
     reportId = id;
+  }
+
+  static void setReportTitle(String title) {
+    reportTitle = title;
   }
 }
 
 class ShiftAddition extends StatefulWidget {
   final int reportId;
-  const ShiftAddition({Key? key, required this.reportId}) : super(key: key);
+  final String reportTitle;
+  const ShiftAddition(
+      {Key? key, required this.reportId, required this.reportTitle})
+      : super(key: key);
 
   @override
   State<ShiftAddition> createState() => _ShiftAdditionState();
 }
 
 class _ShiftAdditionState extends State<ShiftAddition> {
-  List<ShiftData> shifts = [
-    ShiftData(
-      breakTimeController: TextEditingController(text: "00:00"),
-      categoryController: TextEditingController(text: ""),
-      dateController: TextEditingController(text: ""),
-      endTimeController: TextEditingController(text: ""),
-      startTimeController: TextEditingController(text: ""),
-    )
-  ];
   int? selectedRowIndex;
 
   @override
   void initState() {
     super.initState();
     CurrentReport.setReportId(widget.reportId.toString());
+    CurrentReport.setReportTitle(widget.reportTitle);
     fetchShifts();
   }
 
@@ -71,43 +191,16 @@ class _ShiftAdditionState extends State<ShiftAddition> {
     }
   }
 
-  Future<void> addShift() async {
-    try {
-      final response = await http.post(
-        Uri.parse('http://localhost:3000/shifts/add'),
-        body: {
-          'date': shifts[0].dateController.text,
-          'start_time': shifts[0].startTimeController.text,
-          'end_time': shifts[0].endTimeController.text,
-          'break_time': shifts[0].breakTimeController.text,
-          'work_category': shifts[0].categoryController.text,
-          'report_id': CurrentReport.reportId,
-          'student_status': 0
-        },
-      );
-
-      if (response.statusCode == 200) {
-        // Course added successfully
-        print('Shift added successfully');
-      } else {
-        // Handle errors
-        print('Failed to shift. Status code: ${response.statusCode}');
-      }
-    } catch (error) {
-      // Handle network errors or other exceptions
-      print('Error: $error');
-    }
-  }
-
-  void addShiftFromRow() {
-    addShift();
+  void onAddShift(BuildContext context) {
+    addShift(context);
   }
 
   @override
   Widget build(BuildContext context) {
+    int shiftsLen = shifts.isEmpty ? 1 : shifts.length;
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Shifts'),
+        title: Text(CurrentReport.reportTitle),
         actions: [
           IconButton(
             icon: const Icon(Icons.exit_to_app),
@@ -150,44 +243,66 @@ class _ShiftAdditionState extends State<ShiftAddition> {
             padding: const EdgeInsets.all(16),
             child: Column(
               children: [
-                for (int index = 0; index < shifts.length; index++)
+                for (int index = 0; index <= shiftsLen; index++)
                   Column(
                     children: [
-                      ShiftRow(
-                        shiftData: shifts[index],
-                        onAddEditShift: () {
-                          setState(() {
-                            if (!shifts[index].isEditMode) {
-                              shifts.insert(
-                                  index,
-                                  ShiftData(
-                                    breakTimeController:
-                                        TextEditingController(text: "00:00"),
-                                    categoryController: TextEditingController(
-                                        text: 'Assistance in lectures'),
-                                    dateController:
-                                        TextEditingController(text: ""),
-                                    endTimeController:
-                                        TextEditingController(text: ""),
-                                    startTimeController:
-                                        TextEditingController(text: ""),
-                                  ));
-                            }
-                            shifts[index].isEditMode =
-                                !shifts[index].isEditMode;
-                            selectedRowIndex = index;
-                          });
-                        },
-                        onDeleteShift: () {
-                          setState(() {
-                            shifts.removeAt(index);
-                            selectedRowIndex =
-                                null; // Reset the selected row index
-                          });
-                        },
-                        isSelected: selectedRowIndex == index,
-                        addShiftCallback: addShift,
-                      ),
+                      
+                      if (shifts.isNotEmpty &&
+                          index < shifts.length &&
+                          (shifts[index].isEditMode || shifts[index].hasData()))
+                        ShiftRow(
+                          shiftData: shifts[index],
+                          onAddEditShift: () {
+                            setState(() {
+                              if (!shifts[index].isEditMode) {
+                                shifts.insert(
+                                    index,
+                                    ShiftData(
+                                      breakTimeController:
+                                          TextEditingController(text: "00:00"),
+                                      categoryController: TextEditingController(
+                                          text: 'Assistance in lectures'),
+                                      dateController:
+                                          TextEditingController(text: ""),
+                                      endTimeController:
+                                          TextEditingController(text: ""),
+                                      startTimeController:
+                                          TextEditingController(text: ""),
+                                    ));
+                              }
+                              // shifts[index].isEditMode =
+                              //     !shifts[index].isEditMode;
+                              // selectedRowIndex = index;
+                            });
+                            onAddShift(context);
+                          },
+                          isSelected: selectedRowIndex == index,
+                          // addShiftCallback: addShift(context),
+                        ),
+                      if ((index == shifts.length))
+                        EmptyShiftRow(
+                          onAddEditShift: () {
+                            setState(() {
+                              shifts.add(
+                                ShiftData(
+                                  breakTimeController:
+                                      TextEditingController(text: "00:00"),
+                                  categoryController: TextEditingController(
+                                      text: 'Assistance in lectures'),
+                                  dateController:
+                                      TextEditingController(text: ""),
+                                  endTimeController:
+                                      TextEditingController(text: ""),
+                                  startTimeController:
+                                      TextEditingController(text: ""),
+                                ),
+                              );
+                              shifts[index].isEditMode =
+                                  true; //TODO check this !
+                              selectedRowIndex = index;
+                            });
+                          },
+                        ),
                       const SizedBox(height: 16.0),
                     ],
                   ),
@@ -211,6 +326,43 @@ class _ShiftAdditionState extends State<ShiftAddition> {
   }
 }
 
+class EmptyShiftRow extends StatelessWidget {
+  final VoidCallback onAddEditShift;
+
+  const EmptyShiftRow({Key? key, required this.onAddEditShift})
+      : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        Expanded(
+          child: Container(
+            // Adjust the styling for the empty shift row as needed
+            decoration: BoxDecoration(
+              border: Border.all(color: Colors.grey),
+              borderRadius: BorderRadius.circular(8.0),
+            ),
+            padding: const EdgeInsets.all(8.0),
+            child: const Text(
+              'Add new worked hours',
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 16.0,
+              ),
+            ),
+          ),
+        ),
+        const SizedBox(width: 2.0),
+        ElevatedButton(
+          onPressed: onAddEditShift,
+          child: const Text('Add'),
+        ),
+      ],
+    );
+  }
+}
+
 class ShiftRow extends StatefulWidget {
   final ShiftData shiftData;
   final VoidCallback onAddEditShift;
@@ -228,6 +380,7 @@ class ShiftRow extends StatefulWidget {
   }) : super(key: key);
 
   @override
+  // ignore: library_private_types_in_public_api
   _ShiftRowState createState() => _ShiftRowState();
 }
 
@@ -304,39 +457,41 @@ class _ShiftRowState extends State<ShiftRow> {
         Expanded(
           child: InkWell(
             onTap: () {
-              _showWorkCategoryDropdown(context);
+              //_showWorkCategoryDropdown(context);
             },
-            child: const InputDecorator(
-              decoration: InputDecoration(
+            child: InputDecorator(
+              decoration: const InputDecoration(
                 border: OutlineInputBorder(),
                 labelText: 'Work Category',
               ),
-
-              // child: DropdownButtonHideUnderline(
-              //   child: DropdownButton<String>(
-              //     value: widget.shiftData.categoryController.text,
-              //     isDense: true,
-              //     isExpanded: true,
-              //     style: const TextStyle(fontSize: 10),
-              //     onChanged: (newValue) {
-              //       setState(() {
-              //         widget.shiftData.categoryController.text = newValue!;
-              //       });
-              //     },
-              //     items: [
-              //       'Assistance in lectures',
-              //       'Assistance in exam proctoring',
-              //       'Assistance in making teaching materials',
-              //       'Assistance in grading',
-              //       'Other',
-              //     ].map<DropdownMenuItem<String>>((String value) {
-              //       return DropdownMenuItem<String>(
-              //         value: value,
-              //         child: Text(value),
-              //       );
-              //     }).toList(),
-              //   ),
+              // controller: widget.shiftData.categoryController,
+              // readOnly: true,
               // ),
+              child: DropdownButtonHideUnderline(
+                child: DropdownButton<String>(
+                  value: widget.shiftData.categoryController.text,
+                  isDense: true,
+                  isExpanded: true,
+                  style: TextStyle(fontSize: 10),
+                  onChanged: (newValue) {
+                    setState(() {
+                      widget.shiftData.categoryController.text = newValue!;
+                    });
+                  },
+                  items: [
+                    'Assistance in lectures',
+                    'Assistance in exam proctoring',
+                    'Assistance in making teaching materials',
+                    'Assistance in grading',
+                    'Other',
+                  ].map<DropdownMenuItem<String>>((String value) {
+                    return DropdownMenuItem<String>(
+                      value: value,
+                      child: Text(value),
+                    );
+                  }).toList(),
+                ),
+              ),
             ),
           ),
         ),
@@ -426,9 +581,11 @@ class _ShiftRowState extends State<ShiftRow> {
           onPressed: () {
             if (validateTime()) {
               widget.onAddEditShift();
+
               if (widget.addShiftCallback != null) {
                 widget
                     .addShiftCallback!(); // Call the callback function if not null
+                addShift(context);
               }
             } else {
               showDialog(
@@ -452,7 +609,7 @@ class _ShiftRowState extends State<ShiftRow> {
               );
             }
           },
-          child: Text(widget.isSelected ? 'Add Shift' : 'Edit Shift'),
+          child: Text(widget.isSelected ? 'Add' : 'Edit'),
         ),
         const SizedBox(width: 8.0),
         // Delete Shift Button
@@ -463,16 +620,21 @@ class _ShiftRowState extends State<ShiftRow> {
               builder: (BuildContext context) {
                 return AlertDialog(
                   title: const Text('Confirm Deletion'),
-                  content:
-                      const Text('Are you sure you want to delete this shift?'),
+                  content: const Text(
+                      'Are you sure you want to delete this work period?'),
                   actions: [
                     TextButton(
-                      onPressed: () {
-                        // Close the confirmation dialog
-                        Navigator.of(context).pop();
 
-                        // Call the method to delete the shift
-                        widget.onDeleteShift();
+                      onPressed: () async {
+                        await deleteShift(context, widget.shiftData.id);
+                        // Remove the deleted shift from the screen
+                        setState(() {
+                          //TODO it is not working for front-end!!
+                          shifts.removeWhere(
+                              (shift) => shift.id == widget.shiftData.id);
+                        });
+                        // ignore: use_build_context_synchronously
+                        Navigator.of(context).pop();
                       },
                       child: const Text('Yes'),
                     ),
@@ -488,7 +650,12 @@ class _ShiftRowState extends State<ShiftRow> {
             );
           },
           style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
-          child: const Text('Delete Shift'),
+          child: const Text(
+            'Delete',
+            style: TextStyle(
+              color: Colors.white,
+            ),
+          ),
         ),
       ],
     );
@@ -496,6 +663,15 @@ class _ShiftRowState extends State<ShiftRow> {
 }
 
 class ShiftData {
+  bool hasData() {
+    // Check if any of the relevant controllers have non-empty text
+    return categoryController.text.isNotEmpty ||
+        dateController.text.isNotEmpty ||
+        breakTimeController.text.isNotEmpty ||
+        startTimeController.text.isNotEmpty ||
+        endTimeController.text.isNotEmpty;
+  }
+
   late final int? id;
   late final TextEditingController categoryController;
   late final TextEditingController dateController;
@@ -505,6 +681,7 @@ class ShiftData {
   bool isEditMode = false;
   late final double? workingHours;
   late final int? reportId;
+  // late final String studentId;
 
   ShiftData({
     this.id,
@@ -544,7 +721,7 @@ class ShiftData {
       'start_time': startTimeController.text,
       'end_time': endTimeController.text,
       'working_hours': workingHours,
-      'report_id': reportId,
+      'report_id': reportId
     };
   }
 }
