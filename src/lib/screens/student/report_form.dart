@@ -46,7 +46,7 @@ class ReportForm extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Dummy data
+    // TODO replace these lists with actual data from the db respectively
     List<String> select =
         List<String>.generate(10, (index) => 'Assistance in lectures');
     List<String> companyName =
@@ -71,115 +71,134 @@ class ReportForm extends StatelessWidget {
           ),
         ),
       ),
-      body: Screenshot(
-        controller: _screenshotController,
-        child: SingleChildScrollView(
-          scrollDirection: Axis.vertical,
-          child: Table(
-            defaultVerticalAlignment: TableCellVerticalAlignment.middle,
-            children: [
-              TableRow(
+      body: Column(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(16),
+            color: Color.fromARGB(255, 145, 244, 191),
+            child: const Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                //TODO: Add the instructor name, sid, sname, status, intl/jap from the db here in place of each respective text
+                Text('Instructor Name'),
+                Text('Student ID'),
+                Text('Name'),
+                Text('SA/TA'),
+                Text('Intl/Jap'),
+              ],
+            ),
+          ),
+          Screenshot(
+            controller: _screenshotController,
+            child: SingleChildScrollView(
+              scrollDirection: Axis.vertical,
+              child: Table(
+                defaultVerticalAlignment: TableCellVerticalAlignment.middle,
                 children: [
-                  TableCell(
-                    child: Container(
-                      color: Colors.green,
-                      padding: const EdgeInsets.all(8),
-                      child: const Center(
-                        child: Text('Work Category',
-                            style: TextStyle(color: Colors.white)),
+                  TableRow(
+                    children: [
+                      TableCell(
+                        child: Container(
+                          color: Colors.green,
+                          padding: const EdgeInsets.all(8),
+                          child: const Center(
+                            child: Text('Work Category',
+                                style: TextStyle(color: Colors.white)),
+                          ),
+                        ),
                       ),
-                    ),
-                  ),
-                  TableCell(
-                    child: Container(
-                      color: Colors.green,
-                      padding: const EdgeInsets.all(8),
-                      child: const Center(
-                        child:
-                            Text('Date', style: TextStyle(color: Colors.white)),
+                      TableCell(
+                        child: Container(
+                          color: Colors.green,
+                          padding: const EdgeInsets.all(8),
+                          child: const Center(
+                            child: Text('Date',
+                                style: TextStyle(color: Colors.white)),
+                          ),
+                        ),
                       ),
-                    ),
-                  ),
-                  TableCell(
-                    child: Container(
-                      color: Colors.green,
-                      padding: const EdgeInsets.all(8),
-                      child: const Center(
-                        child: Text('Start Time',
-                            style: TextStyle(color: Colors.white)),
+                      TableCell(
+                        child: Container(
+                          color: Colors.green,
+                          padding: const EdgeInsets.all(8),
+                          child: const Center(
+                            child: Text('Start Time',
+                                style: TextStyle(color: Colors.white)),
+                          ),
+                        ),
                       ),
-                    ),
-                  ),
-                  TableCell(
-                    child: Container(
-                      color: Colors.green,
-                      padding: const EdgeInsets.all(8),
-                      child: const Center(
-                        child: Text('Break Time',
-                            style: TextStyle(color: Colors.white)),
+                      TableCell(
+                        child: Container(
+                          color: Colors.green,
+                          padding: const EdgeInsets.all(8),
+                          child: const Center(
+                            child: Text('Break Time',
+                                style: TextStyle(color: Colors.white)),
+                          ),
+                        ),
                       ),
-                    ),
-                  ),
-                  TableCell(
-                    child: Container(
-                      color: Colors.green,
-                      padding: const EdgeInsets.all(8),
-                      child: const Center(
-                        child: Text('End Time',
-                            style: TextStyle(color: Colors.white)),
+                      TableCell(
+                        child: Container(
+                          color: Colors.green,
+                          padding: const EdgeInsets.all(8),
+                          child: const Center(
+                            child: Text('End Time',
+                                style: TextStyle(color: Colors.white)),
+                          ),
+                        ),
                       ),
-                    ),
+                    ],
                   ),
+                  for (int i = 0; i < 10; i++)
+                    TableRow(
+                      children: [
+                        TableCell(
+                          child: Container(
+                            constraints: const BoxConstraints(minHeight: 50),
+                            color: i % 2 == 0 ? Colors.white : Colors.grey[200],
+                            padding: const EdgeInsets.all(8),
+                            child: Center(child: Text(select[i])),
+                          ),
+                        ),
+                        TableCell(
+                          child: Container(
+                            constraints: const BoxConstraints(minHeight: 50),
+                            color: i % 2 == 0 ? Colors.white : Colors.grey[200],
+                            padding: const EdgeInsets.all(8),
+                            child: Center(child: Text(companyName[i])),
+                          ),
+                        ),
+                        TableCell(
+                          child: Container(
+                            constraints: const BoxConstraints(minHeight: 50),
+                            color: i % 2 == 0 ? Colors.white : Colors.grey[200],
+                            padding: const EdgeInsets.all(8),
+                            child: Center(child: Text(phoneNumber[i])),
+                          ),
+                        ),
+                        TableCell(
+                          child: Container(
+                            constraints: const BoxConstraints(minHeight: 50),
+                            color: i % 2 == 0 ? Colors.white : Colors.grey[200],
+                            padding: const EdgeInsets.all(8),
+                            child: Center(child: Text(fax[i])),
+                          ),
+                        ),
+                        TableCell(
+                          child: Container(
+                            constraints: const BoxConstraints(minHeight: 50),
+                            color: i % 2 == 0 ? Colors.white : Colors.grey[200],
+                            padding: const EdgeInsets.all(8),
+                            child: Center(child: Text(address[i])),
+                          ),
+                        ),
+                      ],
+                    ),
                 ],
               ),
-              for (int i = 0; i < 10; i++)
-                TableRow(
-                  children: [
-                    TableCell(
-                      child: Container(
-                        constraints: const BoxConstraints(minHeight: 50),
-                        color: i % 2 == 0 ? Colors.white : Colors.grey[200],
-                        padding: const EdgeInsets.all(8),
-                        child: Center(child: Text(select[i])),
-                      ),
-                    ),
-                    TableCell(
-                      child: Container(
-                        constraints: const BoxConstraints(minHeight: 50),
-                        color: i % 2 == 0 ? Colors.white : Colors.grey[200],
-                        padding: const EdgeInsets.all(8),
-                        child: Center(child: Text(companyName[i])),
-                      ),
-                    ),
-                    TableCell(
-                      child: Container(
-                        constraints: const BoxConstraints(minHeight: 50),
-                        color: i % 2 == 0 ? Colors.white : Colors.grey[200],
-                        padding: const EdgeInsets.all(8),
-                        child: Center(child: Text(phoneNumber[i])),
-                      ),
-                    ),
-                    TableCell(
-                      child: Container(
-                        constraints: const BoxConstraints(minHeight: 50),
-                        color: i % 2 == 0 ? Colors.white : Colors.grey[200],
-                        padding: const EdgeInsets.all(8),
-                        child: Center(child: Text(fax[i])),
-                      ),
-                    ),
-                    TableCell(
-                      child: Container(
-                        constraints: const BoxConstraints(minHeight: 50),
-                        color: i % 2 == 0 ? Colors.white : Colors.grey[200],
-                        padding: const EdgeInsets.all(8),
-                        child: Center(child: Text(address[i])),
-                      ),
-                    ),
-                  ],
-                ),
-            ],
+            ),
           ),
-        ),
+        ],
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
