@@ -246,6 +246,7 @@ class _ShiftAdditionState extends State<ShiftAddition> {
                 for (int index = 0; index <= shiftsLen; index++)
                   Column(
                     children: [
+                      
                       if (shifts.isNotEmpty &&
                           index < shifts.length &&
                           (shifts[index].isEditMode || shifts[index].hasData()))
@@ -314,7 +315,7 @@ class _ShiftAdditionState extends State<ShiftAddition> {
         onPressed: () {
           Navigator.of(context).push(
             MaterialPageRoute(
-              builder: (context) => const ReportForm(),
+              builder: (context) => ReportForm(),
             ),
           );
         },
@@ -367,11 +368,13 @@ class ShiftRow extends StatefulWidget {
   final VoidCallback onAddEditShift;
   final bool isSelected;
   final VoidCallback? addShiftCallback;
+  final VoidCallback onDeleteShift;
 
   const ShiftRow({
     Key? key,
     required this.shiftData,
     required this.onAddEditShift,
+    required this.onDeleteShift,
     required this.isSelected,
     this.addShiftCallback,
   }) : super(key: key);
@@ -437,6 +440,14 @@ class _ShiftRowState extends State<ShiftRow> {
         );
       },
     );
+  }
+
+  void _onDeleteShift() {
+    // Remove the shift from the list
+    if (widget.addShiftCallback != null) {
+      widget.addShiftCallback!(); // Call the callback function if not null
+    }
+    widget.onDeleteShift(); // Call the onDeleteShift callback
   }
 
   @override
@@ -613,6 +624,7 @@ class _ShiftRowState extends State<ShiftRow> {
                       'Are you sure you want to delete this work period?'),
                   actions: [
                     TextButton(
+
                       onPressed: () async {
                         await deleteShift(context, widget.shiftData.id);
                         // Remove the deleted shift from the screen
