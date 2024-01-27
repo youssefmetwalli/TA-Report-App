@@ -1,7 +1,18 @@
 import 'package:flutter/material.dart';
 
-class AdminForm extends StatelessWidget {
-  const AdminForm({Key? key}) : super(key: key);
+class AdminForm extends StatefulWidget {
+  const AdminForm(
+      {Key? key, required this.item, required this.onApprovalStatusChanged})
+      : super(key: key);
+  final String item;
+  final Function(bool) onApprovalStatusChanged;
+
+  @override
+  _AdminFormState createState() => _AdminFormState();
+}
+
+class _AdminFormState extends State<AdminForm> {
+  bool isApproved = false;
 
   @override
   Widget build(BuildContext context) {
@@ -24,11 +35,26 @@ class AdminForm extends StatelessWidget {
               end: Alignment.bottomRight,
               colors: [
                 Color.fromARGB(255, 150, 171, 248),
-                Color.fromARGB(255, 254, 187, 255)
+                Color.fromARGB(255, 114, 201, 245)
               ],
             ),
           ),
         ),
+        actions: [
+          ElevatedButton(
+              onPressed: () {
+                setState(() {
+                  isApproved = true;
+                });
+                widget.onApprovalStatusChanged(isApproved);
+                Navigator.of(context).pop();
+              },
+              child: const Text('Approve')),
+          const SizedBox(
+            width: 10,
+          ),
+          ElevatedButton(onPressed: () {}, child: const Text('Lock'))
+        ],
       ),
       body: // テーブルを配置
           Table(
