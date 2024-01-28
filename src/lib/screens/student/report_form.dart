@@ -4,6 +4,9 @@ import 'package:path_provider/path_provider.dart' as path_provider;
 import 'dart:io';
 import 'dart:typed_data';
 import 'package:screenshot/screenshot.dart';
+import 'package:ta_report_app/screens/login.dart';
+import 'package:ta_report_app/screens/student/course_input.dart';
+import 'package:ta_report_app/screens/student/shift_addition.dart';
 
 class ReportForm extends StatelessWidget {
   ReportForm({Key? key}) : super(key: key);
@@ -46,18 +49,20 @@ class ReportForm extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // TODO replace these lists with actual data from the db respectively
     List<String> select =
-        List<String>.generate(10, (index) => 'Assistance in lectures');
+        shifts.map((shift) => shift.categoryController.text).toList();
     List<String> companyName =
-        List<String>.generate(10, (index) => '2024-01-08');
-    List<String> phoneNumber = List<String>.generate(10, (index) => '9:00');
-    List<String> fax = List<String>.generate(10, (index) => '1:00');
-    List<String> address = List<String>.generate(10, (index) => '14:00');
+        shifts.map((shift) => shift.dateController.text).toList();
+    List<String> phoneNumber =
+        shifts.map((shift) => shift.startTimeController.text).toList();
+    List<String> fax =
+        shifts.map((shift) => shift.breakTimeController.text).toList();
+    List<String> address =
+        shifts.map((shift) => shift.endTimeController.text).toList();
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('SE01 BIG DATA    OCTOBER'),
+        title: Text(CurrentReport.reportTitle[0]),
         flexibleSpace: Container(
           decoration: const BoxDecoration(
             gradient: LinearGradient(
@@ -76,15 +81,20 @@ class ReportForm extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(16),
             color: Color.fromARGB(255, 145, 244, 191),
-            child: const Row(
+            child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
-                //TODO: Add the instructor name, sid, sname, status, intl/jap from the db here in place of each respective text
-                Text('Instructor Name'),
-                Text('Student ID'),
-                Text('Name'),
-                Text('SA/TA'),
-                Text('Intl/Jap'),
+                // ignore: prefer_interpolation_to_compose_strings
+                Text("Name: " + UserData.userDetails['username']),
+
+                Text("ID: ${UserData.userId}"),
+
+                Text(CurrentReport.taStatus),
+
+                Text("Residency: ${UserData.userDetails['status']}"),
+
+                Text(
+                    "Instructor Name: ${CurrentReport.reportTitle[1]}"), //=> prof_id
               ],
             ),
           ),
@@ -149,7 +159,7 @@ class ReportForm extends StatelessWidget {
                       ),
                     ],
                   ),
-                  for (int i = 0; i < 10; i++)
+                  for (int i = 0; i < shifts.length; i++)
                     TableRow(
                       children: [
                         TableCell(

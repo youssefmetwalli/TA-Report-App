@@ -48,6 +48,7 @@ class _CourseInputDialogState extends State<CourseInputDialog> {
           'year': academicYearController.text.toString(),
         },
       );
+
       final Map<String, dynamic> responseData = json.decode(response.body);
       if (response.statusCode == 200) {
         if (responseData['success'] == true && responseData['result'] != null) {

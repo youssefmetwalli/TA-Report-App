@@ -70,7 +70,7 @@ class _StudentScreenState extends State<StudentScreen> {
 
         for (var item in itemList) {
           await fetchReports(item);
-          print(item);
+          // print(item);
         }
         // Set courses in the non-static method
         CoursesData.setReportsList(itemList);
@@ -129,7 +129,7 @@ class _StudentScreenState extends State<StudentScreen> {
   void _addCourseToItemList(
       String academicYear, String month, String courseName, String courseId) {
     setState(() {
-      stateNotifier.displayList[AddedReportData.reportId] =
+      stateNotifier.displayList[AddedReportData.reportId]?[0] =
           '$courseId $courseName $month/$academicYear ';
       stateNotifier.setReportKeys(AddedReportData.reportId);
     });
@@ -213,7 +213,7 @@ class _StudentScreenState extends State<StudentScreen> {
                           ),
                         ),
                         child: ListTile(
-                          title: Text(notifier.displayList[key]!),
+                          title: Text(notifier.displayList[key]?[0]!),
                           onTap: () {
                             Navigator.of(context).push(
                               MaterialPageRoute(
@@ -278,22 +278,28 @@ class _StudentScreenState extends State<StudentScreen> {
 
 //a ChangeNotifier to hold the state
 class StudentScreenStateNotifier extends ChangeNotifier {
-  Map<int, String> displayList = {};
+  Map<int, List> displayList = {};
   List<int> reportKeys = [];
   void setReportKeys(reportId) {
     reportKeys.add(reportId);
   }
 
+  Map<dynamic, dynamic> reportData = {};
+// TODO improve data structure
   void generateDisplayList() {
     for (var item in CoursesData.reportsList) {
       String courseInfo = '${item['course_id']} ${item['course_name']}';
 
       for (var report in item['reports']) {
         String reportInfo = '${report['Year']}/${report['Month']} ';
-        String displayString = '$courseInfo $reportInfo';
+        List display = [
+          '$courseInfo $reportInfo',
+          item['prof_id'],
+          item['status']
+        ];
 
         // Assigning the displayString to the report_id as the key in the map
-        displayList[report['report_id']] = displayString;
+        displayList[report['report_id']] = display;
         setReportKeys(report['report_id']);
       }
     }
