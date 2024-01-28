@@ -153,9 +153,15 @@ class _StudentScreenState extends State<StudentScreen> {
         create: (context) => stateNotifier,
         child: Scaffold(
             appBar: AppBar(
-              title: const Text('Current Reports'),
+              title: const Text(
+                'Current Reports',
+                style: TextStyle(
+                    fontWeight: FontWeight.w400,
+                    color: Color.fromARGB(255, 228, 228, 228)),
+              ),
               actions: [
                 IconButton(
+                  color: Color.fromARGB(255, 225, 217, 217),
                   icon: const Icon(Icons.exit_to_app),
                   onPressed: () {
                     Navigator.of(context).push(
@@ -213,7 +219,19 @@ class _StudentScreenState extends State<StudentScreen> {
                           ),
                         ),
                         child: ListTile(
-                          title: Text(notifier.displayList[key]?[0]!),
+                          title: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(notifier.displayList[key]?[0]!),
+                              Text(
+                                'Approved', // Replace with the actual additional text
+                                style: TextStyle(
+                                  color: Color.fromARGB(255, 46, 223,
+                                      123), // Customize the color if needed
+                                ),
+                              ),
+                            ],
+                          ),
                           onTap: () {
                             Navigator.of(context).push(
                               MaterialPageRoute(

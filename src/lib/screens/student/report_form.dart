@@ -6,6 +6,7 @@ import 'dart:typed_data';
 import 'package:screenshot/screenshot.dart';
 import 'package:ta_report_app/screens/login.dart';
 import 'package:ta_report_app/screens/student/course_input.dart';
+import 'package:ta_report_app/screens/student/report_list.dart';
 import 'package:ta_report_app/screens/student/shift_addition.dart';
 
 class ReportForm extends StatelessWidget {
@@ -62,7 +63,12 @@ class ReportForm extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(CurrentReport.reportTitle[0]),
+        title: Text(
+          CurrentReport.reportTitle[0],
+          style: const TextStyle(
+              fontWeight: FontWeight.w400,
+              color: Color.fromARGB(255, 228, 228, 228)),
+        ),
         flexibleSpace: Container(
           decoration: const BoxDecoration(
             gradient: LinearGradient(
@@ -75,6 +81,21 @@ class ReportForm extends StatelessWidget {
             ),
           ),
         ),
+        actions: [
+          ElevatedButton(
+              onPressed: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => const StudentScreen(),
+                  ),
+                );
+              },
+              child: const Text(
+                  style: TextStyle(
+                      fontWeight: FontWeight.w400,
+                      color: Color.fromARGB(255, 105, 184, 234)),
+                  'Submit'))
+        ],
       ),
       body: Column(
         children: [
