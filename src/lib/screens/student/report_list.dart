@@ -70,7 +70,7 @@ class _StudentScreenState extends State<StudentScreen> {
 
         for (var item in itemList) {
           await fetchReports(item);
-          print(item);
+          // print(item);
         }
         // Set courses in the non-static method
         CoursesData.setReportsList(itemList);
@@ -129,7 +129,7 @@ class _StudentScreenState extends State<StudentScreen> {
   void _addCourseToItemList(
       String academicYear, String month, String courseName, String courseId) {
     setState(() {
-      stateNotifier.displayList[AddedReportData.reportId] =
+      stateNotifier.displayList[AddedReportData.reportId]?[0] =
           '$courseId $courseName $month/$academicYear ';
       stateNotifier.setReportKeys(AddedReportData.reportId);
     });
@@ -153,9 +153,15 @@ class _StudentScreenState extends State<StudentScreen> {
         create: (context) => stateNotifier,
         child: Scaffold(
             appBar: AppBar(
-              title: const Text('Current Reports'),
+              title: const Text(
+                'Current Reports',
+                style: TextStyle(
+                    fontWeight: FontWeight.w400,
+                    color: Color.fromARGB(255, 228, 228, 228)),
+              ),
               actions: [
                 IconButton(
+                  color: Color.fromARGB(255, 225, 217, 217),
                   icon: const Icon(Icons.exit_to_app),
                   onPressed: () {
                     Navigator.of(context).push(
@@ -213,7 +219,19 @@ class _StudentScreenState extends State<StudentScreen> {
                           ),
                         ),
                         child: ListTile(
-                          title: Text(notifier.displayList[key]!),
+                          title: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(notifier.displayList[key]?[0]!),
+                              Text(
+                                'Approved', // Replace with the actual additional text
+                                style: TextStyle(
+                                  color: Color.fromARGB(255, 46, 223,
+                                      123), // Customize the color if needed
+                                ),
+                              ),
+                            ],
+                          ),
                           onTap: () {
                             Navigator.of(context).push(
                               MaterialPageRoute(
@@ -278,22 +296,28 @@ class _StudentScreenState extends State<StudentScreen> {
 
 //a ChangeNotifier to hold the state
 class StudentScreenStateNotifier extends ChangeNotifier {
-  Map<int, String> displayList = {};
+  Map<int, List> displayList = {};
   List<int> reportKeys = [];
   void setReportKeys(reportId) {
     reportKeys.add(reportId);
   }
 
+  Map<dynamic, dynamic> reportData = {};
+// TODO improve data structure
   void generateDisplayList() {
     for (var item in CoursesData.reportsList) {
       String courseInfo = '${item['course_id']} ${item['course_name']}';
 
       for (var report in item['reports']) {
         String reportInfo = '${report['Year']}/${report['Month']} ';
-        String displayString = '$courseInfo $reportInfo';
+        List display = [
+          '$courseInfo $reportInfo',
+          item['prof_id'],
+          item['status']
+        ];
 
         // Assigning the displayString to the report_id as the key in the map
-        displayList[report['report_id']] = displayString;
+        displayList[report['report_id']] = display;
         setReportKeys(report['report_id']);
       }
     }

@@ -4,9 +4,19 @@ import 'package:http/http.dart' as http;
 
 class UserData {
   static String userId = '';
+  static Map<String, dynamic> userDetails = {};
 
   static void setUserId(String id) {
     userId = id;
+  }
+
+  static void setUserDetails(Map<String, dynamic> studentData) {
+    if (studentData['status'] == 0) {
+      studentData['status'] = "International";
+    } else {
+      studentData['status'] = "Japanese";
+    }
+    userDetails = studentData;
   }
 }
 
@@ -37,6 +47,8 @@ class _LoginFormState extends State<LoginForm> {
     return null;
   }
 
+  String? loginError;
+
   Future<void> handleLogin() async {
     if (_formKey.currentState!.validate()) {
       final response = await http.post(
@@ -53,23 +65,36 @@ class _LoginFormState extends State<LoginForm> {
         final Map<String, dynamic> data = json.decode(response.body);
         if (data['success']) {
           UserData.setUserId(username);
-          print(UserData.userId);
+          UserData.setUserDetails(data['result'][0]);
+
           // Navigate based on user type
-          if (userType == 'student') {
+          if (userType == 'student' &&
+              UserData.userDetails['role'] == 'student') {
             Navigator.pushReplacementNamed(context, '/student_screen');
-          } else if (userType == 'faculty') {
+          } else if (userType == 'faculty' &&
+              UserData.userDetails['role'] == 'faculty') {
             Navigator.pushReplacementNamed(context, '/faculty_screen');
-          } else if (userType == 'admin') {
+          } else if (userType == 'admin' &&
+              UserData.userDetails['role'] == 'admin') {
             Navigator.pushReplacementNamed(context, '/admin_screen');
+          } else {
+            setState(() {
+              loginError =
+                  "ERROR: You must select student, faculty, or admin according to your status!";
+            });
           }
         } else {
           // ignore: avoid_print
+          setState(() {
+            loginError = data['message'];
+          });
 
-          print(data['Incorrect email or password']);
+          print('Incorrect email or password');
         }
       } else {
-        // Handle other HTTP response codes
-        // ignore: avoid_print
+        setState(() {
+          loginError = "Invalid credentials";
+        });
         print('Request failed with status: ${response.statusCode}');
       }
     }
@@ -153,10 +178,16 @@ class _LoginFormState extends State<LoginForm> {
                   ElevatedButton(
                     onPressed: handleLogin,
                     style: ElevatedButton.styleFrom(
-                      foregroundColor: Colors.white, backgroundColor: Colors.blue[500],
+                      foregroundColor: Colors.white,
+                      backgroundColor: Colors.blue[500],
                     ),
                     child: const Text('Login'),
                   ),
+                  if (loginError != null)
+                    Text(
+                      loginError!,
+                      style: const TextStyle(color: Colors.red),
+                    ),
                 ],
               ),
             ),

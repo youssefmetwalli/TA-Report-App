@@ -37,13 +37,6 @@ Future<void> addShift(BuildContext context) async {
       },
     );
 
-    // ignore: avoid_print
-    print(shifts[shifts.length - 1].dateController.text.toString());
-    print(shifts[shifts.length - 1].startTimeController.text.toString());
-    print(shifts[shifts.length - 1].endTimeController.text.toString());
-    print(shifts[shifts.length - 1].breakTimeController.text.toString());
-    print(shifts[shifts.length - 1].categoryController.text.toString());
-
     final Map<String, dynamic> responseData = json.decode(response.body);
     print(responseData);
 
@@ -129,20 +122,28 @@ Future<void> deleteShift(
 
 class CurrentReport {
   static String reportId = '';
-  static String reportTitle = '';
+  static List reportTitle = [];
+  static String taStatus = "";
 
   static void setReportId(String id) {
     reportId = id;
   }
 
-  static void setReportTitle(String title) {
-    reportTitle = title;
+  static void setReportTitle(List report) {
+    reportTitle = report;
+    taStatus = report[2].toString();
+
+    if (taStatus == "1") {
+      taStatus = "TA";
+    } else {
+      taStatus = "SA";
+    }
   }
 }
 
 class ShiftAddition extends StatefulWidget {
   final int reportId;
-  final String reportTitle;
+  final List reportTitle;
   const ShiftAddition(
       {Key? key, required this.reportId, required this.reportTitle})
       : super(key: key);
@@ -200,7 +201,7 @@ class _ShiftAdditionState extends State<ShiftAddition> {
     int shiftsLen = shifts.isEmpty ? 1 : shifts.length;
     return Scaffold(
       appBar: AppBar(
-        title: Text(CurrentReport.reportTitle),
+        title: Text(CurrentReport.reportTitle[0]),
         actions: [
           IconButton(
             icon: const Icon(Icons.exit_to_app),
@@ -246,7 +247,6 @@ class _ShiftAdditionState extends State<ShiftAddition> {
                 for (int index = 0; index <= shiftsLen; index++)
                   Column(
                     children: [
-                      
                       if (shifts.isNotEmpty &&
                           index < shifts.length &&
                           (shifts[index].isEditMode || shifts[index].hasData()))
@@ -254,22 +254,22 @@ class _ShiftAdditionState extends State<ShiftAddition> {
                           shiftData: shifts[index],
                           onAddEditShift: () {
                             setState(() {
-                              if (!shifts[index].isEditMode) {
-                                shifts.insert(
-                                    index,
-                                    ShiftData(
-                                      breakTimeController:
-                                          TextEditingController(text: "00:00"),
-                                      categoryController: TextEditingController(
-                                          text: 'Assistance in lectures'),
-                                      dateController:
-                                          TextEditingController(text: ""),
-                                      endTimeController:
-                                          TextEditingController(text: ""),
-                                      startTimeController:
-                                          TextEditingController(text: ""),
-                                    ));
-                              }
+                              // if (!shifts[index].isEditMode) {
+                              //   shifts.insert(
+                              //       index,
+                              //       ShiftData(
+                              //         breakTimeController:
+                              //             TextEditingController(text: "00:00"),
+                              //         categoryController:
+                              //             TextEditingController(text: ''),
+                              //         dateController:
+                              //             TextEditingController(text: ""),
+                              //         endTimeController:
+                              //             TextEditingController(text: ""),
+                              //         startTimeController:
+                              //             TextEditingController(text: ""),
+                              //       ));
+                              // }
                               // shifts[index].isEditMode =
                               //     !shifts[index].isEditMode;
                               // selectedRowIndex = index;
@@ -277,6 +277,7 @@ class _ShiftAdditionState extends State<ShiftAddition> {
                             onAddShift(context);
                           },
                           isSelected: selectedRowIndex == index,
+                          onDeleteShift: () {},
                           // addShiftCallback: addShift(context),
                         ),
                       if ((index == shifts.length))
@@ -624,15 +625,16 @@ class _ShiftRowState extends State<ShiftRow> {
                       'Are you sure you want to delete this work period?'),
                   actions: [
                     TextButton(
-
                       onPressed: () async {
                         await deleteShift(context, widget.shiftData.id);
                         // Remove the deleted shift from the screen
                         setState(() {
                           //TODO it is not working for front-end!!
+                          _onDeleteShift();
                           shifts.removeWhere(
                               (shift) => shift.id == widget.shiftData.id);
                         });
+                        _onDeleteShift();
                         // ignore: use_build_context_synchronously
                         Navigator.of(context).pop();
                       },
