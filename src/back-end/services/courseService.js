@@ -124,9 +124,9 @@ const assignedCoursesDto = require('../dto/assignedCoursesDto')
                 return;
             }
 
-        const query = 'INSERT INTO AssignedCourses (student_id, course_id, prof_id, status, max_hours, course_name) VALUES (?, ?, ?, ?, ?, ?)';
+        const query = 'INSERT INTO AssignedCourses (student_id, course_id, prof_id, status, max_hours, course_name, submit_status) VALUES (?, ?, ?, ?, ?, ?, ?)';
           
-        db.DB.query(query, [assignedCoursesDto.studentId, assignedCoursesDto.courseId, assignedCoursesDto.profId, assignedCoursesDto.status, assignedCoursesDto.maxHours, assignedCoursesDto.courseName], (error, results) => {
+        db.DB.query(query, [assignedCoursesDto.studentId, assignedCoursesDto.courseId, assignedCoursesDto.profId, assignedCoursesDto.status, assignedCoursesDto.maxHours, assignedCoursesDto.courseName, "Editing"], (error, results) => {
         if (error) {
             console.log("Error 3: Internal server assigning a course. ", error);
             reject({
@@ -147,6 +147,48 @@ const assignedCoursesDto = require('../dto/assignedCoursesDto')
                 }
             );
             });
+            });
+        }
+        catch(error){
+            reject({
+                success: false,
+                message: "Internal Server Error",
+                error: error
+            })
+        }
+        });
+    }
+
+    //update assigned course
+    function updateAssignedCourse(submit_status, id) {
+        return new Promise((resolve, reject) => {
+
+            try
+            {
+
+        const query = 'UPDATE AssignedCourses SET submit_status = ? WHERE ID = ?';
+          
+        db.DB.query(query, [submit_status, id], (error, results) => {
+        if (error) {
+            console.log("Error 3: Internal server assigning a course. ", error);
+            reject({
+                success: false,
+                message: "Internal Server Error",  
+                error: error
+            });
+            return;
+        }
+        console.log('Course assigned updated successfully:', results);
+
+            //automatically creates a report
+            resolve(
+                {
+                    success: true,
+                    message: "Report updated!",
+                    result: results
+                }
+            );
+            // });
             });
         }
         catch(error){
@@ -246,6 +288,56 @@ function getAssignedCourseId(course_id){
             reject({
                 success: false,
                 message: "Failed to get the assigned_course_id"
+            })
+        }
+    })
+}
+
+function getAssignedCoursesBySubmitStatus(submit_status){
+    return new Promise(async (resolve, reject) =>{
+        try {
+            const query = 'SELECT * FROM AssignedCourses WHERE submit_status = ?';
+            db.DB.query(query, submit_status, (err, results) =>{
+                if (err){
+                  throw err;
+                }
+                resolve({
+                    success: true,
+                    result: results,
+                    message: `Successfully got all assigned courses with ${submit_status}`
+                });
+            });
+            
+        }
+        catch {
+            reject({
+                success: false,
+                message: "Failed to get all the course data assigned"
+            })
+        }
+    })
+}
+
+function getAssignedCoursesBySubmitStatusAndProfId(submit_status, prof_id){
+    return new Promise(async (resolve, reject) =>{
+        try {
+            const query = 'SELECT * FROM AssignedCourses WHERE submit_status = ? AND prof_id = ?';
+            db.DB.query(query, [submit_status, prof_id], (err, results) =>{
+                if (err){
+                  throw err;
+                }
+                resolve({
+                    success: true,
+                    result: results,
+                    message: `Successfully got all assigned courses with ${submit_status}`
+                });
+            });
+            
+        }
+        catch {
+            reject({
+                success: false,
+                message: "Failed to get all the course data assigned"
             })
         }
     })
@@ -382,6 +474,7 @@ module.exports = {
     getAllAssignedCourses,
     getAssignedCourseId,
     addCourse, 
+    updateAssignedCourse,
     deleteAssignedCourseByCourseId, 
     deleteAssignedCourseById,
     assignCourseToStudent,
@@ -389,5 +482,7 @@ module.exports = {
     deleteReportById,
     getReportByReportId,
     getReportsByAssignedId,
-    getAllCourses
+    getAllCourses,
+    getAssignedCoursesBySubmitStatus,
+    getAssignedCoursesBySubmitStatusAndProfId
 };
