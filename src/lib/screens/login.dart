@@ -34,9 +34,9 @@ class _LoginFormState extends State<LoginForm> {
   final _formKey = GlobalKey<FormState>();
 
   String? validateUsername(String? value) {
-    if (value == null || !value.contains('@')) {
-      return 'Please Enter a Valid Email Address';
-    }
+    // if (value == null || !value.contains('@')) {
+    //   return 'Please Enter a Valid Email Address';
+    // }
     return null;
   }
 

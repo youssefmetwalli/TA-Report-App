@@ -14,10 +14,10 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Your App Title',
+      title: 'TA Report',
       initialRoute: '/', // Set your initial route as needed
       routes: {
-        '/': (context) => const StudentScreen(),
+        '/': (context) => const LoginForm(),
         '/student_screen': (context) => const StudentScreen(),
         '/faculty_screen': (context) => const FacultyScreen(),
         '/admin_screen': (context) => const AdminScreen(),
