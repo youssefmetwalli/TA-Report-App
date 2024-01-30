@@ -1,33 +1,54 @@
 import 'package:flutter/material.dart';
+import 'package:ta_report_app/screens/student/shift_addition.dart';
 
 class FacultyForm extends StatefulWidget {
-  const FacultyForm(
-      {Key? key, required this.item, required this.onApprovalStatusChanged})
+  final List? reportData;
+  FacultyForm(
+      {Key? key,
+      required this.reportData,
+      required this.onApprovalStatusChanged,
+      required this.reportId})
       : super(key: key);
-  final String item;
+
   final Function(bool) onApprovalStatusChanged;
+  final int reportId;
 
   @override
+  // ignore: library_private_types_in_public_api
   _FacultyFormState createState() => _FacultyFormState();
 }
 
 class _FacultyFormState extends State<FacultyForm> {
   bool isApproved = false;
 
+  List<ShiftData> shifts = [
+    ShiftData(
+      breakTimeController: TextEditingController(text: "00:00"),
+      categoryController: TextEditingController(text: ""),
+      dateController: TextEditingController(text: ""),
+      endTimeController: TextEditingController(text: ""),
+      startTimeController: TextEditingController(text: ""),
+    )
+  ];
+
   @override
   Widget build(BuildContext context) {
-    // ダミーのデータ
+    fetchShifts(widget.reportId);
+    sortShiftsByDate();
     List<String> select =
-        List<String>.generate(10, (index) => 'Assistance in lectures');
+        shifts.map((shift) => shift.categoryController.text).toList();
     List<String> companyName =
-        List<String>.generate(10, (index) => '2024-01-08');
-    List<String> phoneNumber = List<String>.generate(10, (index) => '9:00');
-    List<String> fax = List<String>.generate(10, (index) => '1:00');
-    List<String> address = List<String>.generate(10, (index) => '14:00');
+        shifts.map((shift) => (shift.dateController.text)).toList();
+    List<String> phoneNumber =
+        shifts.map((shift) => shift.startTimeController.text).toList();
+    List<String> fax =
+        shifts.map((shift) => shift.breakTimeController.text).toList();
+    List<String> address =
+        shifts.map((shift) => shift.endTimeController.text).toList();
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('SE01 BIG DATA    OCTOBER'),
+        title: Text(widget.reportData?[0]),
         flexibleSpace: Container(
           decoration: const BoxDecoration(
             gradient: LinearGradient(
@@ -164,5 +185,15 @@ class _FacultyFormState extends State<FacultyForm> {
         ],
       ),
     );
+  }
+
+  String formatDate(String dateString) {
+    DateTime dateTime = DateTime.parse(dateString);
+    return '${dateTime.year}/${dateTime.month}/${dateTime.day}';
+  }
+
+  void sortShiftsByDate() {
+    shifts.sort((a, b) => DateTime.parse(b.dateController.text)
+        .compareTo(DateTime.parse(a.dateController.text)));
   }
 }
