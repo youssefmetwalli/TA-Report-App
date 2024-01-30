@@ -71,6 +71,47 @@ Future<void> addShift(BuildContext context) async {
   }
 }
 
+Future<void> fetchShifts(reportIdParam) async {
+  try {
+    final response = await http.post(
+      Uri.parse('http://localhost:3000/shifts/getall'),
+      body: {'report_id': reportIdParam.toString()},
+    );
+
+    if (response.statusCode == 200) {
+      final Map<String, dynamic> data = json.decode(response.body);
+      if (data['success']) {
+        final List<dynamic> shiftDataList = data['result'];
+        // Convert shift data list to ShiftData objects
+        List<ShiftData> fetchedShifts = shiftDataList
+            .map((shiftData) => ShiftData.fromJson(shiftData))
+            .toList();
+
+        // Sort the shifts by date in descending order
+        fetchedShifts.sort((a, b) => DateTime.parse(b.dateController.text)
+            .compareTo(DateTime.parse(a.dateController.text)));
+
+        // Format the date in each ShiftData object to 'yyyy/MM/dd' format
+        // for (var shift in fetchedShifts) {
+        //   shift.dateController.text = formatDate(shift.dateController.text);
+        // }
+
+        // setState(() {
+        shifts = fetchedShifts;
+        // });
+        print('Shifts fetched successfully');
+      } else {
+        print('Failed to fetch shifts. Message: ${data['message']}');
+      }
+    } else {
+      print('Failed to fetch shifts. Status code: ${response.statusCode}');
+    }
+  } catch (error) {
+    // Handle network errors or other exceptions
+    print('Error: $error');
+  }
+}
+
 Future<void> deleteShift(
   BuildContext context,
   int? id,
@@ -149,47 +190,26 @@ class ShiftAddition extends StatefulWidget {
       : super(key: key);
 
   @override
+  // ignore: no_logic_in_create_state
   State<ShiftAddition> createState() => _ShiftAdditionState();
 }
 
 class _ShiftAdditionState extends State<ShiftAddition> {
   int? selectedRowIndex;
 
+  _ShiftAdditionState();
+
   @override
   void initState() {
     super.initState();
     CurrentReport.setReportId(widget.reportId.toString());
     CurrentReport.setReportTitle(widget.reportTitle);
-    fetchShifts();
+    fetchShifts(widget.reportId);
   }
 
-  Future<void> fetchShifts() async {
-    try {
-      final response = await http.post(
-        Uri.parse('http://localhost:3000/shifts/getall'),
-        body: {'report_id': CurrentReport.reportId},
-      );
-
-      if (response.statusCode == 200) {
-        final Map<String, dynamic> data = json.decode(response.body);
-        if (data['success']) {
-          final List<dynamic> shiftDataList = data['result'];
-          setState(() {
-            shifts = shiftDataList
-                .map((shiftData) => ShiftData.fromJson(shiftData))
-                .toList();
-          });
-          print('Shifts fetched successfully');
-        } else {
-          print('Failed to fetch shifts. Message: ${data['message']}');
-        }
-      } else {
-        print('Failed to fetch shifts. Status code: ${response.statusCode}');
-      }
-    } catch (error) {
-      // Handle network errors or other exceptions
-      print('Error: $error');
-    }
+  String formatDate(String dateString) {
+    DateTime dateTime = DateTime.parse(dateString);
+    return '${dateTime.year}/${dateTime.month.toString().padLeft(2, '0')}/${dateTime.day.toString().padLeft(2, '0')}';
   }
 
   void onAddShift(BuildContext context) {
@@ -270,9 +290,9 @@ class _ShiftAdditionState extends State<ShiftAddition> {
                               //             TextEditingController(text: ""),
                               //       ));
                               // }
-                              // shifts[index].isEditMode =
-                              //     !shifts[index].isEditMode;
-                              // selectedRowIndex = index;
+                              shifts[index].isEditMode =
+                                  !shifts[index].isEditMode;
+                              selectedRowIndex = index;
                             });
                             onAddShift(context);
                           },
@@ -316,11 +336,11 @@ class _ShiftAdditionState extends State<ShiftAddition> {
         onPressed: () {
           Navigator.of(context).push(
             MaterialPageRoute(
-              builder: (context) => ReportForm(),
+              builder: (context) => ReportForm(reportData: widget.reportTitle),
             ),
           );
         },
-        label: const Text('Create Report'),
+        label: const Text('Go to Report'),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
     );
@@ -444,11 +464,12 @@ class _ShiftRowState extends State<ShiftRow> {
   }
 
   void _onDeleteShift() {
+    widget.onDeleteShift();
     // Remove the shift from the list
     if (widget.addShiftCallback != null) {
       widget.addShiftCallback!(); // Call the callback function if not null
     }
-    widget.onDeleteShift(); // Call the onDeleteShift callback
+    // Call the onDeleteShift callback
   }
 
   @override
@@ -628,13 +649,16 @@ class _ShiftRowState extends State<ShiftRow> {
                       onPressed: () async {
                         await deleteShift(context, widget.shiftData.id);
                         // Remove the deleted shift from the screen
+                        // (() {
+                        //TODO it is not working for front-end!!
+                        print(widget.shiftData.id);
                         setState(() {
-                          //TODO it is not working for front-end!!
-                          _onDeleteShift();
                           shifts.removeWhere(
                               (shift) => shift.id == widget.shiftData.id);
                         });
-                        _onDeleteShift();
+                        // });
+                        // };
+                        // widget.onDeleteShift();
                         // ignore: use_build_context_synchronously
                         Navigator.of(context).pop();
                       },

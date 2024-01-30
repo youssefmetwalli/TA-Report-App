@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
 import 'package:ta_report_app/screens/login.dart';
 import 'package:ta_report_app/screens/student/course_input.dart';
+import 'package:ta_report_app/screens/student/report_form.dart';
 // import 'package:ta_report_app/screens/student/report_form.dart';
 import 'package:ta_report_app/screens/student/shift_addition.dart';
 import 'package:http/http.dart' as http;
@@ -11,6 +12,8 @@ import 'dart:html';
 
 class CoursesData {
   static List<dynamic> reportsList = [];
+  static String submitStatus = "";
+  static int assignedCourseId = 0;
 
   static void setReportsList(dynamic list) {
     reportsList = list;
@@ -27,6 +30,30 @@ class CoursesData {
     if (reportsListJson != null) {
       reportsList = jsonDecode(reportsListJson);
     }
+  }
+}
+
+//get reports
+Future<void> fetchReports(item) async {
+  final response = await http.post(
+    Uri.parse('http://localhost:3000/reports/getall'),
+    headers: <String, String>{
+      'Content-Type': 'application/json',
+      'Access-Control-Allow-Origin': '*'
+    },
+    body: jsonEncode(<String, dynamic>{'assigned_course_id': item['ID']}),
+  );
+
+  if (response.statusCode == 200) {
+    final Map<String, dynamic> data = json.decode(response.body);
+    if (data['success']) {
+      item['reports'] = data['result'];
+    } else {
+      print(data['message']);
+    }
+  } else {
+    // Handle other HTTP response codes
+    print('Request failed with status: ${response.statusCode}');
   }
 }
 
@@ -90,30 +117,6 @@ class _StudentScreenState extends State<StudentScreen> {
     }
   }
 
-  //get reports
-  Future<void> fetchReports(item) async {
-    final response = await http.post(
-      Uri.parse('http://localhost:3000/reports/getall'),
-      headers: <String, String>{
-        'Content-Type': 'application/json',
-        'Access-Control-Allow-Origin': '*'
-      },
-      body: jsonEncode(<String, dynamic>{'assigned_course_id': item['ID']}),
-    );
-
-    if (response.statusCode == 200) {
-      final Map<String, dynamic> data = json.decode(response.body);
-      if (data['success']) {
-        item['reports'] = data['result'];
-      } else {
-        print(data['message']);
-      }
-    } else {
-      // Handle other HTTP response codes
-      print('Request failed with status: ${response.statusCode}');
-    }
-  }
-
   // Sample list of notifications
   List<String> notifications = [
     'Notification 1',
@@ -122,20 +125,22 @@ class _StudentScreenState extends State<StudentScreen> {
   ];
 
   // Controllers for text form fields in the dialog
-  // ignore: unused_field
-  final List<TextEditingController> _textFieldControllers =
-      List.generate(6, (index) => TextEditingController());
 
   void _addCourseToItemList(
       String academicYear, String month, String courseName, String courseId) {
     setState(() {
-      stateNotifier.displayList[AddedReportData.reportId]?[0] =
-          '$courseId $courseName $month/$academicYear ';
+      stateNotifier.displayList[AddedReportData.reportId]?[0] = [
+        '$courseId $courseName $month/$academicYear ',
+        AddedReportData.status,
+        "Editing",
+        AddedReportData.assignedId
+      ];
       stateNotifier.setReportKeys(AddedReportData.reportId);
     });
   }
 
   // Function to show the create report dialog
+  //TODO this is where the error is
   void _showCreateReportDialog() {
     showDialog(
       context: context,
@@ -222,26 +227,53 @@ class _StudentScreenState extends State<StudentScreen> {
                           title: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Text(notifier.displayList[key]?[0]!),
+                              Text(notifier.displayList[key]
+                                  ?[0]), //report description
                               Text(
-                                'Approved', // Replace with the actual additional text
-                                style: TextStyle(
+                                notifier.displayList[key]?[3], // submit_status
+                                style: const TextStyle(
                                   color: Color.fromARGB(255, 46, 223,
                                       123), // Customize the color if needed
                                 ),
                               ),
                             ],
                           ),
-                          onTap: () {
-                            Navigator.of(context).push(
-                              MaterialPageRoute(
-                                //TODO Shifts handling
-                                builder: (context) => ShiftAddition(
-                                  reportId: key,
-                                  reportTitle: notifier.displayList[key]!,
+                          onTap: () async {
+                            try {
+                              if (notifier.displayList[key]?[3] ==
+                                      "Submitted" ||
+                                  notifier.displayList[key]?[3] ==
+                                      "Faculty Approved" ||
+                                  notifier.displayList[key]?[3] ==
+                                      "Admin Approved" ||
+                                  notifier.displayList[key]?[3] == "Locked" ||
+                                  false) {
+                                // If the submit_status is "submitted", navigate to ReportForm page
+                                // and fetch shifts using a function in ReportForm
+                                print(key);
+                                print(notifier.displayList[key]);
+                                await fetchShiftsAndNavigateToReportForm(
+                                    context, key, notifier.displayList[key]!);
+                              } else {
+                                // If submit_status is not "submitted", navigate to ShiftAddition page
+                                Navigator.of(context).push(
+                                  MaterialPageRoute(
+                                    builder: (context) => ShiftAddition(
+                                      reportId: key,
+                                      reportTitle: notifier.displayList[key]!,
+                                    ),
+                                  ),
+                                );
+                              }
+                            } catch (e) {
+                              print("Error: $e");
+                              // ignore: use_build_context_synchronously
+                              Navigator.of(context).push(
+                                MaterialPageRoute(
+                                  builder: (context) => const LoginForm(),
                                 ),
-                              ),
-                            );
+                              );
+                            }
                           },
                         ),
                       );
@@ -294,6 +326,51 @@ class _StudentScreenState extends State<StudentScreen> {
   }
 }
 
+Future<void> fetchShiftsAndNavigateToReportForm(
+    BuildContext context, int reportId, List reportData) async {
+  try {
+    // Make HTTP POST request to fetch shifts
+    final shiftsResponse = await http.post(
+      Uri.parse('http://localhost:3000/shifts/getall'),
+      headers: <String, String>{
+        'Content-Type': 'application/json',
+        'Access-Control-Allow-Origin': '*',
+      },
+      body: jsonEncode(<String, dynamic>{'report_id': reportId}),
+    );
+
+    if (shiftsResponse.statusCode == 200) {
+      // Parse the response body
+      final Map<String, dynamic> responseData =
+          json.decode(shiftsResponse.body);
+      final List<dynamic> shiftDataList = responseData['result'];
+
+      shifts = shiftDataList
+          .map((shiftData) => ShiftData.fromJson(shiftData))
+          .toList();
+      print(shifts);
+      // Now navigate to the ReportForm page
+      fetchShifts(reportId);
+      print(shifts);
+      Navigator.of(context).push(
+        MaterialPageRoute(
+          builder: (context) => ReportForm(
+            reportData: reportData,
+          ),
+        ),
+      );
+    } else {
+      // Handle HTTP error response
+      print('Failed to fetch shifts. Status code: ${shiftsResponse}');
+      // Optionally, show a snackbar or dialog to inform the user
+    }
+  } catch (e) {
+    // Handle exceptions
+    print('Error fetching shifts: $e');
+    // Optionally, show a snackbar or dialog to inform the user
+  }
+}
+
 //a ChangeNotifier to hold the state
 class StudentScreenStateNotifier extends ChangeNotifier {
   Map<int, List> displayList = {};
@@ -302,18 +379,22 @@ class StudentScreenStateNotifier extends ChangeNotifier {
     reportKeys.add(reportId);
   }
 
-  Map<dynamic, dynamic> reportData = {};
+  // Map<dynamic, dynamic> reportData = {};
 // TODO improve data structure
   void generateDisplayList() {
     for (var item in CoursesData.reportsList) {
       String courseInfo = '${item['course_id']} ${item['course_name']}';
+      CoursesData.submitStatus = item['submit_status'];
+      CoursesData.assignedCourseId = item['ID'];
 
       for (var report in item['reports']) {
         String reportInfo = '${report['Year']}/${report['Month']} ';
         List display = [
           '$courseInfo $reportInfo',
           item['prof_id'],
-          item['status']
+          item['status'],
+          item['submit_status'],
+          item['ID']
         ];
 
         // Assigning the displayString to the report_id as the key in the map

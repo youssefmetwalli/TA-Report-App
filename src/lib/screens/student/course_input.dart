@@ -1,8 +1,10 @@
 import 'dart:convert';
+import 'dart:core';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:ta_report_app/screens/login.dart';
+import 'package:ta_report_app/screens/student/report_list.dart';
 
 class CourseInputDialog extends StatefulWidget {
   final Function(String, String, String, String) onCourseAdded;
@@ -16,7 +18,9 @@ class CourseInputDialog extends StatefulWidget {
 }
 
 class AddedReportData {
-  static int reportId = -1;
+  static int reportId = 13;
+  static dynamic status = "TA";
+  static dynamic assignedId = "";
 }
 
 class _CourseInputDialogState extends State<CourseInputDialog> {
@@ -58,7 +62,8 @@ class _CourseInputDialogState extends State<CourseInputDialog> {
           return true;
         } else {
           print('Failed to add course. ${responseData['message']}');
-          _showErrorDialog('Failed to add course. ${responseData['message']}');
+          _showErrorDialog(
+              'ERROR: Failed to add the course. Make sure all the fields are answered correctly and the professor email is correct }');
           return false;
         }
       } else {
@@ -66,14 +71,14 @@ class _CourseInputDialogState extends State<CourseInputDialog> {
         print(
             'Failed to add course. ${responseData['message']} \n Status code: ${response.statusCode}');
         _showErrorDialog(
-            'Failed to add course. ${responseData['message']} \n Status code: ${response.statusCode}');
+            'ERROR: Failed to add course. \n Status code: ${response.statusCode}');
         return false;
       }
     } catch (error) {
       // ignore: avoid_print
       print('Error: $error');
       _showErrorDialog(
-          'Error: Invalid input. Please write the year and the month in numbers');
+          'ERROR: Failed to add the course. Make sure all the fields are answered correctly and the professor email is correct');
       return false;
     }
   }
@@ -162,7 +167,7 @@ class _CourseInputDialogState extends State<CourseInputDialog> {
                   children: [
                     Expanded(
                       child: buildTextField(
-                        'Instructor Name',
+                        'Instructor Email',
                         instructorNameController,
                       ),
                     ),
@@ -187,6 +192,10 @@ class _CourseInputDialogState extends State<CourseInputDialog> {
                           courseNameController.text,
                           courseIDController.text,
                         );
+
+                        setState(() {
+                          const StudentScreen();
+                        });
 
                         // ignore: use_build_context_synchronously
                         Navigator.of(context).pop();
