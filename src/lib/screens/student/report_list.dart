@@ -231,11 +231,20 @@ class _StudentScreenState extends State<StudentScreen> {
                                   ?[0]), //report description
                               Text(
                                 notifier.displayList[key]?[3], // submit_status
-                                style: const TextStyle(
-                                  color: Color.fromARGB(255, 46, 223,
-                                      123), // Customize the color if needed
+                                style: TextStyle(
+                                  color: notifier.displayList[key]?[3] ==
+                                          "Submitted"
+                                      ? Color.fromARGB(255, 46, 223,
+                                          123) // Blue color for "Submitted"
+                                      : notifier.displayList[key]?[3] ==
+                                              "Editing"
+                                          ? Colors
+                                              .green // Green color for "Editing"
+                                          : Colors
+                                              .black, // Default color if not "Submitted" or "Editing"
                                 ),
-                              ),
+                              )
+                              // ),
                             ],
                           ),
                           onTap: () async {
