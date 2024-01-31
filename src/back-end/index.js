@@ -1,6 +1,7 @@
 const express = require("express");
 const cors = require('cors');
 const app = express();
+const session = require('express-session'); 
 const coursesRoutes = require('./routes/courseRoutes');
 const shiftsRoutes = require('./routes/shiftsRoute');
 const reportRoutes = require('./routes/reportRoutes');
@@ -12,6 +13,8 @@ const { loginRoute } = require("./controllers/usersManagerController");
 
 const port = 3000;
 
+
+
 // app.use(bodyParser);
 app.use(
   express.urlencoded({
@@ -21,6 +24,14 @@ app.use(
 app.use(express.json());
 // Use CORS middleware
 app.use(cors());
+
+// Add session middleware
+app.use(session({
+  secret: 'wakanda', // Secret key to sign the session ID cookie
+  resave: false, // Do not save session if unmodified
+  saveUninitialized: false, // Do not create session until something is stored
+  // You can customize other options as needed
+}));
 
 /* Error handler middleware */
 app.use((err, req, res, next) => {
